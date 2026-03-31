@@ -100,6 +100,51 @@ export default function Pipeline() {
           ))}
         </div>
 
+        {/* Detailed roadmap — two tracks */}
+        <FadeIn className="mt-12">
+          <div className="rounded-[1.5rem] bg-white/[.03] ring-1 ring-white/[.06] p-7 md:p-9">
+            <h3 className="text-lg font-bold tracking-tight mb-6">세부 절차</h3>
+            <div className="space-y-8">
+              {/* Start */}
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-white/[.06] ring-1 ring-white/[.08] px-4 py-2 text-sm font-medium text-white/60">
+                  사전 교육 및 입교 수속진행
+                </div>
+                <Icon icon="solar:arrow-right-linear" className="text-white/15 text-xs" />
+                <div className="rounded-lg bg-blue-500/10 ring-1 ring-blue-500/20 px-4 py-2 text-sm font-medium text-blue-400">
+                  PPL, IR, CPL, ME 취득
+                </div>
+              </div>
+
+              {/* Track A — 미국/국내 항공사 */}
+              <div className="pl-4 border-l-2 border-blue-500/20 space-y-3">
+                <p className="text-xs uppercase tracking-[.15em] text-blue-400/60 font-medium">Track A</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  {["CFI, CFII 취득", "교관 취임 후 1000/1500hr", "항공사 공채 준비", "미국 / 국내 항공사"].map((s, i, arr) => (
+                    <span key={s} className="flex items-center gap-2">
+                      <span className="rounded-lg bg-white/[.04] ring-1 ring-white/[.06] px-3 py-1.5 text-sm text-white/50">{s}</span>
+                      {i < arr.length - 1 && <Icon icon="solar:arrow-right-linear" className="text-white/15 text-xs" />}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Track B — 국내 항공사 */}
+              <div className="pl-4 border-l-2 border-amber-500/20 space-y-3">
+                <p className="text-xs uppercase tracking-[.15em] text-amber-400/60 font-medium">Track B</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  {["Time Building", "Jet Rating (선택)", "항공사 공채 준비", "국내 항공사"].map((s, i, arr) => (
+                    <span key={s} className="flex items-center gap-2">
+                      <span className="rounded-lg bg-white/[.04] ring-1 ring-white/[.06] px-3 py-1.5 text-sm text-white/50">{s}</span>
+                      {i < arr.length - 1 && <Icon icon="solar:arrow-right-linear" className="text-white/15 text-xs" />}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
         {/* Flight school cost table */}
         <FadeIn className="mt-12">
           <div className="rounded-[1.5rem] bg-white/[.03] ring-1 ring-white/[.06] p-7 md:p-9 overflow-x-auto">

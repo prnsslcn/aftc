@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Icon } from "@iconify/react";
-import { GOOGLE_FORM_URL } from "@/lib/constants";
 
 const HERO_WORDS = [
   { text: "준비된", color: "white" },
@@ -138,9 +137,7 @@ export default function Hero() {
             </span>
           </a>
           <a
-            href={GOOGLE_FORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#apply"
             className="inline-flex items-center gap-2 text-white/60 text-[15px] font-medium hover:text-white transition-colors"
           >
             과정 문의 및 지원

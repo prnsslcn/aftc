@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { NAV_ITEMS, GOOGLE_FORM_URL, CONTACT } from "@/lib/constants";
+import { NAV_ITEMS, CONTACT } from "@/lib/constants";
 
 export default function Footer() {
   return (
@@ -29,7 +29,7 @@ export default function Footer() {
               </p>
               <p className="flex items-center gap-2">
                 <Icon icon="solar:phone-linear" className="text-white/30" />
-                담당: {CONTACT.name} {CONTACT.phone}
+                {CONTACT.phone}
               </p>
             </div>
           </div>
@@ -63,9 +63,7 @@ export default function Footer() {
               과정 상담 및 지원은 아래 링크를 통해 문의해주세요.
             </p>
             <a
-              href={GOOGLE_FORM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#apply"
               className="inline-flex items-center gap-2 bg-white/[.06] ring-1 ring-white/[.08] rounded-full px-5 py-2.5 text-sm font-medium hover:bg-white/[.1] transition-colors"
             >
               과정 문의 및 지원

@@ -24,17 +24,16 @@ export default function FlightSchool() {
         </FadeIn>
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Image */}
+          {/* Map image */}
           <FadeIn direction="scale">
-            <div className="rounded-[1.5rem] overflow-hidden h-full min-h-[280px] md:min-h-[360px] relative bg-white/[.03] ring-1 ring-white/[.06]">
+            <div className="rounded-[1.5rem] overflow-hidden h-full min-h-[280px] md:min-h-[360px] relative bg-white/[.03] ring-1 ring-white/[.06] flex items-center justify-center p-8">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/3.jpg"
-                alt="비행 훈련"
-                className="w-full h-full object-cover"
+                src="/images/academy.png"
+                alt="비행학교 위치 - Hillsboro, AeroGuard, Phoenix East Aviation"
+                className="w-full h-auto object-contain"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/70 to-transparent" />
             </div>
           </FadeIn>
 

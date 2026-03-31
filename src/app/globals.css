@@ -53,3 +53,22 @@ body::after {
 .info-table tr:last-child td {
   border-bottom: none;
 }
+
+/* Form inputs */
+.form-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: white;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+.form-input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+.form-input:focus {
+  border-color: rgba(255, 255, 255, 0.2);
+}

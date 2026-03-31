@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import FadeIn from "@/components/ui/FadeIn";
-import { GOOGLE_FORM_URL, CONTACT } from "@/lib/constants";
+import { CONTACT } from "@/lib/constants";
 
 export default function Contact() {
   return (
@@ -23,25 +23,9 @@ export default function Contact() {
           </FadeIn>
 
           <FadeIn delay={0.16}>
-            <div className="mt-6 flex items-center gap-3 text-white/50">
-              <Icon icon="solar:user-rounded-bold" className="text-white/30" />
-              <span className="text-sm">담당자: {CONTACT.name}</span>
-              <span className="text-white/15">|</span>
-              <a
-                href={`tel:${CONTACT.phone}`}
-                className="text-sm text-white/70 font-medium hover:text-white transition-colors"
-              >
-                {CONTACT.phone}
-              </a>
-            </div>
-          </FadeIn>
-
-          <FadeIn delay={0.24}>
             <div className="flex flex-wrap gap-4 mt-10">
               <a
-                href={GOOGLE_FORM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#apply"
                 className="inline-flex items-center gap-3 bg-white text-[#0a0a0a] rounded-full px-8 py-4 text-[15px] font-semibold hover:scale-[1.03] active:scale-[0.97] transition-transform"
               >
                 과정 문의 및 지원

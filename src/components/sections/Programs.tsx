@@ -1,7 +1,6 @@
 import { Icon } from "@iconify/react";
 import FadeIn from "@/components/ui/FadeIn";
 import {
-  GOOGLE_FORM_URL,
   GROUND_SCHOOL,
   FTD_TRAINING,
   COURSE_4W,
@@ -179,9 +178,7 @@ export default function Programs() {
               </p>
             </div>
             <a
-              href={GOOGLE_FORM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#apply"
               className="inline-flex items-center gap-3 bg-white text-[#0a0a0a] rounded-full px-7 py-3.5 text-[15px] font-semibold flex-shrink-0 hover:scale-[1.03] active:scale-[0.97] transition-transform"
             >
               지원 폼 바로가기

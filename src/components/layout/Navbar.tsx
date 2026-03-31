@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
-import { NAV_ITEMS, GOOGLE_FORM_URL } from "@/lib/constants";
+import { NAV_ITEMS } from "@/lib/constants";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -59,9 +59,7 @@ export default function Navbar() {
         </div>
 
         <a
-          href={GOOGLE_FORM_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+          href="#apply"
           className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium bg-white/10 hover:bg-white/20 rounded-full transition-colors"
         >
           과정 문의
@@ -107,9 +105,7 @@ export default function Navbar() {
             ))}
 
             <a
-              href={GOOGLE_FORM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#apply"
               onClick={() => setMobileOpen(false)}
               className="mt-4 bg-white text-[#0a0a0a] rounded-full px-8 py-4 text-lg font-semibold"
             >

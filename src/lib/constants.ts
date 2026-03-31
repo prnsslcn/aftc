@@ -1,9 +1,23 @@
 export const GOOGLE_FORM_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSeMWuAgbIi8-xprEo0Sv8G3M-xTmGLZXwNMyYq3KDeMJooAiQ/viewform";
 
+export const GOOGLE_FORM_ACTION =
+  "https://docs.google.com/forms/d/e/1FAIpQLSeMWuAgbIi8-xprEo0Sv8G3M-xTmGLZXwNMyYq3KDeMJooAiQ/formResponse";
+
+export const FORM_ENTRIES = {
+  name: "entry.826355120",
+  phone: "entry.1149713456",
+  email: "entry.245385898",
+  status: "entry.1212825914",
+  plan: "entry.1290620365",
+  school: "entry.476526749",
+  english: "entry.886453069",
+  experience: "entry.843615978",
+  inquiry: "entry.1138392509",
+} as const;
+
 export const CONTACT = {
-  name: "박노훈",
-  phone: "010-5192-0332",
+  phone: "02-717-8811",
   location: "아세아항공직업전문학교",
 };
 
