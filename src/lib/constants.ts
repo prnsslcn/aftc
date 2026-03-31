@@ -9,9 +9,10 @@ export const CONTACT = {
 
 export const NAV_ITEMS = [
   { label: "교육원 소개", href: "#intro", active: true },
+  { label: "통합 프로그램", href: "#pipeline", active: true },
   { label: "비행 유학 사전교육", href: "#programs", active: true },
-  { label: "비행학교", href: "/#", active: false },
-  { label: "항공사 입사과정", href: "/#", active: false },
+  { label: "비행학교", href: "#flight-school", active: true },
+  { label: "항공사 입사과정", href: "#airline-prep", active: true },
 ];
 
 export const GROUND_SCHOOL = [
@@ -69,3 +70,35 @@ export const COURSE_8W = {
   costNote: "(C172 FTD 비용 포함)",
   footnote: "* Embry-Riddle Aeronautical University 신입생과 함께 진행",
 };
+
+export const PIPELINE_STEPS = [
+  { label: "유학 상담", sub: "1:1 개별상담 / 비행학교 선택" },
+  { label: "입교 준비", sub: "I-20 발급 / 비자발급" },
+  { label: "사전교육", sub: "항공기초이론 / C172 FTD실습" },
+  { label: "출국", sub: "면장 취득 / 1500/1000/300hr" },
+  { label: "항공사 공채 준비", sub: "국내외 공채 준비" },
+  { label: "항공사 취업", sub: "" },
+];
+
+export const FLIGHT_SCHOOL_COURSES = [
+  { name: "PPL", hours: 75, months: "6", cost: "$40,000" },
+  { name: "IR", hours: 45, months: "3", cost: "$20,000" },
+  { name: "CPL(Single)", hours: 60, months: "3", cost: "$30,000" },
+  { name: "CPL(Multi)", hours: 20, months: "2", cost: "$20,000" },
+  { name: "CFI", hours: 30, months: "5", cost: "$20,000" },
+  { name: "CFII", hours: 10, months: "1", cost: "$5,000" },
+];
+
+export const FLIGHT_SCHOOLS = [
+  { name: "Hillsboro Aero Academy" },
+  { name: "AeroGuard Flight Training Center" },
+  { name: "Phoenix East Aviation" },
+];
+
+export const AIRLINE_PREP_POINTS = [
+  "1:1 혹은 2:1의 개별 코칭 교육",
+  "스터디 지원",
+  "저렴한 가격으로 A320, B737 FTD 교육",
+  "필기 시험, 실기 시험, 면접까지 전형 전과정 교육",
+  "필기 출제 평가 경력, 실기시험 평가경력, 면접 경력 보유한 강사진",
+];
