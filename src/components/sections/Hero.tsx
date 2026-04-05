@@ -91,6 +91,16 @@ export default function Hero() {
               <div style={{ height: SP * 5 }} />
             </div>
           </div>
+
+          {/* Scroll indicator */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white" style={{ opacity: "var(--ui-op)" }}>
+            <motion.svg width="10" height="14" viewBox="0 0 10 14" fill="none" className="opacity-50"
+              animate={{ y: [0, 3, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+              <path d="M5 1v12M1 9l4 4 4-4" stroke="currentColor" strokeWidth="1.5" />
+            </motion.svg>
+            <span className="text-[10px] opacity-40 tracking-widest uppercase">Scroll to explore</span>
+          </div>
+
           <div ref={dummyRef} className="absolute pointer-events-none" style={{ aspectRatio: "7/8", width: "33.333%", left: "33.333%", top: "50%", transform: "translateY(-50%)", visibility: "hidden" }} />
         </div>
         <div className="absolute inset-0 z-20 flex items-center pointer-events-none" style={{ padding: `0 ${GG}px` }}>
