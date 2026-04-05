@@ -59,11 +59,11 @@ export default function ApplyForm() {
   }
 
   return (
-    <section id="apply" className="py-24 md:py-36 bg-[#0a0a0a]">
-      <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12">
+    <section id="apply" className="bg-[#f0f2f5]" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
+      <div className="max-w-[80rem] mx-auto">
         <div className="max-w-2xl mx-auto">
           <FadeIn>
-            <p className="text-[11px] uppercase tracking-[.2em] text-white/30 font-medium mb-5">
+            <p className="text-[11px] uppercase tracking-[.2em] text-black opacity-60 font-medium mb-5">
               Apply Now
             </p>
           </FadeIn>
@@ -73,7 +73,7 @@ export default function ApplyForm() {
             </h2>
           </FadeIn>
           <FadeIn delay={0.16}>
-            <p className="mt-4 text-white/40 leading-relaxed">
+            <p className="mt-4 text-black opacity-70 leading-relaxed">
               아래 양식을 작성해주시면 상담 안내를 드리겠습니다.
             </p>
           </FadeIn>
@@ -84,18 +84,18 @@ export default function ApplyForm() {
                 key="success"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-12 rounded-[1.5rem] bg-emerald-500/10 ring-1 ring-emerald-500/20 p-9 text-center"
+                className="mt-12 rounded-[1.5rem] bg-emerald-50 p-9 text-center"
               >
                 <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                  <Icon icon="solar:check-circle-bold" className="text-emerald-400 text-2xl" />
+                  <Icon icon="solar:check-circle-bold" className="text-emerald-600 text-2xl" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">제출이 완료되었습니다</h3>
-                <p className="text-sm text-white/40">
+                <p className="text-sm text-black opacity-70">
                   빠른 시일 내에 안내 연락을 드리겠습니다.
                 </p>
                 <button
                   onClick={() => setState("idle")}
-                  className="mt-6 text-sm text-white/40 hover:text-white transition-colors"
+                  className="mt-6 text-sm text-black opacity-70 hover:text-black transition-colors"
                 >
                   다시 작성하기
                 </button>
@@ -169,7 +169,7 @@ export default function ApplyForm() {
                         className="peer sr-only"
                         onChange={() => setPlanOther(true)}
                       />
-                      <span className="inline-block rounded-full px-4 py-2 text-sm text-white/45 bg-white/[.03] ring-1 ring-white/[.08] peer-checked:bg-white/[.1] peer-checked:text-white peer-checked:ring-white/[.2] transition-all">
+                      <span className="inline-block rounded-full px-4 py-2 text-sm text-black opacity-70 bg-black/[.03]  peer-checked:bg-black/[.08] peer-checked:text-black peer-checked: transition-all">
                         기타
                       </span>
                     </label>
@@ -203,7 +203,7 @@ export default function ApplyForm() {
                         className="peer sr-only"
                         onChange={() => setSchoolOther(true)}
                       />
-                      <span className="inline-block rounded-full px-4 py-2 text-sm text-white/45 bg-white/[.03] ring-1 ring-white/[.08] peer-checked:bg-white/[.1] peer-checked:text-white peer-checked:ring-white/[.2] transition-all">
+                      <span className="inline-block rounded-full px-4 py-2 text-sm text-black opacity-70 bg-black/[.03]  peer-checked:bg-black/[.08] peer-checked:text-black peer-checked: transition-all">
                         기타
                       </span>
                     </label>
@@ -251,7 +251,7 @@ export default function ApplyForm() {
                 <button
                   type="submit"
                   disabled={state === "submitting"}
-                  className="w-full bg-white text-[#0a0a0a] rounded-full py-4 text-[15px] font-semibold hover:scale-[1.01] active:scale-[0.99] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-black text-white rounded-full py-4 text-[15px] font-semibold hover:scale-[1.01] active:scale-[0.99] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {state === "submitting" ? "제출 중..." : "문의 제출하기"}
                 </button>
@@ -281,9 +281,9 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-white/60 mb-2">
+      <label className="block text-sm font-medium text-black/60 mb-2">
         {label}
-        {required && <span className="text-emerald-400 ml-1">*</span>}
+        {required && <span className="text-emerald-600 ml-1">*</span>}
       </label>
       {children}
     </div>
@@ -294,7 +294,7 @@ function RadioPill({ name, value, onChange }: { name: string; value: string; onC
   return (
     <label className="cursor-pointer">
       <input type="radio" name={name} value={value} className="peer sr-only" onChange={onChange} />
-      <span className="inline-block rounded-full px-4 py-2 text-sm text-white/45 bg-white/[.03] ring-1 ring-white/[.08] peer-checked:bg-white/[.1] peer-checked:text-white peer-checked:ring-white/[.2] transition-all">
+      <span className="inline-block rounded-full px-4 py-2 text-sm text-black opacity-70 bg-black/[.03]  peer-checked:bg-black/[.08] peer-checked:text-black peer-checked: transition-all">
         {value}
       </span>
     </label>

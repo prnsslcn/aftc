@@ -32,7 +32,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-[100dvh] flex flex-col bg-[#0a0a0a] text-white font-sans overflow-x-hidden">
+      <body className="min-h-[100dvh] flex flex-col bg-white text-black font-sans overflow-x-hidden">
+        <script dangerouslySetInnerHTML={{ __html: `history.scrollRestoration='manual';window.scrollTo(0,0);` }} />
         {children}
       </body>
     </html>

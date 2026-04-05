@@ -1,11 +1,30 @@
+'use client';
+
+import { useRef } from 'react';
 import { Icon } from "@iconify/react";
-import FadeIn from "@/components/ui/FadeIn";
+import { motion, useInView } from "framer-motion";
 import {
   GROUND_SCHOOL,
   FTD_TRAINING,
   COURSE_4W,
   COURSE_8W,
 } from "@/lib/constants";
+
+function RevealBlock({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 function CourseCard({
   course,
@@ -17,24 +36,24 @@ function CourseCard({
   delay?: number;
 }) {
   const colors = {
-    emerald: "bg-emerald-500/10 text-emerald-400 ring-emerald-500/20",
-    blue: "bg-blue-500/10 text-blue-400 ring-blue-500/20",
+    emerald: "bg-emerald-500/10 text-emerald-600",
+    blue: "bg-blue-500/10 text-blue-600",
   };
 
   return (
-    <FadeIn delay={delay}>
-      <div className="rounded-[1.5rem] bg-white/[.03] ring-1 ring-white/[.06] overflow-hidden h-full relative">
+    <RevealBlock delay={delay}>
+      <div className="rounded-[10px] bg-[#f0f2f5] overflow-hidden h-full relative">
         {"highlight" in course && course.highlight && (
-          <div className={`absolute top-5 right-5 rounded-full px-3 py-1 text-[10px] font-semibold ${colors[accent]} ring-1`}>
+          <div className={`absolute top-5 right-5 rounded-full px-3 py-1 text-[10px] font-semibold ${colors[accent]}`}>
             {course.highlight}
           </div>
         )}
         <div className="p-7 md:p-9">
-          <span className={`inline-block rounded-full px-3 py-1 text-[10px] uppercase tracking-[.15em] font-semibold ${colors[accent]} ring-1 mb-5`}>
+          <span className={`inline-block rounded-full px-3 py-1 text-[10px] uppercase tracking-[.15em] font-semibold ${colors[accent]} mb-5`}>
             {course.badge}
           </span>
-          <h3 className="text-2xl font-bold tracking-tight">{course.title}</h3>
-          <p className="mt-3 text-white/35 leading-relaxed">
+          <h3 className="text-2xl font-medium tracking-tight">{course.title}</h3>
+          <p className="mt-3 opacity-40 leading-relaxed">
             {course.description}
           </p>
 
@@ -42,20 +61,20 @@ function CourseCard({
             <tbody>
               {course.rows.map((row) => (
                 <tr key={row.label}>
-                  <td className="text-white/30 w-24">{row.label}</td>
+                  <td className="opacity-40 w-24">{row.label}</td>
                   <td className={"highlight" in row && row.highlight
-                    ? "text-emerald-400/80 font-medium"
-                    : "text-white/55"
+                    ? "text-emerald-600 font-medium"
+                    : "opacity-60"
                   }>
                     {row.value}
                   </td>
                 </tr>
               ))}
               <tr>
-                <td className="text-white/30">비용</td>
-                <td className="text-white/70 font-semibold">
+                <td className="opacity-40">비용</td>
+                <td className="opacity-80 font-semibold">
                   {course.cost}{" "}
-                  <span className="text-white/30 font-normal">
+                  <span className="opacity-40 font-normal">
                     {course.costNote}
                   </span>
                 </td>
@@ -64,55 +83,58 @@ function CourseCard({
           </table>
 
           {"footnote" in course && course.footnote && (
-            <p className="mt-4 text-xs text-white/25">{course.footnote}</p>
+            <p className="mt-4 text-xs opacity-30">{course.footnote}</p>
           )}
         </div>
       </div>
-    </FadeIn>
+    </RevealBlock>
   );
 }
 
 export default function Programs() {
   return (
-    <section id="programs" className="py-24 md:py-36 bg-[#0a0a0a]">
-      <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12">
+    <section id="programs" className="py-[clamp(5rem,8vw,9rem)] px-[clamp(0.5rem,5vw,7.75rem)] bg-white">
+      <div className="max-w-[80rem] mx-auto">
         {/* Header */}
-        <FadeIn>
-          <p className="text-[11px] uppercase tracking-[.2em] text-white/30 font-medium mb-5">
+        <RevealBlock>
+          <p className="text-sm opacity-40 uppercase tracking-widest mb-5">
             Pre-Flight Education
           </p>
-        </FadeIn>
-        <FadeIn delay={0.08}>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight leading-[1.06]">
+        </RevealBlock>
+        <RevealBlock delay={0.08}>
+          <h2
+            className="font-display tracking-[-0.05em]"
+            style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: 1, fontWeight: 400 }}
+          >
             비행 유학
             <br />
             사전교육.
           </h2>
-        </FadeIn>
-        <FadeIn delay={0.16}>
-          <p className="mt-6 text-white/40 text-lg leading-relaxed max-w-[60ch]">
+        </RevealBlock>
+        <RevealBlock delay={0.16}>
+          <p className="mt-6 opacity-40 leading-relaxed max-w-[60ch]" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.375rem)' }}>
             해외 비행학교 진학을 준비하는 예비 조종사를 위한 유학 전문 사전교육
             프로그램입니다. 해외 비행학교 교육과정을 기반으로 한 체계적인
             사전교육을 제공하며, 이론과 실습(C172 FTD)을 결합한 교육을 통해
             준비된 상태로 비행훈련을 시작할 수 있도록 지원합니다.
           </p>
-        </FadeIn>
+        </RevealBlock>
 
         {/* Curriculum */}
         <div className="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Ground School */}
-          <FadeIn>
-            <div className="rounded-[1.5rem] bg-white/[.03] ring-1 ring-white/[.06] p-7 md:p-9 h-full">
+          <RevealBlock>
+            <div className="rounded-[10px] bg-[#f0f2f5] p-7 md:p-9 h-full">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/20 flex items-center justify-center">
-                  <Icon icon="solar:book-2-bold" className="text-emerald-400 text-lg" />
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                  <Icon icon="solar:book-2-bold" className="text-emerald-600 text-lg" />
                 </div>
-                <h3 className="text-xl font-bold tracking-tight">Ground School</h3>
+                <h3 className="text-xl font-medium tracking-tight">Ground School</h3>
               </div>
-              <ol className="space-y-2.5 text-sm text-white/45 leading-relaxed">
+              <ol className="space-y-2.5 text-sm opacity-50 leading-relaxed">
                 {GROUND_SCHOOL.map((subject, i) => (
                   <li key={subject} className="flex items-start gap-3">
-                    <span className="text-white/20 font-mono text-xs mt-0.5 w-5 text-right flex-shrink-0">
+                    <span className="opacity-40 font-mono text-xs mt-0.5 w-5 text-right flex-shrink-0">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {subject}
@@ -120,21 +142,21 @@ export default function Programs() {
                 ))}
               </ol>
             </div>
-          </FadeIn>
+          </RevealBlock>
 
           {/* FTD Training */}
-          <FadeIn delay={0.08}>
-            <div className="rounded-[1.5rem] bg-white/[.03] ring-1 ring-white/[.06] p-7 md:p-9 h-full flex flex-col">
+          <RevealBlock delay={0.08}>
+            <div className="rounded-[10px] bg-[#f0f2f5] p-7 md:p-9 h-full flex flex-col">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20 flex items-center justify-center">
-                  <Icon icon="solar:monitor-bold" className="text-blue-400 text-lg" />
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                  <Icon icon="solar:monitor-bold" className="text-blue-600 text-lg" />
                 </div>
-                <h3 className="text-xl font-bold tracking-tight">FTD Training</h3>
+                <h3 className="text-xl font-medium tracking-tight">FTD Training</h3>
               </div>
-              <ol className="space-y-2.5 text-sm text-white/45 leading-relaxed">
+              <ol className="space-y-2.5 text-sm opacity-50 leading-relaxed">
                 {FTD_TRAINING.map((subject, i) => (
                   <li key={subject} className="flex items-start gap-3">
-                    <span className="text-white/20 font-mono text-xs mt-0.5 w-5 text-right flex-shrink-0">
+                    <span className="opacity-40 font-mono text-xs mt-0.5 w-5 text-right flex-shrink-0">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {subject}
@@ -152,12 +174,12 @@ export default function Programs() {
                     loading="lazy"
                   />
                 </div>
-                <p className="mt-3 text-xs text-white/20">
+                <p className="mt-3 text-xs opacity-30">
                   C172 FTD (Flight Training Device) 실습실
                 </p>
               </div>
             </div>
-          </FadeIn>
+          </RevealBlock>
         </div>
 
         {/* Course cards */}
@@ -167,27 +189,27 @@ export default function Programs() {
         </div>
 
         {/* Apply CTA */}
-        <FadeIn className="mt-12">
-          <div className="rounded-[1.5rem] bg-gradient-to-r from-white/[.04] to-white/[.02] ring-1 ring-white/[.08] p-7 md:p-9 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <RevealBlock className="mt-12">
+          <div className="rounded-[10px] bg-[#f0f2f5] p-7 md:p-9 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
-              <h3 className="text-xl font-bold tracking-tight">
+              <h3 className="text-xl font-medium tracking-tight">
                 과정 문의 및 지원
               </h3>
-              <p className="mt-2 text-sm text-white/35">
+              <p className="mt-2 text-sm opacity-40">
                 자세한 과정 안내와 상담을 원하시면 아래 버튼을 통해 문의해주세요.
               </p>
             </div>
             <a
               href="#apply"
-              className="inline-flex items-center gap-3 bg-white text-[#0a0a0a] rounded-full px-7 py-3.5 text-[15px] font-semibold flex-shrink-0 hover:scale-[1.03] active:scale-[0.97] transition-transform"
+              className="inline-flex items-center gap-3 h-[42px] px-5 bg-black text-white text-sm rounded-full flex-shrink-0 hover:scale-[1.03] active:scale-[0.97] transition-transform"
             >
               지원 폼 바로가기
-              <span className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center">
+              <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center">
                 <Icon icon="solar:arrow-right-up-linear" className="text-[10px]" />
               </span>
             </a>
           </div>
-        </FadeIn>
+        </RevealBlock>
       </div>
     </section>
   );

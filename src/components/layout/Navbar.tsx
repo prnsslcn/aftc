@@ -14,103 +14,95 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.nav
-        className="fixed top-6 left-1/2 z-50 flex items-center gap-6 px-6 py-3 rounded-full border border-white/10 text-white"
+      <nav
+        className="fixed top-6 left-1/2 z-[210] flex items-center gap-6 px-6 py-3 rounded-full transition-all duration-500"
         style={{
-          x: "-50%",
-          backgroundColor: "rgba(10,10,10,0.9)",
-          backdropFilter: "blur(20px) saturate(180%)",
-          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          transform: "translateX(-50%)",
+          backgroundColor: scrolled ? "rgba(255,255,255,0.85)" : "transparent",
+          backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+          boxShadow: scrolled ? "0 8px 40px rgba(0,0,0,0.1)" : "none",
+          border: scrolled ? "1px solid rgba(0,0,0,0.08)" : "1px solid transparent",
+          color: scrolled ? "#000" : "#fff",
         }}
-        animate={{
-          boxShadow: scrolled
-            ? "0 25px 60px rgba(0,0,0,0.5)"
-            : "0 25px 50px -12px rgba(0,0,0,0.25)",
-          borderColor: scrolled
-            ? "rgba(255,255,255,0.15)"
-            : "rgba(255,255,255,0.1)",
-        }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
         <a href="#" className="font-black tracking-tighter text-xl mr-2">
           ASEA
         </a>
 
-        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-white/70">
-          {NAV_ITEMS.map((item) =>
-            item.active ? (
-              <a
-                key={item.label}
-                href={item.href}
-                className="hover:text-white transition-colors"
-              >
-                {item.label}
-              </a>
-            ) : (
-              <span
-                key={item.label}
-                className="opacity-35 cursor-default"
-                title="준비중"
-              >
-                {item.label}
-              </span>
-            )
-          )}
+        <div className="hidden md:flex items-center gap-6 text-sm font-medium opacity-60">
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              className="hover:opacity-100 transition-opacity"
+            >
+              {item.label}
+            </a>
+          ))}
         </div>
 
         <a
           href="#apply"
-          className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+          className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500"
+          style={{
+            backgroundColor: scrolled ? "#000" : "rgba(255,255,255,0.15)",
+            color: scrolled ? "#fff" : "inherit",
+          }}
         >
           과정 문의
         </a>
 
         <button
           onClick={() => setMobileOpen(true)}
-          className="md:hidden p-1 text-white"
+          className="md:hidden p-1"
           aria-label="메뉴 열기"
         >
           <Icon icon="solar:hamburger-menu-linear" className="text-xl" />
         </button>
-      </motion.nav>
+      </nav>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-50 bg-[#0a0a0a]/98 backdrop-blur-3xl flex flex-col items-center justify-center gap-7"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-[220] bg-white/98 backdrop-blur-3xl flex flex-col items-center justify-center gap-7 text-black"
+            initial={{ clipPath: "inset(0 0 100% 0)" }}
+            animate={{ clipPath: "inset(0 0 0% 0)" }}
+            exit={{ clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center"
+              className="absolute top-5 right-5 w-10 h-10 rounded-full bg-black/5 flex items-center justify-center"
               aria-label="메뉴 닫기"
             >
               <Icon icon="solar:close-circle-linear" className="text-xl" />
             </button>
 
-            {NAV_ITEMS.map((item) => (
-              <a
+            {NAV_ITEMS.map((item, i) => (
+              <motion.a
                 key={item.label}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className={`text-2xl font-bold ${item.active ? "" : "text-white/30"}`}
+                className="text-2xl font-bold"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
               >
                 {item.label}
-                {!item.active && " (준비중)"}
-              </a>
+              </motion.a>
             ))}
 
-            <a
+            <motion.a
               href="#apply"
               onClick={() => setMobileOpen(false)}
-              className="mt-4 bg-white text-[#0a0a0a] rounded-full px-8 py-4 text-lg font-semibold"
+              className="mt-4 bg-black text-white rounded-full px-8 py-4 text-lg font-semibold"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
             >
               과정 문의하기
-            </a>
+            </motion.a>
           </motion.div>
         )}
       </AnimatePresence>

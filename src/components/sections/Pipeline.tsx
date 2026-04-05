@@ -1,5 +1,8 @@
+'use client';
+
+import { useRef } from 'react';
 import { Icon } from "@iconify/react";
-import FadeIn from "@/components/ui/FadeIn";
+import { motion, useInView } from "framer-motion";
 import { PIPELINE_STEPS, FLIGHT_SCHOOL_COURSES } from "@/lib/constants";
 
 const STAGES = [
@@ -30,129 +33,148 @@ const STAGES = [
 ];
 
 const accentMap = {
-  emerald: "bg-emerald-500/10 ring-emerald-500/20 text-emerald-400",
-  blue: "bg-blue-500/10 ring-blue-500/20 text-blue-400",
-  amber: "bg-amber-500/10 ring-amber-500/20 text-amber-400",
+  emerald: "bg-emerald-500/10 text-emerald-600",
+  blue: "bg-blue-500/10 text-blue-600",
+  amber: "bg-amber-500/10 text-amber-600",
 };
+
+function RevealBlock({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function Pipeline() {
   return (
-    <section id="pipeline" className="py-24 md:py-36 bg-[#0a0a0a]">
-      <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12">
+    <section id="pipeline" className="py-[clamp(5rem,8vw,9rem)] px-[clamp(0.5rem,5vw,7.75rem)] bg-[#f0f2f5]">
+      <div className="max-w-[80rem] mx-auto">
         {/* Header */}
-        <FadeIn>
-          <p className="text-[11px] uppercase tracking-[.2em] text-white/30 font-medium mb-5">
+        <RevealBlock>
+          <p className="text-sm opacity-40 uppercase tracking-widest mb-5">
             Integrated Pilot Program
           </p>
-        </FadeIn>
-        <FadeIn delay={0.08}>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight leading-[1.06]">
+        </RevealBlock>
+        <RevealBlock delay={0.08}>
+          <h2
+            className="font-display tracking-[-0.05em]"
+            style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: 1, fontWeight: 400 }}
+          >
             조종사 커리어의<br />전과정을 설계합니다.
           </h2>
-        </FadeIn>
-        <FadeIn delay={0.16}>
-          <p className="mt-6 text-white/40 text-lg leading-relaxed max-w-[60ch]">
+        </RevealBlock>
+        <RevealBlock delay={0.16}>
+          <p className="mt-6 opacity-40 leading-relaxed max-w-[60ch]" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.375rem)' }}>
             조종사 훈련은 단순한 훈련이 아닌 체계적인 단계와 전략이 필요한 과정입니다.
             아세아 비행교육원은 사전교육에서 해외 비행유학, 항공사 입사준비까지 이어지는
             통합 조종사 교육시스템을 통해 조종사 커리어 전과정을 설계합니다.
           </p>
-        </FadeIn>
+        </RevealBlock>
 
         {/* Pipeline flow */}
         <div className="mt-16 flex flex-wrap items-center gap-3 md:gap-0">
           {PIPELINE_STEPS.map((step, i) => (
-            <FadeIn key={step.label} delay={0.06 * i} className="flex items-center">
-              <div className="rounded-full bg-white/[.05] ring-1 ring-white/[.08] px-4 py-2 text-sm font-medium text-white/60 whitespace-nowrap">
+            <RevealBlock key={step.label} delay={0.06 * i} className="flex items-center">
+              <div className="rounded-full bg-white px-4 py-2 text-sm font-medium opacity-60 whitespace-nowrap">
                 {step.label}
               </div>
               {i < PIPELINE_STEPS.length - 1 && (
-                <Icon icon="solar:arrow-right-linear" className="text-white/15 mx-2 hidden md:block text-xs" />
+                <Icon icon="solar:arrow-right-linear" className="opacity-20 mx-2 hidden md:block text-xs" />
               )}
-            </FadeIn>
+            </RevealBlock>
           ))}
         </div>
 
         {/* 3 Stages */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           {STAGES.map((stage, i) => (
-            <FadeIn key={stage.title} delay={0.08 * i}>
-              <div className="rounded-[1.5rem] bg-white/[.03] ring-1 ring-white/[.06] p-7 h-full flex flex-col">
+            <RevealBlock key={stage.title} delay={0.08 * i}>
+              <div className="rounded-[10px] bg-white p-7 h-full flex flex-col">
                 <div className="flex items-center gap-3 mb-5">
-                  <div className={`w-10 h-10 rounded-xl ${accentMap[stage.accent as keyof typeof accentMap]} ring-1 flex items-center justify-center`}>
+                  <div className={`w-10 h-10 rounded-xl ${accentMap[stage.accent as keyof typeof accentMap]} flex items-center justify-center`}>
                     <Icon icon={stage.icon} className="text-lg" />
                   </div>
                   <div>
-                    <span className="text-white/20 font-mono text-xs">{stage.num}</span>
-                    <h3 className="text-lg font-bold tracking-tight">{stage.title}</h3>
+                    <span className="opacity-20 font-mono text-xs">{stage.num}</span>
+                    <h3 className="text-lg font-medium tracking-tight">{stage.title}</h3>
                   </div>
                 </div>
-                <p className="text-sm text-white/35 leading-relaxed mb-4">{stage.desc}</p>
+                <p className="text-sm opacity-40 leading-relaxed mb-4">{stage.desc}</p>
                 <ul className="mt-auto space-y-2">
                   {stage.details.map((d) => (
-                    <li key={d} className="flex items-start gap-2 text-sm text-white/45 leading-relaxed">
-                      <span className="text-white/15 mt-1.5 flex-shrink-0">-</span>
+                    <li key={d} className="flex items-start gap-2 text-sm opacity-50 leading-relaxed">
+                      <span className="opacity-30 mt-1.5 flex-shrink-0">-</span>
                       {d}
                     </li>
                   ))}
                 </ul>
               </div>
-            </FadeIn>
+            </RevealBlock>
           ))}
         </div>
 
         {/* Detailed roadmap — two tracks */}
-        <FadeIn className="mt-12">
-          <div className="rounded-[1.5rem] bg-white/[.03] ring-1 ring-white/[.06] p-7 md:p-9">
-            <h3 className="text-lg font-bold tracking-tight mb-6">세부 절차</h3>
+        <RevealBlock className="mt-12">
+          <div className="rounded-[10px] bg-white p-7 md:p-9">
+            <h3 className="text-lg font-medium tracking-tight mb-6">세부 절차</h3>
             <div className="space-y-8">
               {/* Start */}
               <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-white/[.06] ring-1 ring-white/[.08] px-4 py-2 text-sm font-medium text-white/60">
+                <div className="rounded-lg bg-[#f5f6f8] px-4 py-2 text-sm font-medium opacity-60">
                   사전 교육 및 입교 수속진행
                 </div>
-                <Icon icon="solar:arrow-right-linear" className="text-white/15 text-xs" />
-                <div className="rounded-lg bg-blue-500/10 ring-1 ring-blue-500/20 px-4 py-2 text-sm font-medium text-blue-400">
+                <Icon icon="solar:arrow-right-linear" className="opacity-20 text-xs" />
+                <div className="rounded-lg bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-600">
                   PPL, IR, CPL, ME 취득
                 </div>
               </div>
 
-              {/* Track A — 미국/국내 항공사 */}
+              {/* Track A */}
               <div className="pl-4 border-l-2 border-blue-500/20 space-y-3">
-                <p className="text-xs uppercase tracking-[.15em] text-blue-400/60 font-medium">Track A</p>
+                <p className="text-xs uppercase tracking-[.15em] text-blue-600/60 font-medium">Track A</p>
                 <div className="flex flex-wrap items-center gap-2">
                   {["CFI, CFII 취득", "교관 취임 후 1000/1500hr", "항공사 공채 준비", "미국 / 국내 항공사"].map((s, i, arr) => (
                     <span key={s} className="flex items-center gap-2">
-                      <span className="rounded-lg bg-white/[.04] ring-1 ring-white/[.06] px-3 py-1.5 text-sm text-white/50">{s}</span>
-                      {i < arr.length - 1 && <Icon icon="solar:arrow-right-linear" className="text-white/15 text-xs" />}
+                      <span className="rounded-lg bg-[#f5f6f8] px-3 py-1.5 text-sm opacity-60">{s}</span>
+                      {i < arr.length - 1 && <Icon icon="solar:arrow-right-linear" className="opacity-20 text-xs" />}
                     </span>
                   ))}
                 </div>
               </div>
 
-              {/* Track B — 국내 항공사 */}
+              {/* Track B */}
               <div className="pl-4 border-l-2 border-amber-500/20 space-y-3">
-                <p className="text-xs uppercase tracking-[.15em] text-amber-400/60 font-medium">Track B</p>
+                <p className="text-xs uppercase tracking-[.15em] text-amber-600/60 font-medium">Track B</p>
                 <div className="flex flex-wrap items-center gap-2">
                   {["Time Building", "Jet Rating (선택)", "항공사 공채 준비", "국내 항공사"].map((s, i, arr) => (
                     <span key={s} className="flex items-center gap-2">
-                      <span className="rounded-lg bg-white/[.04] ring-1 ring-white/[.06] px-3 py-1.5 text-sm text-white/50">{s}</span>
-                      {i < arr.length - 1 && <Icon icon="solar:arrow-right-linear" className="text-white/15 text-xs" />}
+                      <span className="rounded-lg bg-[#f5f6f8] px-3 py-1.5 text-sm opacity-60">{s}</span>
+                      {i < arr.length - 1 && <Icon icon="solar:arrow-right-linear" className="opacity-20 text-xs" />}
                     </span>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-        </FadeIn>
+        </RevealBlock>
 
         {/* Flight school cost table */}
-        <FadeIn className="mt-12">
-          <div className="rounded-[1.5rem] bg-white/[.03] ring-1 ring-white/[.06] p-7 md:p-9 overflow-x-auto">
-            <h3 className="text-lg font-bold tracking-tight mb-1">해외 비행학교 과정 (추정치)</h3>
-            <p className="text-xs text-white/25 mb-6">* 학생의 영어, 준비상태, 기량등에 따라서 기간 및 비용은 상이합니다. 생활비 별도.</p>
+        <RevealBlock className="mt-12">
+          <div className="rounded-[10px] bg-white p-7 md:p-9 overflow-x-auto">
+            <h3 className="text-lg font-medium tracking-tight mb-1">해외 비행학교 과정 (추정치)</h3>
+            <p className="text-xs opacity-30 mb-6">* 학생의 영어, 준비상태, 기량등에 따라서 기간 및 비용은 상이합니다. 생활비 별도.</p>
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-white/30 text-left border-b border-white/[.06]">
+                <tr className="opacity-40 text-left border-b border-black/10">
                   <th className="pb-3 font-medium">과정</th>
                   <th className="pb-3 font-medium">비행시간(Hour)</th>
                   <th className="pb-3 font-medium">소요 기간(Month)</th>
@@ -161,23 +183,23 @@ export default function Pipeline() {
               </thead>
               <tbody>
                 {FLIGHT_SCHOOL_COURSES.map((c) => (
-                  <tr key={c.name} className="border-b border-white/[.04]">
-                    <td className="py-3 text-white/60 font-medium">{c.name}</td>
-                    <td className="py-3 text-white/45">{c.hours}</td>
-                    <td className="py-3 text-white/45">{c.months}</td>
-                    <td className="py-3 text-white/45">{c.cost}</td>
+                  <tr key={c.name} className="border-b border-black/5">
+                    <td className="py-3 opacity-70 font-medium">{c.name}</td>
+                    <td className="py-3 opacity-50">{c.hours}</td>
+                    <td className="py-3 opacity-50">{c.months}</td>
+                    <td className="py-3 opacity-50">{c.cost}</td>
                   </tr>
                 ))}
-                <tr className="border-t border-white/[.08]">
-                  <td className="py-3 text-white/70 font-semibold">합계</td>
-                  <td className="py-3 text-white/45"></td>
-                  <td className="py-3 text-white/45">14~20개월</td>
-                  <td className="py-3 text-white/70 font-semibold">$110,000~$135,000</td>
+                <tr className="border-t border-black/10">
+                  <td className="py-3 opacity-80 font-semibold">합계</td>
+                  <td className="py-3 opacity-50"></td>
+                  <td className="py-3 opacity-50">14~20개월</td>
+                  <td className="py-3 opacity-80 font-semibold">$110,000~$135,000</td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </FadeIn>
+        </RevealBlock>
       </div>
     </section>
   );
