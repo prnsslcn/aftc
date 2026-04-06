@@ -32,10 +32,10 @@ export default function AirlinePrep() {
         </RevealBlock>
         <RevealBlock delay={0.08}>
           <h2
-            className="font-display tracking-[-0.05em]"
-            style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: 1, fontWeight: 400 }}
+            className="tracking-[-0.05em]"
+            style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: 1, fontWeight: 600 }}
           >
-            항공사 입사과정 교육.
+            항공사 입사과정 교육
           </h2>
         </RevealBlock>
         <RevealBlock delay={0.16}>

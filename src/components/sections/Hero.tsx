@@ -80,11 +80,11 @@ export default function Hero() {
             <div className="relative z-10 text-white" style={{ padding: `0 ${SP * 5}px` }}>
               <div style={{ opacity: "var(--ui-op)", paddingBottom: SP * 10 }}>
                 <div className="overflow-hidden">
-                  <motion.h1 className="font-bold tracking-[-0.05em] leading-none" style={{ fontSize: "clamp(4rem, 13vw, 12rem)" }}
+                  <motion.h1 className="font-display font-bold tracking-[-0.05em] leading-none" style={{ fontSize: "clamp(4rem, 13vw, 12rem)" }}
                     initial={{ y: "110%" }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.2, delay: 0.3, ease: [0, 1, 0.4, 1] }}>ASEA</motion.h1>
                 </div>
                 <div className="overflow-hidden">
-                  <motion.p className="font-bold tracking-[-0.04em] leading-none" style={{ fontSize: "clamp(1.5rem, 10vw, 10rem)", lineHeight: 1.3, color: "rgba(255,255,255,0.4)" }}
+                  <motion.p className="font-display font-bold tracking-[-0.04em] leading-none" style={{ fontSize: "clamp(1.5rem, 10vw, 10rem)", lineHeight: 1.3, color: "rgba(255,255,255,0.4)" }}
                     initial={{ y: "110%" }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.2, delay: 0.42, ease: [0, 1, 0.4, 1] }}>Flight Training Center</motion.p>
                 </div>
               </div>

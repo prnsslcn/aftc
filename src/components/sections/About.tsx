@@ -23,12 +23,12 @@ function RevealBlock({ children, delay = 0, className = "" }: { children: React.
   );
 }
 
-function AnimText({ text }: { text: string }) {
+function AnimText({ text, className = "" }: { text: string; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-15%" });
   let ci = 0;
   return (
-    <div ref={ref} style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)", letterSpacing: "-0.05em", lineHeight: 1, fontWeight: 400 }}>
+    <div ref={ref} className={className} style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)", letterSpacing: "-0.05em", lineHeight: 1, fontWeight: 600 }}>
       {text.split(" ").map((word, wi, arr) => (
         <span key={wi}>
           <span className="inline-block whitespace-nowrap">
@@ -86,7 +86,7 @@ export default function About() {
           <RevealBlock>
             <p className="text-sm opacity-40 uppercase tracking-widest mb-5">About ASEA</p>
           </RevealBlock>
-          <AnimText text="예비 조종사 양성부터 항공사 입사까지 이어지는 통합 교육." />
+          <AnimText text="예비 조종사 양성부터 항공사 입사까지 이어지는 통합 교육" />
           <RevealBlock delay={0.2}>
             <p className="mt-8 opacity-40 leading-relaxed max-w-[55ch]" style={{ fontSize: "clamp(1rem, 1.5vw, 1.375rem)" }}>
               아세아 비행교육원은 A320, B737, C172 FTD를 기반으로 이론과 실습을
@@ -100,7 +100,7 @@ export default function About() {
         {/* Why ASEA — numbered list */}
         <div className="max-w-4xl">
           <RevealBlock>
-            <p className="" style={{ fontSize: "clamp(3.5rem, 8vw, 7rem)", fontWeight: 900, letterSpacing: "-0.03em" }}>
+            <p className="font-display" style={{ fontSize: "clamp(3.5rem, 8vw, 7rem)", fontWeight: 800, letterSpacing: "-0.03em" }}>
               <span className="text-[#555] font-light">Why </span><span className="text-[#1767b1]">ASEA</span><span className="text-[#555] font-light">?</span>
             </p>
           </RevealBlock>

@@ -26,7 +26,7 @@ export default function Navbar() {
           color: scrolled ? "#000" : "#fff",
         }}
       >
-        <a href="#" className="font-black tracking-tighter text-xl mr-2">
+        <a href="#" className="font-display font-black tracking-tighter text-xl mr-2">
           ASEA
         </a>
 

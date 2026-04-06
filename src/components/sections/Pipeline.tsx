@@ -68,7 +68,7 @@ export default function Pipeline() {
           <p className="text-sm opacity-40 uppercase tracking-widest mb-5">Integrated Pilot Program</p>
         </Reveal>
         <Reveal delay={0.08}>
-          <h2 className="font-display tracking-[-0.05em]" style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)", lineHeight: 1, fontWeight: 400 }}>
+          <h2 className="tracking-[-0.05em]" style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)", lineHeight: 1, fontWeight: 600 }}>
             조종사 훈련은 단순한 훈련이 아닌<br />체계적인 단계와 전략이 필요합니다.
           </h2>
         </Reveal>
@@ -149,7 +149,7 @@ export default function Pipeline() {
             <p className="text-sm font-medium opacity-40 uppercase tracking-widest mb-4">After Certification</p>
           </Reveal>
           <Reveal delay={0.05}>
-            <h3 className="tracking-[-0.05em]" style={{ fontSize: "clamp(2rem, 5vw, 4rem)", lineHeight: 1.05, fontWeight: 400 }}>
+            <h3 className="tracking-[-0.05em]" style={{ fontSize: "clamp(2rem, 5vw, 4rem)", lineHeight: 1.05, fontWeight: 600 }}>
               면허 취득 이후,<br />두 갈래의 길이 열립니다.
             </h3>
           </Reveal>

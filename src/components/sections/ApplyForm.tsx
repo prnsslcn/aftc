@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import FadeIn from "@/components/ui/FadeIn";
@@ -21,8 +21,6 @@ export default function ApplyForm() {
   const [state, setState] = useState<FormState>("idle");
   const [planOther, setPlanOther] = useState(false);
   const [schoolOther, setSchoolOther] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
-
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setState("submitting");
@@ -68,7 +66,7 @@ export default function ApplyForm() {
             </p>
           </FadeIn>
           <FadeIn delay={0.08}>
-            <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight leading-[1.06]">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.06]">
               과정 문의 및 지원
             </h2>
           </FadeIn>

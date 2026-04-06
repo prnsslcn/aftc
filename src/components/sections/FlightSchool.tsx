@@ -32,10 +32,10 @@ export default function FlightSchool() {
         </RevealBlock>
         <RevealBlock delay={0.08}>
           <h2
-            className="font-display tracking-[-0.05em]"
-            style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: 1, fontWeight: 400 }}
+            className="tracking-[-0.05em]"
+            style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: 1, fontWeight: 600 }}
           >
-            해외 비행학교.
+            해외 비행학교
           </h2>
         </RevealBlock>
         <RevealBlock delay={0.16}>
