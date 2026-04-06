@@ -57,7 +57,14 @@ export default function Hero() {
       const items = stag(raw, 5, 0.1), mp = EASE(items[0]);
       mk.style.clipPath = `inset(${mp * cy}px ${mp * cx}px ${mp * cy}px ${mp * cx}px round ${RD}px)`;
       inn.style.transform = `scale(${1 - mp * 0.75 * sr})`;
-      imgRefs.current.forEach((img, i) => { if (img) img.style.setProperty("--ip", String(EASE(items[i + 1]))); });
+      imgRefs.current.forEach((img, i) => {
+        if (!img) return;
+        const p = EASE(items[i + 1]);
+        img.style.setProperty("--ip", String(p));
+        // 영상이 보이기 시작하면 재생
+        const vid = img.querySelector("video");
+        if (vid) { if (p > 0.1) { vid.play().catch(() => {}); } else { vid.pause(); } }
+      });
       h.style.setProperty("--ui-op", String(1 - clamp(0, 1, map(0, 0.2, 0, 1, raw))));
       raf = false;
     }
@@ -72,7 +79,7 @@ export default function Hero() {
         <div ref={maskRef} className="relative w-full h-full" style={{ clipPath: "inset(0)" }}>
           <div ref={innerRef} className="flex flex-col justify-end w-full h-full absolute inset-0 origin-center">
             <div className="absolute inset-0 bg-black" style={{ zIndex: -1 }}>
-              <video className="absolute inset-0 w-full h-full object-cover" autoPlay loop muted playsInline preload="auto">
+              <video className="absolute inset-0 w-full h-full object-cover" autoPlay loop muted playsInline preload="metadata">
                 <source src="/images/wing.mp4" type="video/mp4" />
               </video>
               <div className="absolute inset-0 bg-black/30" />
@@ -107,7 +114,7 @@ export default function Hero() {
           <div className="w-full grid" style={{ aspectRatio: "1190/650", maxHeight: "85%", gridTemplateColumns: "1fr 1fr 1fr", columnGap: GG, paddingBlock: GG }}>
             <div className="flex flex-col justify-start" style={{ rowGap: GG }}>
               <div ref={el => { imgRefs.current[0] = el; }} className="rounded-xl overflow-hidden pointer-events-auto" style={{ aspectRatio: "5/3", ["--ip" as string]: "0", transform: "translate3d(calc((1 - var(--ip)) * -1 * (100% + 8px)), calc((1 - var(--ip)) * 100%), 0)" }}>
-                <video src={VIDS[0]} className="w-full h-full object-cover" autoPlay loop muted playsInline /></div>
+                <video src={VIDS[0]} className="w-full h-full object-cover" loop muted playsInline preload="none" /></div>
               <div ref={el => { imgRefs.current[1] = el; }} className="pointer-events-auto" style={{ paddingLeft: "calc(100vw * 0.08333 - 8px * 2 * 0.08333)", ["--ip" as string]: "0", transform: "translate3d(calc((1 - var(--ip)) * -1 * (100% + 8px)), calc((1 - var(--ip)) * 100%), 0)" }}>
                 <div className="rounded-xl overflow-hidden" style={{ aspectRatio: "4/3" }}><video src={VIDS[1]} className="w-full h-full object-cover" autoPlay loop muted playsInline /></div></div>
             </div>
