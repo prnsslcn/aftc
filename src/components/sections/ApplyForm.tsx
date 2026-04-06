@@ -167,7 +167,7 @@ export default function ApplyForm() {
                         className="peer sr-only"
                         onChange={() => setPlanOther(true)}
                       />
-                      <span className="inline-block rounded-full px-4 py-2 text-sm text-black opacity-70 bg-black/[.03]  peer-checked:bg-black/[.08] peer-checked:text-black peer-checked: transition-all">
+                      <span className="inline-block rounded-full px-4 py-2 text-sm text-black/50 bg-black/[.04] peer-checked:bg-[#1a1a1a] peer-checked:text-white peer-checked:opacity-100 transition-all">
                         기타
                       </span>
                     </label>
@@ -201,7 +201,7 @@ export default function ApplyForm() {
                         className="peer sr-only"
                         onChange={() => setSchoolOther(true)}
                       />
-                      <span className="inline-block rounded-full px-4 py-2 text-sm text-black opacity-70 bg-black/[.03]  peer-checked:bg-black/[.08] peer-checked:text-black peer-checked: transition-all">
+                      <span className="inline-block rounded-full px-4 py-2 text-sm text-black/50 bg-black/[.04] peer-checked:bg-[#1a1a1a] peer-checked:text-white peer-checked:opacity-100 transition-all">
                         기타
                       </span>
                     </label>
@@ -292,7 +292,7 @@ function RadioPill({ name, value, onChange }: { name: string; value: string; onC
   return (
     <label className="cursor-pointer">
       <input type="radio" name={name} value={value} className="peer sr-only" onChange={onChange} />
-      <span className="inline-block rounded-full px-4 py-2 text-sm text-black opacity-70 bg-black/[.03]  peer-checked:bg-black/[.08] peer-checked:text-black peer-checked: transition-all">
+      <span className="inline-block rounded-full px-4 py-2 text-sm text-black/50 bg-black/[.04] peer-checked:bg-[#1a1a1a] peer-checked:text-white peer-checked:opacity-100 transition-all">
         {value}
       </span>
     </label>
