@@ -27,7 +27,7 @@ function stag(p: number, n: number, s: number) {
 }
 
 const SP = 4, GG = 8, RD = 12;
-const IMGS = ["/images/hero-aircraft.jpg", "/images/3.jpg", "/images/254431.jpg", "/images/hero-aircraft.jpg"];
+const VIDS = ["/images/hero1.mp4", "/images/hero2.mp4", "/images/hero3.mp4", "/images/hero4.mp4"];
 
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -107,16 +107,16 @@ export default function Hero() {
           <div className="w-full grid" style={{ aspectRatio: "1190/650", maxHeight: "85%", gridTemplateColumns: "1fr 1fr 1fr", columnGap: GG, paddingBlock: GG }}>
             <div className="flex flex-col justify-start" style={{ rowGap: GG }}>
               <div ref={el => { imgRefs.current[0] = el; }} className="rounded-xl overflow-hidden pointer-events-auto" style={{ aspectRatio: "5/3", ["--ip" as string]: "0", transform: "translate3d(calc((1 - var(--ip)) * -1 * (100% + 8px)), calc((1 - var(--ip)) * 100%), 0)" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}<img src={IMGS[0]} alt="" className="w-full h-full object-cover" /></div>
+                <video src={VIDS[0]} className="w-full h-full object-cover" autoPlay loop muted playsInline /></div>
               <div ref={el => { imgRefs.current[1] = el; }} className="pointer-events-auto" style={{ paddingLeft: "calc(100vw * 0.08333 - 8px * 2 * 0.08333)", ["--ip" as string]: "0", transform: "translate3d(calc((1 - var(--ip)) * -1 * (100% + 8px)), calc((1 - var(--ip)) * 100%), 0)" }}>
-                <div className="rounded-xl overflow-hidden" style={{ aspectRatio: "4/3" }}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={IMGS[1]} alt="" className="w-full h-full object-cover" /></div></div>
+                <div className="rounded-xl overflow-hidden" style={{ aspectRatio: "4/3" }}><video src={VIDS[1]} className="w-full h-full object-cover" autoPlay loop muted playsInline /></div></div>
             </div>
             <div className="flex items-center justify-center"><div style={{ aspectRatio: "7/8", width: "100%", visibility: "hidden" }} /></div>
             <div className="flex flex-col justify-end" style={{ rowGap: GG }}>
               <div ref={el => { imgRefs.current[2] = el; }} className="pointer-events-auto" style={{ paddingRight: "calc(100vw * 0.08333 - 8px * 2 * 0.08333)", ["--ip" as string]: "0", transform: "translate3d(calc((1 - var(--ip)) * 1 * (100% + 8px)), calc((1 - var(--ip)) * 100%), 0)" }}>
-                <div className="rounded-xl overflow-hidden" style={{ aspectRatio: "4/3" }}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={IMGS[2]} alt="" className="w-full h-full object-cover" /></div></div>
+                <div className="rounded-xl overflow-hidden" style={{ aspectRatio: "4/3" }}><video src={VIDS[2]} className="w-full h-full object-cover" autoPlay loop muted playsInline /></div></div>
               <div ref={el => { imgRefs.current[3] = el; }} className="rounded-xl overflow-hidden pointer-events-auto" style={{ aspectRatio: "5/3", ["--ip" as string]: "0", transform: "translate3d(calc((1 - var(--ip)) * 1 * (100% + 8px)), calc((1 - var(--ip)) * 100%), 0)" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}<img src={IMGS[3]} alt="" className="w-full h-full object-cover" /></div>
+                <video src={VIDS[3]} className="w-full h-full object-cover" autoPlay loop muted playsInline /></div>
             </div>
           </div>
         </div>
