@@ -5,25 +5,6 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-
 import { Icon } from "@iconify/react";
 import { NAV_ITEMS } from "@/lib/constants";
 
-function smoothScroll(target: string) {
-  const el = document.querySelector(target);
-  if (!el) return;
-  const start = window.scrollY;
-  const end = el.getBoundingClientRect().top + start;
-  const duration = 600;
-  const startTime = performance.now();
-
-  function step(now: number) {
-    const elapsed = now - startTime;
-    const t = Math.min(elapsed / duration, 1);
-    // ease-out cubic
-    const ease = 1 - Math.pow(1 - t, 3);
-    window.scrollTo(0, start + (end - start) * ease);
-    if (t < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -55,7 +36,6 @@ export default function Navbar() {
               key={item.label}
               href={item.href}
               className="hover:opacity-100 transition-opacity"
-              onClick={(e) => { e.preventDefault(); smoothScroll(item.href); }}
             >
               {item.label}
             </a>
@@ -64,7 +44,6 @@ export default function Navbar() {
 
         <a
           href="#apply"
-          onClick={(e) => { e.preventDefault(); smoothScroll("#apply"); }}
           className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500"
           style={{
             backgroundColor: scrolled ? "#000" : "rgba(255,255,255,0.15)",
@@ -104,7 +83,7 @@ export default function Navbar() {
               <motion.a
                 key={item.label}
                 href={item.href}
-                onClick={(e) => { e.preventDefault(); setMobileOpen(false); setTimeout(() => smoothScroll(item.href), 400); }}
+                onClick={() => setMobileOpen(false)}
                 className="text-2xl font-bold"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -116,7 +95,7 @@ export default function Navbar() {
 
             <motion.a
               href="#apply"
-              onClick={(e) => { e.preventDefault(); setMobileOpen(false); setTimeout(() => smoothScroll("#apply"), 400); }}
+              onClick={() => setMobileOpen(false)}
               className="mt-4 bg-black text-white rounded-full px-8 py-4 text-lg font-semibold"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
