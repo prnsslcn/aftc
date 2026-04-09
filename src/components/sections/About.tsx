@@ -1,7 +1,61 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
+
+function bezier(x1: number, y1: number, x2: number, y2: number) {
+  return (t: number) => {
+    if (t <= 0) return 0;
+    if (t >= 1) return 1;
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 16; i++) {
+      const mid = (lo + hi) / 2;
+      const x = 3 * x1 * mid * (1 - mid) ** 2 + 3 * x2 * mid ** 2 * (1 - mid) + mid ** 3;
+      if (x < t) lo = mid; else hi = mid;
+    }
+    const m = (lo + hi) / 2;
+    return 3 * y1 * m * (1 - m) ** 2 + 3 * y2 * m ** 2 * (1 - m) + m ** 3;
+  };
+}
+const planeEase = bezier(0.15, 0.61, 0, 1);
+
+function Planes({ targetRef }: { targetRef: React.RefObject<HTMLDivElement | null> }) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let raf = false;
+    function tick() {
+      const heading = targetRef.current;
+      if (!heading) { raf = false; return; }
+      const headingTop = heading.getBoundingClientRect().top;
+      const vh = window.innerHeight;
+      const start = vh * 2;
+      const end = -vh * 0.5;
+      const current = headingTop;
+      const distance = start - end;
+      const traveled = start - current;
+      const p = Math.max(0, Math.min(1, traveled / distance));
+      setProgress(p);
+      raf = false;
+    }
+    function onScroll() { if (!raf) { requestAnimationFrame(tick); raf = true; } }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    tick();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [targetRef]);
+
+  const eased = planeEase(progress);
+  const rightX = `${240 - eased * 250}%`;
+
+  return (
+    <motion.img
+      src="/images/plane2.png"
+      alt=""
+      className="hidden md:block absolute pointer-events-none z-0 select-none right-0"
+      style={{ width: "100vw", maxWidth: "2000px", marginRight: "-43vw", top: "8%", x: rightX }}
+    />
+  );
+}
 
 const WHY_ASEA = [
   { title: "Embry-Riddle 항공대학 연계과정을 보유한 교육원", desc: "미국 최고의 항공운항학과를 보유한 엠브리리들과의 협력 연계과정을 운영합니다." },
@@ -23,8 +77,9 @@ function RevealBlock({ children, delay = 0, className = "" }: { children: React.
   );
 }
 
-function AnimText({ text, className = "" }: { text: string; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
+function AnimText({ text, className = "", innerRef }: { text: string; className?: string; innerRef?: React.RefObject<HTMLDivElement | null> }) {
+  const localRef = useRef<HTMLDivElement>(null);
+  const ref = innerRef ?? localRef;
   const inView = useInView(ref, { once: true, margin: "-15%" });
   let ci = 0;
   return (
@@ -78,15 +133,17 @@ function WhyItem({ index, title, desc, delay }: { index: number; title: string; 
 }
 
 export default function About() {
+  const headingRef = useRef<HTMLDivElement>(null);
   return (
-    <section id="intro" className="bg-white" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
-      <div className="max-w-[80rem] mx-auto">
+    <section id="intro" className="bg-white relative overflow-hidden" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
+      <Planes targetRef={headingRef} />
+      <div className="max-w-[80rem] mx-auto relative">
         {/* Intro text — char-by-char animation */}
         <div className="max-w-3xl mb-16 md:mb-24">
           <RevealBlock>
             <p className="text-sm opacity-40 uppercase tracking-widest mb-5">About ASEA</p>
           </RevealBlock>
-          <AnimText text="예비 조종사 양성부터 항공사 입사까지 이어지는 통합 교육" />
+          <AnimText innerRef={headingRef} text="예비 조종사 양성부터 항공사 입사까지 이어지는 통합 교육" />
           <RevealBlock delay={0.2}>
             <p className="mt-8 opacity-40 leading-relaxed max-w-[55ch]" style={{ fontSize: "clamp(1rem, 1.5vw, 1.375rem)" }}>
               아세아 비행교육원은 A320, B737, C172 FTD를 기반으로 이론과 실습을
