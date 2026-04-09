@@ -35,7 +35,7 @@ export default function Navbar() {
             <a
               key={item.label}
               href={item.href}
-              className="hover:opacity-100 transition-opacity"
+              className="hover:opacity-100 transition-opacity whitespace-nowrap"
             >
               {item.label}
             </a>
@@ -44,13 +44,23 @@ export default function Navbar() {
 
         <a
           href="#apply"
-          className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500"
+          className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500 whitespace-nowrap"
           style={{
             backgroundColor: scrolled ? "#000" : "rgba(255,255,255,0.15)",
             color: scrolled ? "#fff" : "inherit",
           }}
         >
           과정 문의
+        </a>
+        <a
+          href="#trial"
+          className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500 whitespace-nowrap"
+          style={{
+            backgroundColor: scrolled ? "#6b7280" : "rgba(255,255,255,0.15)",
+            color: scrolled ? "#fff" : "inherit",
+          }}
+        >
+          체험 문의
         </a>
 
         <button
@@ -102,6 +112,16 @@ export default function Navbar() {
               transition={{ duration: 0.4, delay: 0.4 }}
             >
               과정 문의하기
+            </motion.a>
+            <motion.a
+              href="#trial"
+              onClick={() => setMobileOpen(false)}
+              className="bg-[#6b7280] text-white rounded-full px-8 py-4 text-lg font-semibold"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.45 }}
+            >
+              체험 문의하기
             </motion.a>
           </motion.div>
         )}

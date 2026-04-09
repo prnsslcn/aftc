@@ -57,7 +57,7 @@ export default function ApplyForm() {
   }
 
   return (
-    <section id="apply" className="bg-[#f0f2f5]" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
+    <section id="apply" className="bg-white" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
       <div className="max-w-[80rem] mx-auto">
         <div className="max-w-2xl mx-auto">
           <FadeIn>
