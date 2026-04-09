@@ -501,6 +501,7 @@ export default function Pipeline() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   return (
     <section id="pipeline" className="bg-[#f0f2f5] relative overflow-hidden" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
+      <AirlineRain />
       <div className="max-w-[80rem] mx-auto relative">
 
         {/* Header */}
@@ -528,9 +529,9 @@ export default function Pipeline() {
 
         {/* 3단계 — 가운데 흰 컨테이너 */}
         <div className="mt-20 relative" ref={stageRef}>
-          {/* 3단계 타임라인 — 흰 컨테이너 */}
+          {/* 3단계 타임라인 — 글래스모피즘 컨테이너 */}
           <motion.div
-            className="relative z-10 rounded-3xl bg-white shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)] p-8 md:p-12 lg:p-16"
+            className="relative z-10 rounded-3xl border border-white/50 bg-white/70 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.12)] p-8 md:p-12 lg:p-16"
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
@@ -547,7 +548,6 @@ export default function Pipeline() {
 
         {/* 세부 절차 — 텍스트 중심 */}
         <div className="mt-24 relative">
-          <AirlineRain />
           <div className="relative z-10">
             <Reveal>
               <p className="text-sm font-medium opacity-40 uppercase tracking-widest mb-4">After Certification</p>
