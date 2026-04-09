@@ -5,7 +5,6 @@ import { Icon } from "@iconify/react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   GROUND_SCHOOL,
-  FTD_TRAINING,
   COURSE_4W,
   COURSE_8W,
 } from "@/lib/constants";
@@ -207,15 +206,7 @@ export default function Programs() {
           <Reveal delay={0.08}>
             <div className="bg-white py-10 md:pl-12">
               <p className="text-[11px] uppercase tracking-[.2em] text-blue-600 font-semibold mb-3">FTD Training</p>
-              <h3 className="tracking-[-0.03em] mb-6" style={{ fontSize: "clamp(1.3rem, 2.5vw, 1.75rem)", fontWeight: 600 }}>시뮬레이터 실습 3과목</h3>
-              <div className="space-y-0">
-                {FTD_TRAINING.map((subject, i) => (
-                  <div key={subject} className="flex items-baseline gap-4 py-2 border-b border-black/[.03]">
-                    <span className="font-mono text-[11px] opacity-20 w-5 text-right flex-shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="opacity-55" style={{ fontSize: "clamp(0.9rem, 1.2vw, 1.05rem)" }}>{subject}</span>
-                  </div>
-                ))}
-              </div>
+              <h3 className="tracking-[-0.03em] mb-6" style={{ fontSize: "clamp(1.3rem, 2.5vw, 1.75rem)", fontWeight: 600 }}>FTD 실습</h3>
 
               {/* FTD 실습실 갤러리 */}
               <FtdGallery />

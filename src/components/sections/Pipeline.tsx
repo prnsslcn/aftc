@@ -6,7 +6,7 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { PIPELINE_STEPS, FLIGHT_SCHOOL_COURSES } from "@/lib/constants";
 
 const TRACK_A = ["CFI, CFII 취득", "교관 취임 후 1,000~1,500hr", "항공사 공채 준비", "미국 / 국내 항공사 입사"];
-const TRACK_B = ["Time Building (비행시간 적립)", "Jet Rating 취득 (선택)", "항공사 공채 준비", "국내 항공사 입사"];
+const TRACK_B = ["CFI, CFII 취득(MEI 선택)", "Jet Rating 취득 (선택)", "항공사 공채 준비", "국내 항공사 입사"];
 
 function TrackStep({ text, index, total, color, alpha, inView, baseDelay }: {
   text: string; index: number; total: number; color: string; alpha: string; inView: boolean; baseDelay: number;
