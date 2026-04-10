@@ -184,6 +184,136 @@ export const FLIGHT_SCHOOLS = [
   },
 ];
 
+// APP / UPP — ASEA가 대비시키는 3가지 핵심 영역
+export const APP_UPP_COVERED_AREAS = [
+  {
+    key: "aptitude" as const,
+    label: "운항 적성검사",
+    desc: "학습 능력, 운항 적성, 심리 상태 등 종합 적성 평가를 체계적으로 대비합니다.",
+    icon: "solar:chart-2-linear",
+  },
+  {
+    key: "flight" as const,
+    label: "비행 적성평가",
+    desc: "Simulator를 활용해 비행 감각, 주의력, 지시사항 이행능력을 집중 훈련합니다.",
+    icon: "solar:widget-5-linear",
+  },
+  {
+    key: "interview" as const,
+    label: "면접 코칭",
+    desc: "태도와 인품, 조종사로서의 자질까지 실전형 면접 대비 코칭을 제공합니다.",
+    icon: "solar:chat-square-like-linear",
+  },
+];
+
+type AppUppCoverKey = "aptitude" | "flight" | "interview";
+type AppUppStageItem = {
+  method: string;
+  content: string;
+  location: string;
+  covered?: AppUppCoverKey;
+};
+type AppUppStage = { step: number; items: AppUppStageItem[] };
+
+export const APP_STAGES: AppUppStage[] = [
+  { step: 1, items: [{ method: "서류심사", content: "지원자격 충족여부", location: "—" }] },
+  {
+    step: 2,
+    items: [
+      {
+        method: "운항인적성검사",
+        content: "학습 / 운항능력 및 심리상태 등",
+        location: "본교",
+        covered: "aptitude",
+      },
+    ],
+  },
+  {
+    step: 3,
+    items: [
+      {
+        method: "모의토플",
+        content: "해외 비행교육의 원활한 진행을 위한 영어 능력 확인",
+        location: "평가기관 고사장",
+      },
+      {
+        method: "영어구술평가",
+        content: "해외 비행교육의 원활한 진행을 위한 영어 능력 확인",
+        location: "본교",
+      },
+    ],
+  },
+  {
+    step: 4,
+    items: [
+      {
+        method: "비행성적평가",
+        content: "Simulator를 활용한 비행 감각, 주의력, 지시사항 이행능력 등",
+        location: "본교",
+        covered: "flight",
+      },
+    ],
+  },
+  {
+    step: 5,
+    items: [
+      {
+        method: "신체검사 및 신원조회",
+        content: "항공종사자 신체검사 기준 준용",
+        location: "인하대 병원",
+      },
+      {
+        method: "최종면접",
+        content: "태도, 의지 등 예비 조종사로서의 자질 평가",
+        location: "본교",
+        covered: "interview",
+      },
+    ],
+  },
+];
+
+export const UPP_STAGES: AppUppStage[] = [
+  { step: 1, items: [{ method: "서류심사", content: "지원자격 충족여부", location: "—" }] },
+  {
+    step: 2,
+    items: [
+      {
+        method: "운항인적성검사",
+        content: "학습 / 운항능력 및 심리상태 등",
+        location: "본교",
+        covered: "aptitude",
+      },
+    ],
+  },
+  {
+    step: 3,
+    items: [
+      {
+        method: "영어구술평가",
+        content: "해외 비행교육의 원활한 진행을 위한 영어 능력 확인",
+        location: "본교",
+      },
+    ],
+  },
+  {
+    step: 4,
+    items: [
+      {
+        method: "비행적성평가",
+        content: "Simulator를 활용한 비행 감각, 주의력, 지시사항 이행능력 등",
+        location: "본교",
+        covered: "flight",
+      },
+      {
+        method: "최종면접",
+        content: "호감도, 인품 등",
+        location: "본교",
+        covered: "interview",
+      },
+    ],
+  },
+];
+
 export const AIRLINE_PREP = {
   programs: [
     { icon: "solar:book-bookmark-linear", title: "강의", desc: "필기·실기·면접 전형 전과정 정규 강의" },
