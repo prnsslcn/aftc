@@ -8,16 +8,20 @@ import { PIPELINE_STEPS, FLIGHT_SCHOOL_COURSES } from "@/lib/constants";
 const TRACK_A = ["CFI, CFII 취득", "교관 취임 후 1,000~1,500hr", "항공사 공채 준비", "미국 / 국내 항공사 입사"];
 const TRACK_B = ["CFI, CFII 취득(MEI 선택)", "Jet Rating 취득 (선택)", "항공사 공채 준비", "국내 항공사 입사"];
 
-function TrackStep({ text, index, total, color, alpha, inView, baseDelay }: {
-  text: string; index: number; total: number; color: string; alpha: string; inView: boolean; baseDelay: number;
+function TrackStep({ text, index, total, color, alpha }: {
+  text: string; index: number; total: number; color: string; alpha: string;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // 각 스텝마다 독립적으로 inView 판정 — 화면 중앙쯤 올라왔을 때 트리거 (스크롤에 따라 하나씩 등장)
+  const inView = useInView(ref, { once: true, margin: "-45% 0% -45% 0%" });
   const isLast = index === total - 1;
   return (
     <motion.div
+      ref={ref}
       className="flex gap-4"
       initial={{ opacity: 0, y: 20 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: baseDelay + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="flex flex-col items-center">
         <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1.5" style={{ background: isLast ? color : alpha }} />
@@ -98,8 +102,6 @@ function DetailFlow() {
                 total={TRACK_A.length}
                 color="#c0425c"
                 alpha="rgba(192,66,92,0.25)"
-                inView={inView}
-                baseDelay={1.4}
               />
             ))}
           </div>
@@ -123,8 +125,6 @@ function DetailFlow() {
                 total={TRACK_B.length}
                 color="#1767b1"
                 alpha="rgba(23,103,177,0.25)"
-                inView={inView}
-                baseDelay={1.6}
               />
             ))}
           </div>

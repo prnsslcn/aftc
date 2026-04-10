@@ -59,6 +59,7 @@ function Planes({ targetRef }: { targetRef: React.RefObject<HTMLDivElement | nul
 
 const WHY_ASEA = [
   { title: "Embry-Riddle 항공대학 연계과정을 보유한 교육원", desc: "미국 최고의 항공운항학과를 보유한 엠브리리들과의 협력 연계과정을 운영합니다." },
+  { title: "항공정비 교수 시스템 심화강의", desc: "항공정비 교수진이 직접 진행하는 심화강의를 통해 이론과 실무를 폭넓게 다룹니다." },
   { title: "FTD 기반 실습 교육으로 실습 이해도 향상", desc: "A320, B737, C172 FTD로 실습 이해도를 높이고, 현장에서 바로 활용 가능한 역량을 키웁니다." },
   { title: "해외 비행학교 연계로 맞춤형 관리 제공", desc: "해외 비행학교와의 네트워크로 맞춤형 관리를 제공합니다." },
   { title: "항공사 입사 준비과정까지 연계된 교육 시스템", desc: "사전교육에서 비행유학, 항공사 입사까지 이어지는 통합 교육." },

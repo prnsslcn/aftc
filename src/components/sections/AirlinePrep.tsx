@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Icon } from "@iconify/react";
-import { motion, useInView } from "framer-motion";
-import { AIRLINE_PREP_POINTS } from "@/lib/constants";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { AIRLINE_PREP } from "@/lib/constants";
 
 function RevealBlock({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -22,6 +22,7 @@ function RevealBlock({ children, delay = 0, className = '' }: { children: React.
 }
 
 export default function AirlinePrep() {
+  const [benefitOpen, setBenefitOpen] = useState(false);
   return (
     <section id="airline-prep" className="py-[clamp(5rem,8vw,9rem)] px-[clamp(0.5rem,5vw,7.75rem)] bg-white">
       <div className="max-w-[80rem] mx-auto">
@@ -41,53 +42,127 @@ export default function AirlinePrep() {
         <RevealBlock delay={0.16}>
           <p className="mt-6 opacity-40 leading-relaxed max-w-[60ch]" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.375rem)' }}>
             비행훈련 이후 항공사 입사를 위한 실전 중심 교육 단계입니다.
-            A320 / B737 FTD 기반 Jet Transition부터 필기, 실기, 면접준비까지
-            항공사 요구 역량을 반영한 실전 교육을 제공합니다.
+            강의부터 1:1 코칭, 모의고사, 면접 컨설팅·모의면접까지
+            항공사 입사 전형 전과정을 체계적으로 준비합니다.
           </p>
         </RevealBlock>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Points */}
-          <RevealBlock>
-            <div className="rounded-[10px] bg-[#f0f2f5] p-7 md:p-9 h-full">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                  <Icon icon="solar:case-round-bold" className="text-amber-600 text-lg" />
-                </div>
-                <h3 className="text-xl font-medium tracking-tight">교육 특장점</h3>
-              </div>
-              <ol className="space-y-4">
-                {AIRLINE_PREP_POINTS.map((point, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm opacity-50 leading-relaxed">
-                    <span className="opacity-40 font-mono text-xs mt-0.5 w-5 text-right flex-shrink-0">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    {point}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </RevealBlock>
+        {/* Programs — editorial list */}
+        <div className="mt-24">
+          <div className="flex items-baseline justify-between mb-10 md:mb-14">
+            <RevealBlock>
+              <p className="text-sm opacity-40 uppercase tracking-widest">Programs</p>
+            </RevealBlock>
+            <RevealBlock delay={0.05}>
+              <p className="text-sm opacity-30 font-mono">
+                8 Components
+              </p>
+            </RevealBlock>
+          </div>
 
-          {/* Image */}
-          <RevealBlock delay={0.08}>
-            <div className="rounded-[10px] overflow-hidden h-full min-h-[280px] md:min-h-[360px] relative bg-[#f0f2f5]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/254431.jpg"
-                alt="항공기"
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <div className="absolute bottom-0 left-0 p-6">
-                <p className="text-sm text-white/80 font-medium">
-                  단순한 교육제공이 아닌 조종사로서의 커리어 완성
-                </p>
-              </div>
-            </div>
-          </RevealBlock>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 md:gap-x-20 gap-y-0 border-t border-black/[.08]">
+            {[
+              ...AIRLINE_PREP.programs.map((p) => ({ ...p, kind: "Program" })),
+              ...AIRLINE_PREP.highlights.map((h) => ({ ...h, kind: "Highlight" })),
+            ].map((item, i) => (
+              <RevealBlock key={item.title} delay={0.04 * i}>
+                <div className="group py-8 md:py-10 border-b border-black/[.08] h-full">
+                  <div className="flex items-start justify-between gap-6">
+                    <div className="flex items-baseline gap-3">
+                      <span className="font-mono text-[11px] opacity-25 tracking-[0.15em]">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="text-[10px] uppercase tracking-[.18em] font-semibold opacity-40">
+                        {item.kind}
+                      </span>
+                    </div>
+                    <Icon
+                      icon={item.icon}
+                      className="text-xl opacity-15 group-hover:opacity-50 transition-opacity flex-shrink-0"
+                    />
+                  </div>
+                  <h4
+                    className="mt-4 tracking-[-0.02em]"
+                    style={{
+                      fontSize: "clamp(1.35rem, 1.8vw, 1.75rem)",
+                      fontWeight: 500,
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {item.title}
+                  </h4>
+                  <p
+                    className="mt-3 opacity-55 max-w-[50ch]"
+                    style={{ fontSize: "clamp(0.9rem, 1vw, 1rem)", lineHeight: 1.65 }}
+                  >
+                    {item.desc}
+                  </p>
+                </div>
+              </RevealBlock>
+            ))}
+          </div>
         </div>
+
+        {/* Cost + Benefit 토글 */}
+        <RevealBlock delay={0.16}>
+          <div className="mt-10 flex items-stretch gap-3">
+            {/* Cost — 95% */}
+            <div className="flex-1 min-w-0 rounded-full border border-black/[.06] bg-[#f5f6f8] px-6 py-5 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] uppercase tracking-[.18em] font-semibold opacity-40">Cost</span>
+                <span className="text-sm opacity-60">{AIRLINE_PREP.cost.note}</span>
+              </div>
+              <p className="font-semibold tracking-tight" style={{ fontSize: "clamp(1.1rem, 1.6vw, 1.35rem)" }}>
+                {AIRLINE_PREP.cost.value}
+              </p>
+            </div>
+
+            {/* Benefit 토글 — 5% */}
+            <button
+              type="button"
+              onClick={() => setBenefitOpen((v) => !v)}
+              aria-expanded={benefitOpen}
+              aria-label="Benefit 보기"
+              className="flex-shrink-0 aspect-square rounded-full border border-black/[.06] bg-[#f5f6f8] hover:bg-[#eef0f3] transition-colors flex items-center justify-center"
+              style={{ width: "clamp(60px, 5%, 80px)", minWidth: 60 }}
+            >
+              <motion.div animate={{ rotate: benefitOpen ? 180 : 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
+                <Icon
+                  icon={benefitOpen ? "solar:close-circle-linear" : "solar:cup-hot-bold"}
+                  className="text-2xl text-amber-600"
+                />
+              </motion.div>
+            </button>
+          </div>
+        </RevealBlock>
+
+        {/* Benefit — 토글 시 출력 */}
+        <AnimatePresence initial={false}>
+          {benefitOpen && (
+            <motion.div
+              key="benefit"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="mt-10 flex flex-col items-center text-center">
+                <span className="text-[10px] uppercase tracking-[.25em] font-semibold text-amber-700/80 mb-3">Benefit</span>
+                <p className="font-semibold tracking-tight" style={{ fontSize: "clamp(1.1rem, 1.4vw, 1.25rem)" }}>
+                  {AIRLINE_PREP.benefit.title}
+                </p>
+                <p className="text-sm opacity-50 mt-1">{AIRLINE_PREP.benefit.desc}</p>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={AIRLINE_PREP.benefit.image}
+                  alt={AIRLINE_PREP.benefit.title}
+                  className="mt-6 w-full max-w-[240px] h-auto object-contain select-none"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

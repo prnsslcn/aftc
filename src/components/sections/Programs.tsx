@@ -5,8 +5,10 @@ import { Icon } from "@iconify/react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   GROUND_SCHOOL,
-  COURSE_4W,
-  COURSE_8W,
+  COURSE_P1,
+  COURSE_P2,
+  COURSE_ERAU,
+  COURSE_COMMON_NOTE,
 } from "@/lib/constants";
 
 function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -117,7 +119,7 @@ function FtdGallery() {
 }
 
 /* ═══ Course info display ═══ */
-function CourseInfo({ course, accent }: { course: typeof COURSE_4W | typeof COURSE_8W; accent: string }) {
+function CourseInfo({ course, accent }: { course: typeof COURSE_P1 | typeof COURSE_P2 | typeof COURSE_ERAU; accent: string }) {
   return (
     <div>
       <div className="flex items-center gap-3 mb-4">
@@ -125,9 +127,6 @@ function CourseInfo({ course, accent }: { course: typeof COURSE_4W | typeof COUR
           style={{ background: `${accent}15`, color: accent }}>
           {course.badge}
         </span>
-        {"highlight" in course && course.highlight && (
-          <span className="text-[11px] font-medium" style={{ color: accent }}>{course.highlight}</span>
-        )}
       </div>
       <h4 className="tracking-[-0.03em] mb-3" style={{ fontSize: "clamp(1.5rem, 2.5vw, 2rem)", fontWeight: 600 }}>
         {course.title}
@@ -147,6 +146,21 @@ function CourseInfo({ course, accent }: { course: typeof COURSE_4W | typeof COUR
           <span className="font-semibold">{course.cost} <span className="opacity-35 font-normal text-sm">{course.costNote}</span></span>
         </div>
       </div>
+
+      {"benefits" in course && course.benefits && course.benefits.length > 0 && (
+        <div className="mt-5 rounded-xl p-4" style={{ background: `${accent}0d`, border: `1px solid ${accent}1f` }}>
+          <p className="text-[10px] uppercase tracking-[.18em] font-semibold mb-2" style={{ color: accent }}>Benefits</p>
+          <ul className="space-y-1.5">
+            {course.benefits.map((b) => (
+              <li key={b} className="flex items-start gap-2 text-sm opacity-70">
+                <Icon icon="solar:check-circle-bold" className="text-base flex-shrink-0 mt-0.5" style={{ color: accent }} />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {"footnote" in course && course.footnote && (
         <p className="mt-3 text-xs opacity-25">{course.footnote}</p>
       )}
@@ -214,24 +228,39 @@ export default function Programs() {
           </Reveal>
         </div>
 
-        {/* 4주 / 8주 과정 */}
+        {/* Phase 1 / Phase 2 / ERAU 과정 */}
         <div className="mt-20">
           <Reveal>
             <p className="text-sm opacity-40 uppercase tracking-widest mb-10">Course Options</p>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-3 items-start">
             <Reveal>
-              <div className="bg-white py-10 md:pr-12 md:border-r md:border-black/[.06]">
-                <CourseInfo course={COURSE_4W} accent="#16a34a" />
+              <div className="bg-white py-10 md:pr-10 md:border-r md:border-black/[.06]">
+                <CourseInfo course={COURSE_P1} accent="#16a34a" />
               </div>
             </Reveal>
             <Reveal delay={0.08}>
-              <div className="bg-white py-10 md:pl-12">
-                <CourseInfo course={COURSE_8W} accent="#1767b1" />
+              <div className="bg-white py-10 md:px-10 md:border-r md:border-black/[.06]">
+                <CourseInfo course={COURSE_P2} accent="#c0425c" />
+              </div>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <div className="bg-white py-10 md:pl-10">
+                <CourseInfo course={COURSE_ERAU} accent="#1767b1" />
               </div>
             </Reveal>
           </div>
+
+          {/* 공통 안내 — 전 과정 적용 */}
+          <Reveal delay={0.2}>
+            <div className="mt-10 flex items-start gap-3 rounded-2xl border border-black/[.06] bg-[#f5f6f8] px-6 py-5">
+              <Icon icon="solar:info-circle-bold" className="text-xl text-black/40 flex-shrink-0 mt-0.5" />
+              <p className="text-sm md:text-base opacity-70 leading-relaxed">
+                {COURSE_COMMON_NOTE}
+              </p>
+            </div>
+          </Reveal>
         </div>
 
         {/* CTA */}

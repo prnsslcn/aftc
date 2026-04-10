@@ -52,28 +52,51 @@ export const FTD_TRAINING = [
   "Instrument Interpretation",
 ];
 
-export const COURSE_4W = {
-  badge: "4주 집중 과정",
-  title: "비행 유학 사전교육",
+const PHASE_BENEFITS = ["비행 유학 시 해당 과정 무료"];
+
+export const COURSE_COMMON_NOTE =
+  "모든 과정은 아세아항공직업전문학교 기숙사와 헬스장 이용이 가능합니다.";
+
+export const COURSE_P1 = {
+  badge: "Phase 1 · 4주 집중 과정",
+  title: "비행 유학 사전교육 Phase 1",
   description:
     "미국 비행학교 입교 예정자를 위한 4주 집중 과정. 단기간 내 핵심 이론과 FTD 실습을 완료합니다.",
   rows: [
     { label: "교육 대상", value: "미국 비행학교 입교 예정자" },
     { label: "교육 기간", value: "4주 집중 과정" },
     { label: "교육 시간", value: "총 80시간 (이론 72시간 / 시뮬레이터 8시간)" },
+    { label: "교육 내용", value: "dummy" },
     { label: "개강", value: "2026년 중" },
     { label: "교육 장소", value: "아세아항공직업전문학교 (강의실 / C172 FTD 실습실)" },
   ],
-  cost: "50만원",
+  cost: "₩800,000",
   costNote: "(C172 FTD 비용 포함)",
+  benefits: PHASE_BENEFITS,
 };
 
-export const COURSE_8W = {
-  badge: "8주 과정",
+export const COURSE_P2 = {
+  badge: "Phase 2 · 4주 심화 과정",
+  title: "비행 유학 사전교육 Phase 2",
+  description:
+    "Phase 1 수료자를 위한 심화 과정. PPL Oral Test 대비와 기초 IR 훈련을 집중적으로 다룹니다.",
+  rows: [
+    { label: "교육 대상", value: "비행 유학 사전교육 Phase 1 수료자" },
+    { label: "교육 기간", value: "4주" },
+    { label: "교육 시간", value: "총 80시간 (이론 60시간 / 시뮬레이터 20시간)" },
+    { label: "교육 내용", value: "PPL Oral Test 대비 및 기초 IR" },
+    { label: "교육 장소", value: "아세아항공직업전문학교 (강의실 / C172 FTD 실습실)" },
+  ],
+  cost: "₩800,000",
+  costNote: "(A320, B737 FTD 체험 포함)",
+  benefits: PHASE_BENEFITS,
+};
+
+export const COURSE_ERAU = {
+  badge: "ERAU 연계 · 8주 과정",
   title: "Embry-Riddle 연계과정",
   description:
     "미국 대학교 항공운항학과 입학 예정자를 위한 8주 과정. 영어 교육(Essay 작성 등)이 포함됩니다.",
-  highlight: "Embry-Riddle 연계",
   rows: [
     { label: "교육 대상", value: "미국 대학교 항공운항학과 입학 예정자" },
     { label: "교육 기간", value: "8주 과정" },
@@ -81,7 +104,7 @@ export const COURSE_8W = {
     { label: "개강", value: "2026년 5월 개강 확정", highlight: true },
     { label: "교육 장소", value: "아세아항공직업전문학교 (강의실 / C172 FTD 실습실)" },
   ],
-  cost: "90만원",
+  cost: "₩1,200,000",
   costNote: "(C172 FTD 비용 포함)",
   footnote: "* Embry-Riddle Aeronautical University 신입생과 함께 진행",
 };
@@ -161,10 +184,23 @@ export const FLIGHT_SCHOOLS = [
   },
 ];
 
-export const AIRLINE_PREP_POINTS = [
-  "1:1 혹은 2:1의 개별 코칭 교육",
-  "스터디 지원",
-  "저렴한 가격으로 A320, B737 FTD 교육",
-  "필기 시험, 실기 시험, 면접까지 전형 전과정 교육",
-  "필기 출제 평가 경력, 실기시험 평가경력, 면접 경력 보유한 강사진",
-];
+export const AIRLINE_PREP = {
+  programs: [
+    { icon: "solar:book-bookmark-linear", title: "강의", desc: "필기·실기·면접 전형 전과정 정규 강의" },
+    { icon: "solar:user-rounded-linear", title: "1:1 코칭", desc: "개별 수준과 목표에 맞춘 1:1 밀착 코칭" },
+    { icon: "solar:document-text-linear", title: "항공사 필기 모의고사", desc: "실제 출제 경향을 반영한 모의고사" },
+    { icon: "solar:chat-round-line-linear", title: "면접 컨설팅", desc: "지원서·자기소개·답변 전략 1:1 컨설팅" },
+    { icon: "solar:videocamera-record-linear", title: "모의면접", desc: "전현직 임직원 출신 면접관과의 실전 모의면접" },
+  ],
+  highlights: [
+    { icon: "solar:medal-ribbon-star-bold", title: "전현직 임직원 출신의 면접관", desc: "현장 경험을 바탕으로 한 실전 코칭" },
+    { icon: "solar:users-group-rounded-bold", title: "스터디 지원", desc: "수강생 간 협업 학습 환경 제공" },
+    { icon: "solar:airbuds-case-charge-bold", title: "A320 · B737 FTD 교육", desc: "합리적인 가격으로 진행되는 FTD 실습" },
+  ],
+  cost: { value: "₩200,000", note: "8회 패키지" },
+  benefit: {
+    title: "매 회 음료 무료 지원",
+    desc: "만월경 자판기 이용 가능",
+    image: "/images/manwol-vending.png",
+  },
+};
