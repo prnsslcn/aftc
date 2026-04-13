@@ -190,19 +190,19 @@ export const APP_UPP_COVERED_AREAS = [
     key: "aptitude" as const,
     label: "운항 적성검사",
     desc: "학습 능력, 운항 적성, 심리 상태 등 종합 적성 평가를 체계적으로 대비합니다.",
-    icon: "solar:chart-2-linear",
+    icon: "ph:exam",
   },
   {
     key: "flight" as const,
     label: "비행 적성평가",
     desc: "Simulator를 활용해 비행 감각, 주의력, 지시사항 이행능력을 집중 훈련합니다.",
-    icon: "solar:widget-5-linear",
+    icon: "ph:airplane-takeoff",
   },
   {
     key: "interview" as const,
     label: "면접 코칭",
     desc: "태도와 인품, 조종사로서의 자질까지 실전형 면접 대비 코칭을 제공합니다.",
-    icon: "solar:chat-square-like-linear",
+    icon: "ph:chats-circle",
   },
 ];
 
