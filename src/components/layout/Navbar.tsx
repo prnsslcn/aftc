@@ -4,13 +4,27 @@ import { useState } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { NAV_ITEMS } from "@/lib/constants";
+import { useLenis } from "@/components/providers/SmoothScrollProvider";
 
 export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: number }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { scrollY } = useScroll();
+  const lenis = useLenis();
 
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > scrollThreshold));
+
+  function handleAnchor(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
+    if (!href.startsWith("#")) return;
+    e.preventDefault();
+    setMobileOpen(false);
+    if (href === "#") {
+      lenis?.scrollTo(0);
+      return;
+    }
+    const target = document.querySelector(href);
+    if (target) lenis?.scrollTo(target as HTMLElement);
+  }
 
   return (
     <>
@@ -26,7 +40,7 @@ export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: num
           color: scrolled ? "#000" : "#fff",
         }}
       >
-        <a href="#" className="font-display font-black tracking-tighter text-xl mr-2">
+        <a href="#" onClick={(e) => handleAnchor(e, "#")} className="font-display font-black tracking-tighter text-xl mr-2">
           ASEA
         </a>
 
@@ -35,6 +49,7 @@ export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: num
             <a
               key={item.label}
               href={item.href}
+              onClick={(e) => handleAnchor(e, item.href)}
               className="hover:opacity-100 transition-opacity whitespace-nowrap"
             >
               {item.label}
@@ -44,6 +59,7 @@ export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: num
 
         <a
           href="#apply"
+          onClick={(e) => handleAnchor(e, "#apply")}
           className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500 whitespace-nowrap"
           style={{
             backgroundColor: scrolled ? "#000" : "rgba(255,255,255,0.15)",
@@ -54,6 +70,7 @@ export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: num
         </a>
         <a
           href="#trial"
+          onClick={(e) => handleAnchor(e, "#trial")}
           className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500 whitespace-nowrap"
           style={{
             backgroundColor: scrolled ? "#6b7280" : "rgba(255,255,255,0.15)",
@@ -93,7 +110,7 @@ export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: num
               <motion.a
                 key={item.label}
                 href={item.href}
-                onClick={() => setMobileOpen(false)}
+                onClick={(e) => handleAnchor(e, item.href)}
                 className="text-2xl font-bold"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -105,7 +122,7 @@ export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: num
 
             <motion.a
               href="#apply"
-              onClick={() => setMobileOpen(false)}
+              onClick={(e) => handleAnchor(e, "#apply")}
               className="mt-4 bg-black text-white rounded-full px-8 py-4 text-lg font-semibold"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -115,7 +132,7 @@ export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: num
             </motion.a>
             <motion.a
               href="#trial"
-              onClick={() => setMobileOpen(false)}
+              onClick={(e) => handleAnchor(e, "#trial")}
               className="bg-[#6b7280] text-white rounded-full px-8 py-4 text-lg font-semibold"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

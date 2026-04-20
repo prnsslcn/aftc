@@ -10,6 +10,7 @@ import {
   COURSE_ERAU,
   COURSE_COMMON_NOTE,
 } from "@/lib/constants";
+import { useLenis } from "@/components/providers/SmoothScrollProvider";
 
 function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -32,12 +33,14 @@ const FTD_IMAGES = [
 function FtdGallery() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<number | null>(null);
+  const lenis = useLenis();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-    if (!open) setActive(null);
-    return () => { document.body.style.overflow = ""; };
-  }, [open]);
+    if (open) lenis?.stop();
+    else { lenis?.start(); setActive(null); }
+    return () => { document.body.style.overflow = ""; lenis?.start(); };
+  }, [open, lenis]);
 
   return (
     <>

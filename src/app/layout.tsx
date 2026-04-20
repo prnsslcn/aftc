@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
+import "lenis/dist/lenis.css";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -34,7 +36,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-[100dvh] flex flex-col bg-white text-black font-sans overflow-x-hidden">
         <script dangerouslySetInnerHTML={{ __html: `history.scrollRestoration='manual';window.scrollTo(0,0);` }} />
-        {children}
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
     </html>
   );
