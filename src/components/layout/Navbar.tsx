@@ -5,12 +5,12 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-
 import { Icon } from "@iconify/react";
 import { NAV_ITEMS } from "@/lib/constants";
 
-export default function Navbar() {
+export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: number }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 80));
+  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > scrollThreshold));
 
   return (
     <>
