@@ -259,7 +259,7 @@ export default function HeroExpand() {
       const radius = lerp(20, 0, frameP);
       frame.style.inset = `${pad}px`;
       frame.style.width = `calc(100% - ${pad * 2}px)`;
-      frame.style.height = `calc(100lvh - ${pad * 2}px)`;
+      frame.style.height = `calc(100% - ${pad * 2}px)`;
       frame.style.borderRadius = `${radius}px`;
 
       // 내부 mask도 동일한 radius로 동기화 (로드 애니메이션 완료 후에만)
@@ -295,14 +295,15 @@ export default function HeroExpand() {
           style={{ height: "100svh" }}
         >
           {/* background_frame: 12px inset + 20px border-radius (원본 CSS 재현)
-             스크롤 시 inset:0 + radius:0 으로 확장 */}
+             스크롤 시 inset:0 + radius:0 으로 확장.
+             부모 sticky가 100svh이므로 frame도 100% (= 100svh) 기준으로 통일 */}
           <div
             ref={frameRef}
             className="absolute overflow-hidden"
             style={{
               inset: "12px",
               width: "calc(100% - 24px)",
-              height: "calc(100lvh - 24px)",
+              height: "calc(100% - 24px)",
               borderRadius: "20px",
             }}
           >
