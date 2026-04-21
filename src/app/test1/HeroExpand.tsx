@@ -82,8 +82,9 @@ function ThreeStageSection() {
   const stageIndex = Math.min(STAGE_COUNT - 1, Math.floor(p * STAGE_COUNT));
   const stageLocalP = clamp(0, 1, p * STAGE_COUNT - stageIndex);
 
-  // 전체 진행도 bar (scaleX)
+  // 전체 진행도 bar (scaleX) + 비행기 아이콘 x 위치 (progress bar 선두)
   const barScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const planeLeft = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
     <section
@@ -111,50 +112,39 @@ function ThreeStageSection() {
 
         {/* scroller_body: progress bar + content */}
         <div className="px-6 md:px-10 flex-1 flex flex-col">
-          {/* Progress bar — 원본: height 1px, track rgba(255,255,255,0.2), bar white */}
+          {/* Progress bar + 비행기 아이콘 (선두에서 스크롤과 함께 이동) */}
           <div
-            className="relative w-full overflow-hidden"
+            className="relative w-full"
             style={{ height: "1px", background: "rgba(255,255,255,0.2)" }}
           >
             <motion.div
               className="absolute inset-0 bg-white origin-left"
               style={{ scaleX: barScale }}
             />
+            {/* 비행기 이미지 — bar 선두 (motion.img 직접 사용으로 래퍼 너비 붕괴 방지) */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <motion.img
+              src="/images/plane1.png"
+              alt=""
+              aria-hidden
+              className="absolute select-none pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: p > 0.005 && p < 0.995 ? 1 : 0 }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                top: "50%",
+                left: planeLeft,
+                x: "-50%",
+                y: "-57%",
+                height: "clamp(72px, 10vw, 120px)",
+                width: "auto",
+              }}
+            />
           </div>
 
-          {/* scroller_content — 데스크탑 grid 1fr:2fr, 모바일 세로 */}
-          <div
-            className="pt-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-y-8 lg:gap-x-[var(--gap,2rem)] items-start"
-          >
-            {/* content_index — 배지 스타일 */}
-            <div>
-              <div
-                className="inline-flex items-stretch justify-start font-mono leading-none"
-                style={{
-                  border: "1px solid rgba(255,255,255,0.4)",
-                  borderRadius: "20px",
-                  padding: "12px 17px",
-                  fontSize: "clamp(0.75rem, 0.9vw, 0.875rem)",
-                }}
-              >
-                <span className="inline-flex items-center justify-center min-w-[20px]">
-                  {String(stageIndex + 1).padStart(2, "0")}
-                </span>
-                <span
-                  className="inline-flex items-center justify-center min-w-[20px]"
-                  style={{ color: "rgba(255,255,255,0.3)" }}
-                >
-                  /
-                </span>
-                <span
-                  className="inline-flex items-center justify-center min-w-[20px]"
-                  style={{ color: "rgba(255,255,255,0.3)" }}
-                >
-                  {String(STAGE_COUNT).padStart(2, "0")}
-                </span>
-              </div>
-            </div>
-
+          {/* scroller_content — 데스크탑 grid 1fr:2fr (좌측 빈칸, 텍스트는 우측 2fr) */}
+          <div className="pt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-y-8 lg:gap-x-8 items-start">
+            <div className="hidden lg:block" />
             {/* content_main — 3개 stage 텍스트 (absolute 오버레이 방식) */}
             <div className="relative w-full">
               {STAGES.map((text, i) => {
