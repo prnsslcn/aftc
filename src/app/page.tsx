@@ -1,6 +1,6 @@
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
+import WhyAsea from "@/components/sections/WhyAsea";
 import Pipeline from "@/components/sections/Pipeline";
 import Programs from "@/components/sections/Programs";
 import FlightSchool from "@/components/sections/FlightSchool";
@@ -16,7 +16,7 @@ export default function Home() {
     <>
       <Navbar />
       <Hero />
-      <About />
+      <WhyAsea />
       <Pipeline />
       <Programs />
       <FlightSchool />

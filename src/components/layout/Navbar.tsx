@@ -1,18 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { useLenis } from "@/components/providers/SmoothScrollProvider";
 
-export default function Navbar({ scrollThreshold = 80 }: { scrollThreshold?: number }) {
+export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [autoThreshold, setAutoThreshold] = useState(99999);
+  const threshold = scrollThreshold ?? autoThreshold;
   const { scrollY } = useScroll();
   const lenis = useLenis();
 
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > scrollThreshold));
+  // scrollThreshold prop 미제공 시 4× viewport 로 자동 계산 (test1 패턴)
+  useEffect(() => {
+    if (scrollThreshold === undefined) {
+      setAutoThreshold(window.innerHeight * 4);
+    }
+  }, [scrollThreshold]);
+
+  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > threshold));
 
   function handleAnchor(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
     if (!href.startsWith("#")) return;
