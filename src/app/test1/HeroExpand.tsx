@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-mot
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import Navbar from "@/components/layout/Navbar";
+import WhyAseaSection from "./WhyAseaV2";
 
 /* ═══════════════════════════════════════
    유틸
@@ -321,6 +322,16 @@ export default function HeroExpand() {
                 <source src="/images/wing.mp4" type="video/mp4" />
               </video>
               <div className="absolute inset-0 bg-black/30" />
+              {/* Bottom fade — 다음 섹션(#0a0a0a)과 자연스럽게 연결 */}
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 pointer-events-none"
+                style={{
+                  height: "40vh",
+                  background:
+                    "linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.7) 60%, #0a0a0a 100%)",
+                }}
+              />
             </motion.div>
           </div>
         </div>
@@ -382,28 +393,8 @@ export default function HeroExpand() {
         <ThreeStageSection />
       </div>
 
-      {/* 다음 섹션 */}
-      <section
-        className="bg-[#f0f2f5] relative z-20"
-        style={{ padding: "clamp(5rem,8vw,9rem) clamp(1rem,5vw,7.75rem)" }}
-      >
-        <div className="max-w-[80rem] mx-auto">
-          <p className="text-sm opacity-40 uppercase tracking-widest mb-5">Next Section</p>
-          <h2
-            className="tracking-[-0.05em]"
-            style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)", lineHeight: 1, fontWeight: 600 }}
-          >
-            다음 섹션 영역
-          </h2>
-          <p
-            className="mt-6 opacity-40 leading-relaxed max-w-[55ch]"
-            style={{ fontSize: "clamp(1rem, 1.5vw, 1.375rem)" }}
-          >
-            pill → 영상 로드 애니메이션과 3-stage 스크롤 텍스트 렌더링이 끝나면 이 섹션으로 이어집니다.
-          </p>
-          <div style={{ height: "100vh" }} />
-        </div>
-      </section>
+      {/* Why ASEA */}
+      <WhyAseaSection />
     </div>
   );
 }

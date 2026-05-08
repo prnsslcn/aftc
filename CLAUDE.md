@@ -12,7 +12,8 @@
 - **TypeScript**
 - **Tailwind CSS v4** — PostCSS (`@tailwindcss/postcss`)
 - **Framer Motion** — 스크롤 애니메이션, 페이지 트랜지션
-- **Pretendard** — 한국어 기본 폰트
+- **Lenis** — 전역 smooth scroll (SmoothScrollProvider)
+- **Pretendard** — 한국어 기본 폰트 (CDN)
 - **Outfit** — 영문 디스플레이 폰트 (`next/font/google`)
 - **Iconify Solar** — 아이콘
 - **next/image** — 이미지 최적화
@@ -26,11 +27,32 @@ npm run start     # 프로덕션 서버
 npm run lint      # ESLint 실행
 ```
 
-## 현재 상태 (2026-03-30)
-- Next.js 프로젝트 초기화 완료 (create-next-app 기본 템플릿)
-- 프로토타입 HTML이 `/Users/dev/Desktop/dev/index.html`에 존재 — 이것을 Next.js 컴포넌트로 마이그레이션해야 함
-- 히어로 이미지 원본: `/Users/dev/Desktop/dev/hero-aircraft.jpg` → `public/images/`로 복사 필요
-- Framer Motion, Pretendard 등 추가 의존성 아직 미설치
+## 현재 상태 (2026-04-22)
+- Next.js 16 + React 19 + Tailwind v4 셋업 완료, 의존성 설치 완료
+  (`framer-motion`, `lenis`, `@iconify/react` 포함)
+- 프로토타입 HTML → Next.js 컴포넌트 마이그레이션 완료 (메인 랜딩)
+- 메인 페이지 섹션 실제 구조:
+  `Navbar → Hero → About → Pipeline → Programs → FlightSchool → AirlinePrep
+   → AppUpp → ApplyForm → TrialInquiry → Contact → Footer`
+- **Lenis smooth scroll** 전역 적용 (`SmoothScrollProvider`, `useLenis` 훅)
+  - Navbar 앵커 이동도 Lenis 경유
+- **브라우저 스크롤바 전역 숨김** (`html::-webkit-scrollbar` + `scrollbar-width: none`)
+- 폰트: **Pretendard CDN** + **Outfit** (`next/font/google`) — `layout.tsx`에 구성됨
+  (Gmarket Sans 실험 후 롤백됨)
+- 이미지 자산: `public/images/` 에 실사/로고/영상 다수 배치됨
+  (hero-aircraft.jpg, hero1~4.mp4, wing.mp4, plane1~3.png, 파트너 로고 SVG/PNG 등)
+- **`/test1` 실험 라우트** — 차세대 히어로 인터랙션 레퍼런스 구현체
+  - `HeroExpand.tsx`: Pill → Video clip-path 로드 애니메이션
+    (`inset(50% round 200px) → inset(0 round 20px)`, expo.inOut, duration≈2s, delay 0.3s)
+  - 스크롤 시 frame 확장 (inset 12→0, radius 20→0) + 비디오 blur/scale + mask clip-path 동기화
+    (`loadCompleteRef` 플래그로 로드 애니 종료 후 스크롤 연동 진입)
+  - 3-Stage 스크롤 섹션 (integratedbiosciences 패턴 재현)
+    - 캐릭터 단위 색상 채우기 (`#1562a9`), progress `v = min(progress * 1.5, 1)`
+    - 1px progress bar (scaleX), `grid 1fr:2fr` 좌측 빈 컬럼 + 우측 텍스트
+  - Progress bar 선단에 `plane1.png` (`motion.img` 직접 배치, wrapper 없음)
+    - size `clamp(72px, 10vw, 120px)`, `y: -57%`
+    - Fade in/out: `p > 0.005 && p < 0.995`, duration 1.2s
+  - 모바일 하단 잘림 수정 완료 (높이 단위 `100svh` + `calc(100% - 24px)` 통일)
 
 ## Next.js 필수 규칙
 - 브라우저 API(window, document, localStorage) 사용 컴포넌트는 반드시 파일 맨 위에 `'use client'` 선언
@@ -156,44 +178,53 @@ Checklist & Procedure / Maneuvers & Navigation / Instrument Interpretation
 ### 지원 링크
 - Google Form: `https://docs.google.com/forms/d/e/1FAIpQLSeMWuAgbIi8-xprEo0Sv8G3M-xTmGLZXwNMyYq3KDeMJooAiQ/viewform`
 
-## 파일 구조 (목표)
+## 파일 구조 (현재)
 ```
 aftc/
 ├── public/
 │   └── images/
 │       ├── hero-aircraft.jpg
-│       └── ...
+│       ├── hero1.mp4 ~ hero4.mp4, wing.mp4
+│       ├── plane1.png ~ plane3.png
+│       ├── ASEA-logo.webp, main-logo.webp
+│       ├── Embry-Riddle_Aeronautical_University_seal.svg
+│       ├── AeroGuard_*, Hillsboro_Aero_Academy.svg, Phoenix_East_Aviation.svg,
+│       │   PU-H-Full-RGB.svg, northdakota-full-rgb.svg, UAA_*, korean.webp 등
+│       └── 1.jpg ~ 11.jpeg (placeholder 실사)
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   ├── globals.css
-│   │   ├── flight-school/
-│   │   │   └── page.tsx
-│   │   └── airline-prep/
-│   │       └── page.tsx
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── Navbar.tsx
-│   │   │   └── Footer.tsx
-│   │   ├── sections/
-│   │   │   ├── Hero.tsx
-│   │   │   ├── About.tsx
-│   │   │   ├── Programs.tsx
-│   │   │   ├── ComingSoon.tsx
-│   │   │   └── Contact.tsx
-│   │   └── ui/
-│   │       ├── RevealOnScroll.tsx
-│   │       ├── Counter.tsx
-│   │       └── Button.tsx
-│   └── lib/
-│       └── constants.ts
+│   │   ├── layout.tsx          # Pretendard CDN + Outfit + SmoothScrollProvider
+│   │   ├── page.tsx            # 메인 랜딩 (섹션 조립)
+│   │   ├── globals.css         # Tailwind v4 + 스크롤바 숨김 + 폼/테이블 스타일
+│   │   ├── icon.png
+│   │   ├── test/               # 실험 라우트
+│   │   └── test1/              # HeroExpand.tsx (pill→video + 3-stage 실험)
+│   └── components/
+│       ├── layout/
+│       │   ├── Navbar.tsx          # 플로팅 pill + useLenis 앵커 이동
+│       │   ├── Footer.tsx
+│       │   └── ScrollProgress.tsx
+│       ├── providers/
+│       │   └── SmoothScrollProvider.tsx  # Lenis context + useLenis 훅
+│       └── sections/
+│           ├── Hero.tsx
+│           ├── About.tsx
+│           ├── Pipeline.tsx
+│           ├── Programs.tsx
+│           ├── FlightSchool.tsx
+│           ├── AirlinePrep.tsx
+│           ├── AppUpp.tsx
+│           ├── ApplyForm.tsx
+│           ├── TrialInquiry.tsx
+│           └── Contact.tsx
 ├── CLAUDE.md
 ├── AGENTS.md
 ├── next.config.ts
 ├── tsconfig.json
 └── package.json
 ```
+
+> `src/components/ui/` 및 `src/lib/constants.ts`는 아직 생성 전 — 필요 시 추가.
 
 ## 참조 파일 (프로젝트 외부)
 - **프로토타입 HTML**: `/Users/dev/Desktop/dev/index.html` — 마이그레이션 원본
@@ -202,15 +233,28 @@ aftc/
 - **디자인 참조 템플릿**: `/Users/dev/Downloads/Template/index-ex.html` — nav 플로팅 pill 스타일 fork 원본
 
 ## 다음 작업
-- [ ] 추가 의존성 설치 (framer-motion, @iconify/react 등)
-- [ ] 히어로 이미지 → `public/images/` 복사
-- [ ] 폰트 설정 (Pretendard + Outfit)
-- [ ] 프로토타입 HTML → Next.js 컴포넌트 마이그레이션
-- [ ] Vercel 배포 연결
-- [ ] 실제 이미지 교체
-- [ ] 비행학교 / 항공사 입사과정 페이지 (자료 수령 후)
+- [x] 추가 의존성 설치 (framer-motion, @iconify/react, lenis)
+- [x] 히어로 이미지 → `public/images/` 복사
+- [x] 폰트 설정 (Pretendard CDN + Outfit `next/font/google`)
+- [x] 프로토타입 HTML → Next.js 컴포넌트 마이그레이션 (메인 섹션)
+- [x] Lenis smooth scroll 메인 적용 + 브라우저 스크롤바 전역 숨김
+- [x] `/test1` 실험 라우트에 Pill→Video + 3-Stage 스크롤 + 비행기 progress 마커 구현
+- [ ] `/test1` 인터랙션 → 메인 Hero/섹션에 반영 여부 결정
+- [ ] Vercel 배포 연결 및 커스텀 도메인
+- [ ] 실제 이미지 최종 교체 (placeholder 숫자 jpg 제거)
+- [ ] 비행학교 / 항공사 입사과정 서브 페이지 (자료 수령 후)
 - [ ] SEO, OG 이미지, sitemap, robots.txt
 - [ ] Google Analytics 연동
 - [ ] 접근성(a11y) 검토
+- [ ] 반응형 QA (모바일/태블릿)
+
+## 최근 커밋 (2026-04-22 기준)
+```
+674e2b8 test1 3-stage progress bar 비행기 이미지 추가
+3e8f936 test1 Hero frame 높이 단위 통일 — 모바일 하단 잘림 수정
+09986eb test1 Hero: integratedbiosciences 패턴 재현
+b76372c Lenis smooth scroll 메인 적용
+80eceea test1 Hero 확장 + 블러 배경 + About/WhyStack 인터랙션 + Lenis 테스트
+```
 
 @AGENTS.md

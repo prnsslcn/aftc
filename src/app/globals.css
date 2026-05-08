@@ -26,6 +26,16 @@
 
 html {
   scroll-restoration: manual;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+/* 브라우저 기본 스크롤바 숨김 (Chrome/Safari/Opera) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 body {
