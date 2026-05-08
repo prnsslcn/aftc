@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { Icon } from "@iconify/react";
 
 function RevealBlock({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -36,14 +37,16 @@ export default function TrialInquiry() {
         </RevealBlock>
 
         <RevealBlock delay={0.16}>
-          <div className="mt-12 rounded-2xl overflow-hidden aspect-[16/9]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/dummy.jpg"
-              alt="체험 문의"
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
+          <div className="mt-12 rounded-2xl bg-white aspect-[16/9] flex flex-col items-center justify-center text-center">
+            <div className="w-14 h-14 rounded-2xl bg-black/[.04] flex items-center justify-center">
+              <Icon icon="solar:hourglass-line-linear" className="text-2xl text-black/40" />
+            </div>
+            <p className="mt-5 text-black/70 font-medium" style={{ fontSize: "clamp(1.125rem, 1.6vw, 1.375rem)", letterSpacing: "-0.02em" }}>
+              준비 중입니다
+            </p>
+            <p className="mt-2 text-sm text-black/40">
+              곧 안내드릴 예정입니다.
+            </p>
           </div>
         </RevealBlock>
       </div>
