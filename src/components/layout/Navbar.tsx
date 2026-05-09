@@ -33,15 +33,22 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
   function handleClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
     setMobileOpen(false);
 
+    // nav 트리거 스크롤은 천천히 + 출발/도착 모두 부드럽게 (ease-in-out cubic)
+    const opts = {
+      duration: 2,
+      easing: (t: number) =>
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+    };
+
     // 같은 페이지 anchor (#xxx)
     if (href.startsWith("#")) {
       e.preventDefault();
       if (href === "#") {
-        lenis?.scrollTo(0);
+        lenis?.scrollTo(0, opts);
         return;
       }
       const target = document.querySelector(href);
-      if (target) lenis?.scrollTo(target as HTMLElement);
+      if (target) lenis?.scrollTo(target as HTMLElement, opts);
       return;
     }
 
@@ -53,11 +60,11 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
     if (pathname === path) {
       e.preventDefault();
       if (!anchor || anchor === "#") {
-        lenis?.scrollTo(0);
+        lenis?.scrollTo(0, opts);
         return;
       }
       const target = document.querySelector(anchor);
-      if (target) lenis?.scrollTo(target as HTMLElement);
+      if (target) lenis?.scrollTo(target as HTMLElement, opts);
     }
     // 다른 페이지면 Link 의 기본 라우팅에 위임
   }
@@ -132,7 +139,7 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             exit={{ clipPath: "inset(0 0 100% 0)" }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
           >
             <button
               onClick={() => setMobileOpen(false)}
@@ -147,7 +154,7 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
                 key={item.label}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.4, delay: 0.1 + i * 0.05, ease: [0.65, 0, 0.35, 1] }}
               >
                 <Link
                   href={item.href}

@@ -12,7 +12,7 @@ function RevealBlock({ children, delay = 0, className = "" }: { children: React.
       ref={ref}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.7, delay, ease: [0.65, 0, 0.35, 1] }}
       className={className}
     >
       {children}

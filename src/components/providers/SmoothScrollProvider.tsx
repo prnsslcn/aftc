@@ -43,24 +43,10 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     };
   }, []);
 
-  // 라우트 변경 시 스크롤 리셋 (hash 있으면 해당 anchor 로, 없으면 top 으로)
+  // 라우트 변경 시 항상 top 으로 리셋. hash 처리는 페이지 컴포넌트(Hero 등)가 담당
   useEffect(() => {
     if (!lenisRef.current) return;
-    const hash = window.location.hash;
-    if (hash) {
-      requestAnimationFrame(() => {
-        const target = document.querySelector(hash) as HTMLElement | null;
-        if (target && lenisRef.current) {
-          // element 기반 대신 명시적 숫자 target 으로 (sticky+svh 레이아웃 정확도)
-          const targetY = target.getBoundingClientRect().top + window.scrollY;
-          lenisRef.current.scrollTo(targetY, { immediate: true });
-        } else if (lenisRef.current) {
-          lenisRef.current.scrollTo(0, { immediate: true });
-        }
-      });
-    } else {
-      lenisRef.current.scrollTo(0, { immediate: true });
-    }
+    lenisRef.current.scrollTo(0, { immediate: true });
   }, [pathname]);
 
   return <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>;

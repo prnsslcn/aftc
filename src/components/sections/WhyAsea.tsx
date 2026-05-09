@@ -22,7 +22,7 @@ const WHY_ASEA = [
 
 const ACCENT = "#467ee9";
 const N = WHY_ASEA.length;
-const EASE = [0.16, 1, 0.3, 1] as const;
+const EASE = [0.65, 0, 0.35, 1] as const;
 const PX = "clamp(2rem,10vw,14rem)";
 
 function SegmentBar({ scrollYProgress, index }: { scrollYProgress: MotionValue<number>; index: number }) {

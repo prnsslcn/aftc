@@ -17,7 +17,7 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
   const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }} className={className}>
+      transition={{ duration: 0.7, delay, ease: [0.65, 0, 0.35, 1] }} className={className}>
       {children}
     </motion.div>
   );
@@ -48,7 +48,7 @@ function FtdGallery() {
       <div className="mt-8 cursor-pointer group" onClick={() => setOpen(true)}>
         <div className="relative rounded-xl overflow-hidden aspect-[16/10]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/1.jpg" alt="FTD 실습실" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" style={{ transitionTimingFunction: "cubic-bezier(.16,1,.3,1)" }} />
+          <img src="/images/1.jpg" alt="FTD 실습실" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" style={{ transitionTimingFunction: "cubic-bezier(0.65, 0, 0.35, 1)" }} />
           <div className="absolute inset-0 bg-black/15 group-hover:bg-black/25 transition-colors flex items-center justify-center">
             <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm text-black text-sm font-medium px-5 py-2.5 rounded-full">
               Click
@@ -66,7 +66,7 @@ function FtdGallery() {
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             exit={{ clipPath: "inset(0 0 100% 0)" }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
           >
             <button onClick={() => setOpen(false)}
               className="fixed top-6 right-6 z-[310] w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors"
@@ -89,7 +89,7 @@ function FtdGallery() {
                       transition={{
                         layout: { duration: 0.8, type: "spring", stiffness: 200, damping: 30 },
                         opacity: { duration: 0.4, delay: i * 0.03 },
-                        y: { duration: 0.5, delay: i * 0.03, ease: [0.16, 1, 0.3, 1] },
+                        y: { duration: 0.5, delay: i * 0.03, ease: [0.65, 0, 0.35, 1] },
                       }}
                     >
                       <motion.img

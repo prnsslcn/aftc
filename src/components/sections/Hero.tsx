@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useEffect, useLayoutEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { useLenis } from "@/components/providers/SmoothScrollProvider";
 
 /* ═══════════════════════════════════════
    유틸
@@ -49,7 +50,7 @@ function CharReveal({
         else opacity = CHAR_FADE_VALUE;
         return (
           <span key={i} style={{ opacity, display: "inline-block" }}>
-            {ch === " " ? " " : ch}
+            {ch === " " ? " " : ch}
           </span>
         );
       })}
@@ -116,7 +117,7 @@ function ThreeStageSection() {
               className="absolute select-none pointer-events-none"
               initial={{ opacity: 0 }}
               animate={{ opacity: p > 0.005 && p < 0.995 ? 1 : 0 }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 1.2, ease: [0.65, 0, 0.35, 1] }}
               style={{
                 top: "50%",
                 left: planeLeft,
@@ -140,7 +141,7 @@ function ThreeStageSection() {
                     key={i}
                     className="top-0 left-0 w-full flex flex-col"
                     animate={{ opacity: isActive ? 1 : 0, y }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
                     style={{
                       position: i === 0 ? "relative" : "absolute",
                       visibility: isActive ? "visible" : "hidden",
@@ -181,40 +182,36 @@ export default function Hero() {
   const loadCompleteRef = useRef(false);
   const [ready, setReady] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [skipLoad, setSkipLoad] = useState(false);
+  const lenis = useLenis();
 
-  // URL 에 hash 있으면 (섹션 이동) 로드 애니메이션 스킵 + 프레임 즉시 풀스크린 + 정확한 위치로 스크롤
-  useLayoutEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!window.location.hash) return;
-
-    if (frameRef.current) {
-      frameRef.current.style.inset = "0px";
-      frameRef.current.style.width = "100%";
-      frameRef.current.style.height = "100%";
-      frameRef.current.style.borderRadius = "0px";
-    }
-    setSkipLoad(true);
-    setLoaded(true);
-    setReady(true);
-    loadCompleteRef.current = true;
-
-    // Lenis element-based scrollTo 가 sticky+svh 레이아웃에서 위치를 정확히 못 잡는 경우 대비,
-    // paint 전에 native scroll 로 정확한 위치 직접 세팅
-    const target = document.querySelector(window.location.hash) as HTMLElement | null;
-    if (target) {
-      const targetY = target.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo(0, targetY);
-    }
-  }, []);
-
-  // 페이지 로드 pill → video 타이머 (hash 없을 때만)
+  // 페이지 로드 pill → video 타이머
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash) return;
     const t1 = setTimeout(() => setLoaded(true), 100);
     const t2 = setTimeout(() => setReady(true), 1600);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
+
+  // hash 진입 (예: /pipeline → /#intro) 시 로드 애니 완료 후 해당 섹션으로 smooth-scroll
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash;
+    if (!hash) return;
+    if (!lenis) return;
+
+    // load(100ms) + ready(1600ms) + 텍스트 reveal(1200ms) 종료 직후
+    const t = setTimeout(() => {
+      const target = document.querySelector(hash) as HTMLElement | null;
+      if (!target) return;
+      const targetY = target.getBoundingClientRect().top + window.scrollY;
+      // ease-in-out cubic — 출발/도착 모두 부드럽게
+      lenis.scrollTo(targetY, {
+        duration: 2,
+        easing: (t: number) =>
+          t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+      });
+    }, 2900);
+    return () => clearTimeout(t);
+  }, [lenis]);
 
   // 스크롤 기반 애니메이션: 영상 프레임 확장 + mask radius 동기화 + 블러
   useEffect(() => {
@@ -252,10 +249,7 @@ export default function Hero() {
     }
     function onScroll() { if (!raf) { requestAnimationFrame(tick); raf = true; } }
     window.addEventListener("scroll", onScroll, { passive: true });
-    // 초기 tick 은 hash 없을 때만 (hash 있으면 이미 풀스크린 프레임으로 pre-set 됨)
-    if (typeof window === "undefined" || !window.location.hash) {
-      tick();
-    }
+    tick();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -288,8 +282,8 @@ export default function Hero() {
               transform: "translate(-50%, -50%)",
             }}
             initial={{ clipPath: "inset(50% 50% 50% 50% round 200px)" }}
-            animate={loaded ? { clipPath: skipLoad ? "inset(0% round 0px)" : "inset(0% round 20px)" } : {}}
-            transition={skipLoad ? { duration: 0 } : { duration: 2, delay: 0.3, ease: [0.87, 0, 0.13, 1] }}
+            animate={loaded ? { clipPath: "inset(0% round 20px)" } : {}}
+            transition={{ duration: 2, delay: 0.3, ease: [0.87, 0, 0.13, 1] }}
             onAnimationComplete={() => { loadCompleteRef.current = true; }}
           >
             <video
@@ -315,7 +309,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Hero main — 일반 flow, 100lvh, 스크롤 시 위로 사라짐 */}
+      {/* Hero main — 일반 flow, 100svh, 스크롤 시 위로 사라짐 */}
       <div
         className="relative z-10 text-white pointer-events-none"
         style={{ marginTop: "-100svh", height: "100svh" }}
@@ -330,7 +324,7 @@ export default function Hero() {
               style={{ fontSize: "clamp(4rem, 13vw, 12rem)" }}
               initial={{ y: "110%" }}
               animate={ready ? { y: 0 } : {}}
-              transition={skipLoad ? { duration: 0 } : { duration: 1.2, delay: 0, ease: [0, 1, 0.4, 1] }}
+              transition={{ duration: 1.2, delay: 0, ease: [0.65, 0, 0.35, 1] }}
             >
               ASEA
             </motion.h1>
@@ -345,7 +339,7 @@ export default function Hero() {
               }}
               initial={{ y: "110%" }}
               animate={ready ? { y: 0 } : {}}
-              transition={skipLoad ? { duration: 0 } : { duration: 1.2, delay: 0.15, ease: [0, 1, 0.4, 1] }}
+              transition={{ duration: 1.2, delay: 0.15, ease: [0.65, 0, 0.35, 1] }}
             >
               Flight Training Center
             </motion.p>

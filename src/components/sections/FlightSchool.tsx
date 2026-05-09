@@ -13,7 +13,7 @@ function RevealBlock({ children, delay = 0, className = '' }: { children: React.
       ref={ref}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.7, delay, ease: [0.65, 0, 0.35, 1] }}
       className={className}
     >
       {children}
@@ -40,7 +40,7 @@ function SchoolCard({ school }: { school: School }) {
           src={school.logo}
           alt={`${school.name} 로고`}
           className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-[1.04]"
-          style={{ transitionTimingFunction: "cubic-bezier(.16,1,.3,1)" }}
+          style={{ transitionTimingFunction: "cubic-bezier(0.65, 0, 0.35, 1)" }}
           loading="lazy"
         />
       </a>
@@ -73,7 +73,7 @@ function SchoolCard({ school }: { school: School }) {
             <Icon icon="solar:map-point-linear" className="text-base" />
             {school.location}
           </span>
-          <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
+          <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.4, ease: [0.65, 0, 0.35, 1] }}>
             <Icon icon="solar:alt-arrow-down-linear" className="text-base opacity-50" />
           </motion.span>
         </button>
@@ -85,7 +85,7 @@ function SchoolCard({ school }: { school: School }) {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.5, ease: [0.65, 0, 0.35, 1] }}
               className="overflow-hidden"
             >
               <div className="px-6 md:px-7 pb-6 pt-2">
@@ -193,7 +193,7 @@ export default function FlightSchool() {
                     src={uni.logo}
                     alt={`${uni.name} 로고`}
                     className="h-20 md:h-24 w-auto max-w-full object-contain transition-transform duration-700 group-hover:scale-[1.04]"
-                    style={{ transitionTimingFunction: "cubic-bezier(.16,1,.3,1)" }}
+                    style={{ transitionTimingFunction: "cubic-bezier(0.65, 0, 0.35, 1)" }}
                     loading="lazy"
                   />
                 </div>

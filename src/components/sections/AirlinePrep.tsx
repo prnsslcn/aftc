@@ -13,7 +13,7 @@ function RevealBlock({ children, delay = 0, className = '' }: { children: React.
       ref={ref}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.7, delay, ease: [0.65, 0, 0.35, 1] }}
       className={className}
     >
       {children}
@@ -126,7 +126,7 @@ export default function AirlinePrep() {
               className="flex-shrink-0 aspect-square rounded-full border border-black/[.06] bg-[#f5f6f8] hover:bg-[#eef0f3] transition-colors flex items-center justify-center"
               style={{ width: "clamp(60px, 5%, 80px)", minWidth: 60 }}
             >
-              <motion.div animate={{ rotate: benefitOpen ? 180 : 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
+              <motion.div animate={{ rotate: benefitOpen ? 180 : 0 }} transition={{ duration: 0.5, ease: [0.65, 0, 0.35, 1] }}>
                 <Icon
                   icon={benefitOpen ? "solar:close-circle-linear" : "solar:cup-hot-bold"}
                   className="text-2xl text-amber-600"
@@ -144,7 +144,7 @@ export default function AirlinePrep() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
               className="overflow-hidden"
             >
               <div className="mt-10 flex flex-col items-center text-center">

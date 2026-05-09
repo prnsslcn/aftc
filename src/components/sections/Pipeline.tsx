@@ -21,7 +21,7 @@ function TrackStep({ text, index, total, color, alpha }: {
       className="flex gap-4"
       initial={{ opacity: 0, y: 20 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
     >
       <div className="flex flex-col items-center">
         <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1.5" style={{ background: isLast ? color : alpha }} />
@@ -49,7 +49,7 @@ function DetailFlow() {
           className="text-[11px] uppercase tracking-[.2em] opacity-25 mb-5"
           initial={{ opacity: 0, y: 10 }}
           animate={inView ? { opacity: 0.25, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
         >
           Common Path
         </motion.p>
@@ -58,7 +58,7 @@ function DetailFlow() {
             className="font-semibold opacity-100"
             initial={{ opacity: 0, x: -20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, delay: 0.15, ease: [0.65, 0, 0.35, 1] }}
           >
             사전교육 및 입교 수속
           </motion.span>
@@ -66,7 +66,7 @@ function DetailFlow() {
             className="opacity-25"
             initial={{ opacity: 0, scale: 0 }}
             animate={inView ? { opacity: 0.25, scale: 1 } : {}}
-            transition={{ duration: 0.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.4, delay: 0.4, ease: [0.65, 0, 0.35, 1] }}
           >
             →
           </motion.span>
@@ -75,7 +75,7 @@ function DetailFlow() {
             style={{ color: "#1767b1" }}
             initial={{ opacity: 0, x: 20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, delay: 0.5, ease: [0.65, 0, 0.35, 1] }}
           >
             PPL · IR · CPL · ME 취득
           </motion.span>
@@ -89,7 +89,7 @@ function DetailFlow() {
           className="py-10 md:pr-12 md:border-r border-b md:border-b-0 border-black/[.06] overflow-hidden"
           initial={{ clipPath: "inset(0 0 100% 0)" }}
           animate={inView ? { clipPath: "inset(0 0 0% 0)" } : {}}
-          transition={{ duration: 1, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1, delay: 0.9, ease: [0.65, 0, 0.35, 1] }}
         >
           <p className="text-[11px] uppercase tracking-[.2em] font-semibold mb-3" style={{ color: "#c0425c" }}>Track A</p>
           <h4 className="tracking-[-0.03em] mb-4" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 600 }}>미국 / 국내 항공사</h4>
@@ -112,7 +112,7 @@ function DetailFlow() {
           className="py-10 md:pl-12 overflow-hidden"
           initial={{ clipPath: "inset(0 0 100% 0)" }}
           animate={inView ? { clipPath: "inset(0 0 0% 0)" } : {}}
-          transition={{ duration: 1, delay: 1.1, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1, delay: 1.1, ease: [0.65, 0, 0.35, 1] }}
         >
           <p className="text-[11px] uppercase tracking-[.2em] font-semibold mb-3" style={{ color: "#1767b1" }}>Track B</p>
           <h4 className="tracking-[-0.03em] mb-4" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 600 }}>국내 항공사</h4>
@@ -210,7 +210,7 @@ function CostTable() {
       className="mt-20"
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.8, ease: [0.65, 0, 0.35, 1] }}
     >
       {/* 헤더 */}
       <div className="mb-8">
@@ -232,7 +232,7 @@ function CostTable() {
             transition={{
               duration: 0.6,
               delay: 0.2 + i * 0.08,
-              ease: [0.16, 1, 0.3, 1],
+              ease: [0.65, 0, 0.35, 1],
               type: "spring",
               stiffness: 200,
               damping: 22,
@@ -268,7 +268,7 @@ function CostTable() {
             className="rounded-xl bg-white p-4 flex items-center justify-between"
             initial={{ opacity: 0, x: -20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.15 + i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, delay: 0.15 + i * 0.06, ease: [0.65, 0, 0.35, 1] }}
           >
             <div className="flex items-center gap-4">
               <span className="font-mono text-[10px] opacity-25">{String(i + 1).padStart(2, "0")}</span>
@@ -287,7 +287,7 @@ function CostTable() {
         className="mt-3 rounded-2xl bg-white px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6, delay: 0.2 + FLIGHT_SCHOOL_COURSES.length * 0.08, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6, delay: 0.2 + FLIGHT_SCHOOL_COURSES.length * 0.08, ease: [0.65, 0, 0.35, 1] }}
       >
         <div className="flex items-center gap-4">
           <span className="text-[11px] uppercase tracking-[.15em] opacity-30 font-medium">Total</span>
@@ -315,7 +315,7 @@ function ProgramSteps() {
         className="text-sm font-medium opacity-60 mb-6"
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 0.6, y: 0 } : {}}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
       >
         프로그램 절차
       </motion.p>
@@ -329,7 +329,7 @@ function ProgramSteps() {
               transition={{
                 duration: 0.6,
                 delay: 0.2 + i * 0.12,
-                ease: [0.16, 1, 0.3, 1],
+                ease: [0.65, 0, 0.35, 1],
                 type: "spring",
                 stiffness: 200,
                 damping: 20,
@@ -343,7 +343,7 @@ function ProgramSteps() {
                 className="w-6 flex justify-center"
                 initial={{ opacity: 0, x: -10 }}
                 animate={inView ? { opacity: 0.2, x: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.35 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.4, delay: 0.35 + i * 0.12, ease: [0.65, 0, 0.35, 1] }}
               >
                 <Icon icon="solar:arrow-right-linear" className="text-sm" />
               </motion.div>
@@ -373,7 +373,7 @@ function StageItem({ stage, index, isLast }: { stage: typeof STAGES[number]; ind
             style={{ height: "calc(100% + 5rem)", backgroundColor: stage.color, opacity: 0.15 }}
             initial={{ scaleY: 0 }}
             animate={inView ? { scaleY: 1 } : {}}
-            transition={{ duration: 0.9, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, delay: 0.5, ease: [0.65, 0, 0.35, 1] }}
           />
         )}
         <motion.div
@@ -381,7 +381,7 @@ function StageItem({ stage, index, isLast }: { stage: typeof STAGES[number]; ind
           style={{ border: `3px solid ${stage.color}` }}
           initial={{ scale: 0, opacity: 0 }}
           animate={inView ? { scale: 1, opacity: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1], type: "spring", stiffness: 200, damping: 15 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.65, 0, 0.35, 1], type: "spring", stiffness: 200, damping: 15 }}
         />
         <motion.span
           className="font-mono text-[11px] opacity-25"
@@ -399,7 +399,7 @@ function StageItem({ stage, index, isLast }: { stage: typeof STAGES[number]; ind
           className="text-[13px] uppercase tracking-[.15em] opacity-35 mb-3"
           initial={{ y: "100%", opacity: 0 }}
           animate={inView ? { y: 0, opacity: 0.35 } : {}}
-          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.65, 0, 0.35, 1] }}
         >
           {stage.subtitle}
         </motion.p>
@@ -409,7 +409,7 @@ function StageItem({ stage, index, isLast }: { stage: typeof STAGES[number]; ind
             style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", fontWeight: 600, color: stage.color }}
             initial={{ y: "110%" }}
             animate={inView ? { y: 0 } : {}}
-            transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, delay: 0.25, ease: [0.65, 0, 0.35, 1] }}
           >
             {stage.title}
           </motion.h3>
@@ -419,7 +419,7 @@ function StageItem({ stage, index, isLast }: { stage: typeof STAGES[number]; ind
           style={{ fontSize: "clamp(1.05rem, 1.4vw, 1.25rem)" }}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 0.5, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.7, delay: 0.4, ease: [0.65, 0, 0.35, 1] }}
         >
           {stage.desc}
         </motion.p>
@@ -431,7 +431,7 @@ function StageItem({ stage, index, isLast }: { stage: typeof STAGES[number]; ind
               style={{ fontSize: "clamp(0.95rem, 1.1vw, 1.05rem)" }}
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 0.65, x: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.5 + pi * 0.06, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.5, delay: 0.5 + pi * 0.06, ease: [0.65, 0, 0.35, 1] }}
             >
               <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ backgroundColor: stage.color }} />
               {point}
@@ -448,7 +448,7 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
   const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }} className={className}>
+      transition={{ duration: 0.7, delay, ease: [0.65, 0, 0.35, 1] }} className={className}>
       {children}
     </motion.div>
   );
@@ -535,7 +535,7 @@ export default function Pipeline() {
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1, ease: [0.65, 0, 0.35, 1] }}
           >
             {STAGES.map((stage, i) => (
               <StageItem key={stage.title} stage={stage} index={i} isLast={i === STAGES.length - 1} />
