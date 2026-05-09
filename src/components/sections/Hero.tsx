@@ -49,8 +49,8 @@ function CharReveal({
         else if (i === m) opacity = CHAR_FADE_VALUE + partial * (1 - CHAR_FADE_VALUE);
         else opacity = CHAR_FADE_VALUE;
         return (
-          <span key={i} style={{ opacity, display: "inline-block" }}>
-            {ch === " " ? " " : ch}
+          <span key={i} style={{ opacity, display: "inline-block", whiteSpace: "pre" }}>
+            {ch === " " ? " " : ch}
           </span>
         );
       })}

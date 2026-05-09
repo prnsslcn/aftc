@@ -162,8 +162,8 @@ export default function WhyAsea() {
                   className="font-display font-bold max-w-[18ch]"
                   style={{
                     fontSize: "clamp(2.5rem,6.5vw,6rem)",
-                    letterSpacing: "-0.04em",
-                    lineHeight: 1.0,
+                    letterSpacing: "-0.02em",
+                    lineHeight: 1.1,
                   }}
                 >
                   {item.title}
