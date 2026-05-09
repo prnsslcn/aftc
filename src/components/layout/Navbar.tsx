@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { NAV_ITEMS } from "@/lib/constants";
@@ -13,6 +15,11 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
   const threshold = scrollThreshold ?? autoThreshold;
   const { scrollY } = useScroll();
   const lenis = useLenis();
+  const pathname = usePathname();
+
+  // 홈은 스크롤 임계 통과 시 pill 채움, 그 외 페이지는 항상 채움 상태
+  const isHome = pathname === "/";
+  const filled = !isHome || scrolled;
 
   // scrollThreshold prop 미제공 시 4× viewport 로 자동 계산 (test1 패턴)
   useEffect(() => {
@@ -23,16 +30,36 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
 
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > threshold));
 
-  function handleAnchor(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
-    if (!href.startsWith("#")) return;
-    e.preventDefault();
+  function handleClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
     setMobileOpen(false);
-    if (href === "#") {
-      lenis?.scrollTo(0);
+
+    // 같은 페이지 anchor (#xxx)
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      if (href === "#") {
+        lenis?.scrollTo(0);
+        return;
+      }
+      const target = document.querySelector(href);
+      if (target) lenis?.scrollTo(target as HTMLElement);
       return;
     }
-    const target = document.querySelector(href);
-    if (target) lenis?.scrollTo(target as HTMLElement);
+
+    // 경로 + (선택적) anchor — 현재 페이지면 스크롤만, 아니면 Link 가 라우팅
+    const hashIndex = href.indexOf("#");
+    const path = hashIndex >= 0 ? href.slice(0, hashIndex) || "/" : href;
+    const anchor = hashIndex >= 0 ? href.slice(hashIndex) : "";
+
+    if (pathname === path) {
+      e.preventDefault();
+      if (!anchor || anchor === "#") {
+        lenis?.scrollTo(0);
+        return;
+      }
+      const target = document.querySelector(anchor);
+      if (target) lenis?.scrollTo(target as HTMLElement);
+    }
+    // 다른 페이지면 Link 의 기본 라우팅에 위임
   }
 
   return (
@@ -41,53 +68,53 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
         className="fixed top-6 left-1/2 z-[210] flex items-center gap-6 px-6 py-3 rounded-full transition-all duration-500"
         style={{
           transform: "translateX(-50%)",
-          backgroundColor: scrolled ? "rgba(255,255,255,0.85)" : "transparent",
-          backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
-          WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
-          boxShadow: scrolled ? "0 8px 40px rgba(0,0,0,0.1)" : "none",
-          border: scrolled ? "1px solid rgba(0,0,0,0.08)" : "1px solid transparent",
-          color: scrolled ? "#000" : "#fff",
+          backgroundColor: filled ? "rgba(255,255,255,0.85)" : "transparent",
+          backdropFilter: filled ? "blur(20px) saturate(180%)" : "none",
+          WebkitBackdropFilter: filled ? "blur(20px) saturate(180%)" : "none",
+          boxShadow: filled ? "0 8px 40px rgba(0,0,0,0.1)" : "none",
+          border: filled ? "1px solid rgba(0,0,0,0.08)" : "1px solid transparent",
+          color: filled ? "#000" : "#fff",
         }}
       >
-        <a href="#" onClick={(e) => handleAnchor(e, "#")} className="font-display font-black tracking-tighter text-xl mr-2">
+        <Link href="/" onClick={(e) => handleClick(e, "/")} className="font-display font-black tracking-tighter text-xl mr-2">
           ASEA
-        </a>
+        </Link>
 
         <div className="hidden md:flex items-center gap-6 text-sm font-medium opacity-60">
           {NAV_ITEMS.map((item) => (
-            <a
+            <Link
               key={item.label}
               href={item.href}
-              onClick={(e) => handleAnchor(e, item.href)}
+              onClick={(e) => handleClick(e, item.href)}
               className="hover:opacity-100 transition-opacity whitespace-nowrap"
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </div>
 
-        <a
-          href="#apply"
-          onClick={(e) => handleAnchor(e, "#apply")}
+        <Link
+          href="/apply"
+          onClick={(e) => handleClick(e, "/apply")}
           className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500 whitespace-nowrap"
           style={{
-            backgroundColor: scrolled ? "#000" : "rgba(255,255,255,0.15)",
-            color: scrolled ? "#fff" : "inherit",
+            backgroundColor: filled ? "#000" : "rgba(255,255,255,0.15)",
+            color: filled ? "#fff" : "inherit",
           }}
         >
           과정 문의
-        </a>
-        <a
-          href="#trial"
-          onClick={(e) => handleAnchor(e, "#trial")}
+        </Link>
+        <Link
+          href="/trial"
+          onClick={(e) => handleClick(e, "/trial")}
           className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500 whitespace-nowrap"
           style={{
-            backgroundColor: scrolled ? "#6b7280" : "rgba(255,255,255,0.15)",
-            color: scrolled ? "#fff" : "inherit",
+            backgroundColor: filled ? "#6b7280" : "rgba(255,255,255,0.15)",
+            color: filled ? "#fff" : "inherit",
           }}
         >
           체험 문의
-        </a>
+        </Link>
 
         <button
           onClick={() => setMobileOpen(true)}
@@ -116,39 +143,48 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
             </button>
 
             {NAV_ITEMS.map((item, i) => (
-              <motion.a
+              <motion.div
                 key={item.label}
-                href={item.href}
-                onClick={(e) => handleAnchor(e, item.href)}
-                className="text-2xl font-bold"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
               >
-                {item.label}
-              </motion.a>
+                <Link
+                  href={item.href}
+                  onClick={(e) => handleClick(e, item.href)}
+                  className="text-2xl font-bold"
+                >
+                  {item.label}
+                </Link>
+              </motion.div>
             ))}
 
-            <motion.a
-              href="#apply"
-              onClick={(e) => handleAnchor(e, "#apply")}
-              className="mt-4 bg-black text-white rounded-full px-8 py-4 text-lg font-semibold"
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.4 }}
             >
-              과정 문의하기
-            </motion.a>
-            <motion.a
-              href="#trial"
-              onClick={(e) => handleAnchor(e, "#trial")}
-              className="bg-[#6b7280] text-white rounded-full px-8 py-4 text-lg font-semibold"
+              <Link
+                href="/apply"
+                onClick={(e) => handleClick(e, "/apply")}
+                className="mt-4 inline-block bg-black text-white rounded-full px-8 py-4 text-lg font-semibold"
+              >
+                과정 문의하기
+              </Link>
+            </motion.div>
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.45 }}
             >
-              체험 문의하기
-            </motion.a>
+              <Link
+                href="/trial"
+                onClick={(e) => handleClick(e, "/trial")}
+                className="bg-[#6b7280] text-white rounded-full px-8 py-4 text-lg font-semibold"
+              >
+                체험 문의하기
+              </Link>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

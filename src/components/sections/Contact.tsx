@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { motion, useInView } from "framer-motion";
 import { CONTACT } from "@/lib/constants";
@@ -46,15 +47,15 @@ export default function Contact() {
 
           <RevealBlock delay={0.16}>
             <div className="flex flex-wrap gap-4 mt-10">
-              <a
-                href="#apply"
+              <Link
+                href="/apply"
                 className="inline-flex items-center gap-3 h-[42px] px-5 bg-black text-white text-sm rounded-full hover:scale-[1.03] active:scale-[0.97] transition-transform"
               >
                 과정 문의 및 지원
                 <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center">
                   <Icon icon="solar:arrow-right-up-linear" className="text-[10px]" />
                 </span>
-              </a>
+              </Link>
               <a
                 href={`tel:${CONTACT.phone}`}
                 className="inline-flex items-center gap-3 h-[42px] px-5 bg-[#f5f6f8] text-black text-sm rounded-full hover:scale-[1.03] active:scale-[0.97] transition-transform"

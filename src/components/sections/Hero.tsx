@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 
 /* ═══════════════════════════════════════
@@ -79,6 +79,7 @@ function ThreeStageSection() {
   return (
     <section
       ref={ref}
+      id="intro"
       className="relative z-10 text-white"
       style={{ height: `${(STAGE_COUNT + 1) * 100}svh` }}
     >
@@ -180,9 +181,36 @@ export default function Hero() {
   const loadCompleteRef = useRef(false);
   const [ready, setReady] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [skipLoad, setSkipLoad] = useState(false);
 
-  // 페이지 로드 pill → video 타이머
+  // URL 에 hash 있으면 (섹션 이동) 로드 애니메이션 스킵 + 프레임 즉시 풀스크린 + 정확한 위치로 스크롤
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!window.location.hash) return;
+
+    if (frameRef.current) {
+      frameRef.current.style.inset = "0px";
+      frameRef.current.style.width = "100%";
+      frameRef.current.style.height = "100%";
+      frameRef.current.style.borderRadius = "0px";
+    }
+    setSkipLoad(true);
+    setLoaded(true);
+    setReady(true);
+    loadCompleteRef.current = true;
+
+    // Lenis element-based scrollTo 가 sticky+svh 레이아웃에서 위치를 정확히 못 잡는 경우 대비,
+    // paint 전에 native scroll 로 정확한 위치 직접 세팅
+    const target = document.querySelector(window.location.hash) as HTMLElement | null;
+    if (target) {
+      const targetY = target.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, targetY);
+    }
+  }, []);
+
+  // 페이지 로드 pill → video 타이머 (hash 없을 때만)
   useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash) return;
     const t1 = setTimeout(() => setLoaded(true), 100);
     const t2 = setTimeout(() => setReady(true), 1600);
     return () => { clearTimeout(t1); clearTimeout(t2); };
@@ -224,7 +252,10 @@ export default function Hero() {
     }
     function onScroll() { if (!raf) { requestAnimationFrame(tick); raf = true; } }
     window.addEventListener("scroll", onScroll, { passive: true });
-    tick();
+    // 초기 tick 은 hash 없을 때만 (hash 있으면 이미 풀스크린 프레임으로 pre-set 됨)
+    if (typeof window === "undefined" || !window.location.hash) {
+      tick();
+    }
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -257,8 +288,8 @@ export default function Hero() {
               transform: "translate(-50%, -50%)",
             }}
             initial={{ clipPath: "inset(50% 50% 50% 50% round 200px)" }}
-            animate={loaded ? { clipPath: "inset(0% round 20px)" } : {}}
-            transition={{ duration: 2, delay: 0.3, ease: [0.87, 0, 0.13, 1] }}
+            animate={loaded ? { clipPath: skipLoad ? "inset(0% round 0px)" : "inset(0% round 20px)" } : {}}
+            transition={skipLoad ? { duration: 0 } : { duration: 2, delay: 0.3, ease: [0.87, 0, 0.13, 1] }}
             onAnimationComplete={() => { loadCompleteRef.current = true; }}
           >
             <video
@@ -299,7 +330,7 @@ export default function Hero() {
               style={{ fontSize: "clamp(4rem, 13vw, 12rem)" }}
               initial={{ y: "110%" }}
               animate={ready ? { y: 0 } : {}}
-              transition={{ duration: 1.2, delay: 0, ease: [0, 1, 0.4, 1] }}
+              transition={skipLoad ? { duration: 0 } : { duration: 1.2, delay: 0, ease: [0, 1, 0.4, 1] }}
             >
               ASEA
             </motion.h1>
@@ -314,7 +345,7 @@ export default function Hero() {
               }}
               initial={{ y: "110%" }}
               animate={ready ? { y: 0 } : {}}
-              transition={{ duration: 1.2, delay: 0.15, ease: [0, 1, 0.4, 1] }}
+              transition={skipLoad ? { duration: 0 } : { duration: 1.2, delay: 0.15, ease: [0, 1, 0.4, 1] }}
             >
               Flight Training Center
             </motion.p>
