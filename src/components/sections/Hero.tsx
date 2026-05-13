@@ -91,10 +91,10 @@ function ThreeStageSection() {
         <div className="px-6 md:px-10 flex-shrink-0" style={{ paddingTop: 48, paddingBottom: 44 }}>
           <span
             className="inline-block rounded-full px-3 py-1.5 text-[11px] md:text-xs uppercase tracking-[.25em]"
-            style={{
-              background: "rgba(255,255,255,0.1)",
-              color: "#fff",
-            }}
+            // style={{
+            //   background: "rgba(255,255,255,0.1)",
+            //   color: "#fff",
+            // }}
           >
             What we do
           </span>
@@ -258,7 +258,7 @@ export default function Hero() {
       {/* 영상 레이어 — sticky */}
       <div
         ref={stickyRef}
-        className="sticky top-0 overflow-hidden bg-white z-0"
+        className="sticky top-0 overflow-hidden bg-[#fafaf8] z-0"
         style={{ height: "100svh" }}
       >
         <div

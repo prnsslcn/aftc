@@ -226,7 +226,7 @@ function CostTable() {
         {FLIGHT_SCHOOL_COURSES.map((c, i) => (
           <motion.div
             key={c.name}
-            className="rounded-2xl bg-white p-5 flex flex-col"
+            className="rounded-2xl bg-[#fafaf8] p-5 flex flex-col"
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{
@@ -265,7 +265,7 @@ function CostTable() {
         {FLIGHT_SCHOOL_COURSES.map((c, i) => (
           <motion.div
             key={c.name}
-            className="rounded-xl bg-white p-4 flex items-center justify-between"
+            className="rounded-xl bg-[#fafaf8] p-4 flex items-center justify-between"
             initial={{ opacity: 0, x: -20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.15 + i * 0.06, ease: [0.65, 0, 0.35, 1] }}
@@ -284,7 +284,7 @@ function CostTable() {
 
       {/* 합계 */}
       <motion.div
-        className="mt-3 rounded-2xl bg-white px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+        className="mt-3 rounded-2xl bg-[#fafaf8] px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6, delay: 0.2 + FLIGHT_SCHOOL_COURSES.length * 0.08, ease: [0.65, 0, 0.35, 1] }}
@@ -323,7 +323,7 @@ function ProgramSteps() {
         {PIPELINE_STEPS.map((step, i) => (
           <div key={step.label} className="flex items-center">
             <motion.div
-              className="rounded-xl bg-white px-6 py-4 min-w-[150px]"
+              className="rounded-xl bg-[#fafaf8] px-6 py-4 min-w-[150px]"
               initial={{ opacity: 0, y: 30, scale: 0.9 }}
               animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
               transition={{
@@ -377,7 +377,7 @@ function StageItem({ stage, index, isLast }: { stage: typeof STAGES[number]; ind
           />
         )}
         <motion.div
-          className="relative z-10 w-[14px] h-[14px] rounded-full bg-white"
+          className="relative z-10 w-[14px] h-[14px] rounded-full bg-[#fafaf8]"
           style={{ border: `3px solid ${stage.color}` }}
           initial={{ scale: 0, opacity: 0 }}
           animate={inView ? { scale: 1, opacity: 1 } : {}}

@@ -24,7 +24,7 @@ function RevealBlock({ children, delay = 0, className = '' }: { children: React.
 export default function AirlinePrep() {
   const [benefitOpen, setBenefitOpen] = useState(false);
   return (
-    <section id="airline-prep" className="py-[clamp(5rem,8vw,9rem)] px-[clamp(0.5rem,5vw,7.75rem)] bg-white">
+    <section id="airline-prep" className="py-[clamp(5rem,8vw,9rem)] px-[clamp(0.5rem,5vw,7.75rem)] bg-[#fafaf8]">
       <div className="max-w-[80rem] mx-auto">
         <RevealBlock>
           <p className="text-sm opacity-40 uppercase tracking-widest mb-5">

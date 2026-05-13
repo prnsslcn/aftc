@@ -24,7 +24,7 @@ function RevealBlock({ children, delay = 0, className = '' }: { children: React.
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-[clamp(5rem,8vw,9rem)] px-[clamp(0.5rem,5vw,7.75rem)] bg-white">
+    <section id="contact" className="py-[clamp(5rem,8vw,9rem)] px-[clamp(0.5rem,5vw,7.75rem)] bg-[#fafaf8]">
       <div className="max-w-[80rem] mx-auto">
         <div className="max-w-3xl">
           <RevealBlock>

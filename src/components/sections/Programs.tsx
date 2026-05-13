@@ -173,7 +173,7 @@ function CourseInfo({ course, accent }: { course: typeof COURSE_P1 | typeof COUR
 
 export default function Programs() {
   return (
-    <section id="programs" className="bg-white" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
+    <section id="programs" className="bg-[#fafaf8]" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
       <div className="max-w-[80rem] mx-auto">
 
         {/* Header */}
@@ -205,7 +205,7 @@ export default function Programs() {
         <div className="mt-20 grid grid-cols-1 md:grid-cols-2 items-start">
           {/* Ground School */}
           <Reveal>
-            <div className="bg-white py-10 md:pr-12 md:border-r md:border-black/[.06]">
+            <div className="bg-[#fafaf8] py-10 md:pr-12 md:border-r md:border-black/[.06]">
               <p className="text-[11px] uppercase tracking-[.2em] text-emerald-600 font-semibold mb-3">Ground School</p>
               <h3 className="tracking-[-0.03em] mb-6" style={{ fontSize: "clamp(1.3rem, 2.5vw, 1.75rem)", fontWeight: 600 }}>이론 교육 13과목</h3>
               <div className="space-y-0">
@@ -221,7 +221,7 @@ export default function Programs() {
 
           {/* FTD Training */}
           <Reveal delay={0.08}>
-            <div className="bg-white py-10 md:pl-12">
+            <div className="bg-[#fafaf8] py-10 md:pl-12">
               <p className="text-[11px] uppercase tracking-[.2em] text-blue-600 font-semibold mb-3">FTD Training</p>
               <h3 className="tracking-[-0.03em] mb-6" style={{ fontSize: "clamp(1.3rem, 2.5vw, 1.75rem)", fontWeight: 600 }}>FTD 실습</h3>
 
@@ -239,17 +239,17 @@ export default function Programs() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 items-start">
             <Reveal>
-              <div className="bg-white py-10 md:pr-10 md:border-r md:border-black/[.06]">
+              <div className="bg-[#fafaf8] py-10 md:pr-10 md:border-r md:border-black/[.06]">
                 <CourseInfo course={COURSE_P1} accent="#16a34a" />
               </div>
             </Reveal>
             <Reveal delay={0.08}>
-              <div className="bg-white py-10 md:px-10 md:border-r md:border-black/[.06]">
+              <div className="bg-[#fafaf8] py-10 md:px-10 md:border-r md:border-black/[.06]">
                 <CourseInfo course={COURSE_P2} accent="#c0425c" />
               </div>
             </Reveal>
             <Reveal delay={0.16}>
-              <div className="bg-white py-10 md:pl-10">
+              <div className="bg-[#fafaf8] py-10 md:pl-10">
                 <CourseInfo course={COURSE_ERAU} accent="#1767b1" />
               </div>
             </Reveal>

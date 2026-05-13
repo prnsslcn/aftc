@@ -120,7 +120,7 @@ function ProcessColumn({
   totalLabel: string;
 }) {
   return (
-    <div className="rounded-3xl bg-white p-8 md:p-10">
+    <div className="rounded-3xl bg-[#fafaf8] p-8 md:p-10">
       <div className="flex items-baseline justify-between mb-8">
         <div>
           <h3

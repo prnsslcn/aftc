@@ -37,7 +37,7 @@ export default function TrialInquiry() {
         </RevealBlock>
 
         <RevealBlock delay={0.16}>
-          <div className="mt-12 rounded-2xl bg-white aspect-[16/9] flex flex-col items-center justify-center text-center">
+          <div className="mt-12 rounded-2xl bg-[#fafaf8] aspect-[16/9] flex flex-col items-center justify-center text-center">
             <div className="w-14 h-14 rounded-2xl bg-black/[.04] flex items-center justify-center">
               <Icon icon="solar:hourglass-line-linear" className="text-2xl text-black/40" />
             </div>

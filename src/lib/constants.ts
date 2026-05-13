@@ -17,7 +17,7 @@ export const FORM_ENTRIES = {
 } as const;
 
 export const CONTACT = {
-  phone: "02-717-8811",
+  phone: "02-715-5398",
   location: "아세아항공직업전문학교",
 };
 

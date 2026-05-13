@@ -143,7 +143,7 @@ export default function FlightSchool() {
 
         {/* 멘토링 안내 */}
         <RevealBlock delay={0.32}>
-          <div className="mt-10 rounded-2xl bg-white p-8 md:p-10 overflow-hidden relative border border-black/[.05]">
+          <div className="mt-10 rounded-2xl bg-[#fafaf8] p-8 md:p-10 overflow-hidden relative border border-black/[.05]">
             <div className="grid md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-start">
               <p className="text-[11px] uppercase tracking-[.25em] opacity-40 md:pt-1">
                 Mentoring Support
