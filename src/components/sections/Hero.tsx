@@ -86,7 +86,7 @@ function ThreeStageSection() {
     >
       <div
         className="sticky top-0 flex flex-col"
-        style={{ height: "100lvh", paddingTop: "70px" }}
+        style={{ height: "100dvh", paddingTop: "70px" }}
       >
         <div className="px-6 md:px-10 flex-shrink-0" style={{ paddingTop: 48, paddingBottom: 44 }}>
           <span
@@ -227,9 +227,11 @@ export default function Hero() {
 
       const frameP = clamp(0, 1, sy / (vh * 0.2));
       const isDesktop = window.matchMedia("(min-width: 1025px)").matches;
+      // 데스크탑은 큰 letterbox + 라운드, 모바일은 작은 letterbox + 작은 라운드
       const padStart = isDesktop ? 12 : 8;
+      const radiusStart = isDesktop ? 20 : 8;
       const pad = lerp(padStart, 0, frameP);
-      const radius = lerp(20, 0, frameP);
+      const radius = lerp(radiusStart, 0, frameP);
       frame.style.inset = `${pad}px`;
       frame.style.width = `calc(100% - ${pad * 2}px)`;
       frame.style.height = `calc(100% - ${pad * 2}px)`;
@@ -259,17 +261,11 @@ export default function Hero() {
       <div
         ref={stickyRef}
         className="sticky top-0 overflow-hidden bg-[#fafaf8] z-0"
-        style={{ height: "100svh" }}
+        style={{ height: "100dvh" }}
       >
         <div
           ref={frameRef}
-          className="absolute overflow-hidden"
-          style={{
-            inset: "12px",
-            width: "calc(100% - 24px)",
-            height: "calc(100% - 24px)",
-            borderRadius: "20px",
-          }}
+          className="absolute overflow-hidden inset-2 lg:inset-3 rounded-[8px] lg:rounded-[20px]"
         >
           <motion.div
             ref={maskRef}
@@ -309,10 +305,10 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Hero main — 일반 flow, 100svh, 스크롤 시 위로 사라짐 */}
+      {/* Hero main — 일반 flow, 100dvh, 스크롤 시 위로 사라짐 */}
       <div
         className="relative z-10 text-white pointer-events-none"
-        style={{ marginTop: "-100svh", height: "100svh" }}
+        style={{ marginTop: "-100dvh", height: "100dvh" }}
       >
         <div
           className="flex flex-col justify-end h-full"

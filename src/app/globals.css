@@ -25,9 +25,15 @@
 }
 
 html {
+  background: var(--background);
+  overflow-x: clip;
   scroll-restoration: manual;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
+}
+
+body {
+  overflow-x: clip;
 }
 
 /* 브라우저 기본 스크롤바 숨김 (Chrome/Safari/Opera) */

@@ -57,7 +57,7 @@ export default function WhyAsea() {
   const item = isOutro ? null : WHY_ASEA[active];
 
   return (
-    <section className="relative bg-[#0a0a0a] text-white">
+    <section className="relative bg-[#0a0a0a] text-white" style={{ overflowX: "clip" }}>
       {/* Intro */}
       <div style={{ padding: `clamp(5rem,8vw,9rem) ${PX} clamp(3rem,5vw,5rem)` }}>
         <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white">
