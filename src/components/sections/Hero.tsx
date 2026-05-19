@@ -225,17 +225,15 @@ export default function Hero() {
       const sy = window.scrollY;
       const vh = window.innerHeight;
 
-      const frameP = clamp(0, 1, sy / (vh * 0.2));
-      // ease-in (quadratic) — Lenis 휠 ease-out 의 빠른 초반을 상쇄해서 letterbox 닫힘 시작을 부드럽게
-      const easedP = frameP * frameP;
+      // 트리거 범위를 늘려서 (vh * 0.5) iOS 스크롤 inertia 가 한 번에 trigger 를 넘기지 않게 함
+      const frameP = clamp(0, 1, sy / (vh * 0.5));
       const isDesktop = window.matchMedia("(min-width: 1025px)").matches;
       // 데스크탑은 큰 letterbox + 라운드, 모바일은 작은 letterbox + 작은 라운드
       const padStart = isDesktop ? 12 : 8;
       const radiusStart = isDesktop ? 20 : 8;
       // pad 끝값을 -1 로 두어 닫힐 때 sticky 를 1px 덮어쓰게 (overdraw) → 좌/우 sub-pixel 갭 차단
-      // sticky 의 overflow-hidden 이 -1 만큼 자동으로 잘라줌
-      const pad = lerp(padStart, -1, easedP);
-      const radius = lerp(radiusStart, 0, easedP);
+      const pad = lerp(padStart, -1, frameP);
+      const radius = lerp(radiusStart, 0, frameP);
       frame.style.inset = `${pad}px`;
       frame.style.width = `calc(100% - ${pad * 2}px)`;
       frame.style.height = `calc(100% - ${pad * 2}px)`;
