@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { useLenis } from "@/components/providers/SmoothScrollProvider";
+import { usePageTransition } from "@/components/layout/PageTransition";
 
 export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }) {
   const [scrolled, setScrolled] = useState(false);
@@ -16,6 +17,8 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
   const { scrollY } = useScroll();
   const lenis = useLenis();
   const pathname = usePathname();
+  const router = useRouter();
+  const { runLeave, runEnter, inTransition, awaitNextChildrenChange } = usePageTransition();
 
   // 홈은 스크롤 임계 통과 시 pill 채움, 그 외 페이지는 항상 채움 상태
   const isHome = pathname === "/";
@@ -52,12 +55,13 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
       return;
     }
 
-    // 경로 + (선택적) anchor — 현재 페이지면 스크롤만, 아니면 Link 가 라우팅
+    // 경로 + (선택적) anchor
     const hashIndex = href.indexOf("#");
     const path = hashIndex >= 0 ? href.slice(0, hashIndex) || "/" : href;
     const anchor = hashIndex >= 0 ? href.slice(hashIndex) : "";
 
     if (pathname === path) {
+      // 같은 페이지: scroll 만
       e.preventDefault();
       if (!anchor || anchor === "#") {
         lenis?.scrollTo(0, opts);
@@ -65,8 +69,27 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
       }
       const target = document.querySelector(anchor);
       if (target) lenis?.scrollTo(target as HTMLElement, opts);
+      return;
     }
-    // 다른 페이지면 Link 의 기본 라우팅에 위임
+
+    // 다른 페이지: leave 애니메이션 먼저 실행 → router.push → children commit 대기 → enter (Barba 패턴)
+    e.preventDefault();
+    if (inTransition()) return;
+
+    (async () => {
+      await runLeave();
+      // children prop 이 새 페이지로 commit 될 때까지 대기 (React 19 concurrent rendering 대응)
+      const childrenChanged = awaitNextChildrenChange();
+      router.push(href);
+      await Promise.race([
+        childrenChanged,
+        // 안전 타임아웃 — children change 가 안 잡히는 edge case 대비
+        new Promise<void>((r) => setTimeout(() => r(), 500)),
+      ]);
+      // commit 후 paint 한 프레임 더 대기
+      await new Promise<void>((r) => requestAnimationFrame(() => r()));
+      await runEnter(path === "/");
+    })();
   }
 
   return (

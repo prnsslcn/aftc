@@ -257,7 +257,7 @@ export default function Programs() {
 
           {/* 공통 안내 — 전 과정 적용 */}
           <Reveal delay={0.2}>
-            <div className="mt-10 flex items-start gap-3 rounded-2xl border border-black/[.06] bg-[#f5f6f8] px-6 py-5">
+            <div className="mt-10 flex items-start gap-3 rounded-2xl border border-black/[.06] bg-[#fafaf8] px-6 py-5">
               <Icon icon="solar:info-circle-bold" className="text-xl text-black/40 flex-shrink-0 mt-0.5" />
               <p className="text-sm md:text-base opacity-70 leading-relaxed">
                 {COURSE_COMMON_NOTE}

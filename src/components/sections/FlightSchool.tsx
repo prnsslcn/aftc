@@ -67,7 +67,7 @@ function SchoolCard({ school }: { school: School }) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className="w-full flex items-center justify-between gap-3 px-6 md:px-7 py-4 text-left hover:bg-[#f5f6f8] transition-colors"
+          className="w-full flex items-center justify-between gap-3 px-6 md:px-7 py-4 text-left hover:bg-[#fafaf8] transition-colors"
         >
           <span className="flex items-center gap-2 text-sm opacity-60">
             <Icon icon="solar:map-point-linear" className="text-base" />
@@ -110,7 +110,7 @@ function SchoolCard({ school }: { school: School }) {
 
 export default function FlightSchool() {
   return (
-    <section id="flight-school" className="py-[clamp(5rem,8vw,9rem)] px-[clamp(0.5rem,5vw,7.75rem)] bg-[#f0f2f5]">
+    <section id="flight-school" className="py-[clamp(5rem,8vw,9rem)] px-[clamp(0.5rem,5vw,7.75rem)] bg-[#fafaf8]">
       <div className="max-w-[80rem] mx-auto">
         <RevealBlock>
           <p className="text-sm opacity-40 uppercase tracking-widest mb-5">

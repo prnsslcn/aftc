@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 const LenisContext = createContext<Lenis | null>(null);
@@ -13,7 +12,6 @@ export function useLenis() {
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
   const [lenis, setLenis] = useState<Lenis | null>(null);
-  const pathname = usePathname();
 
   useEffect(() => {
     const instance = new Lenis({
@@ -43,11 +41,7 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     };
   }, []);
 
-  // 라우트 변경 시 항상 top 으로 리셋. hash 처리는 페이지 컴포넌트(Hero 등)가 담당
-  useEffect(() => {
-    if (!lenisRef.current) return;
-    lenisRef.current.scrollTo(0, { immediate: true });
-  }, [pathname]);
+  // 라우트 변경 시 scroll reset 은 PageTransition 의 swap 시점에 처리
 
   return <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>;
 }

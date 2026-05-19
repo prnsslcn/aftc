@@ -3,6 +3,8 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import "lenis/dist/lenis.css";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { PageTransition } from "@/components/layout/PageTransition";
+import Navbar from "@/components/layout/Navbar";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -36,7 +38,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-[100dvh] flex flex-col bg-[#fafaf8] text-black font-sans overflow-x-hidden">
         <script dangerouslySetInnerHTML={{ __html: `history.scrollRestoration='manual';window.scrollTo(0,0);` }} />
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <SmoothScrollProvider>
+          <PageTransition navbar={<Navbar />}>{children}</PageTransition>
+        </SmoothScrollProvider>
       </body>
     </html>
   );

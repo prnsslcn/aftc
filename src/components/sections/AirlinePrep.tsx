@@ -107,7 +107,7 @@ export default function AirlinePrep() {
         <RevealBlock delay={0.16}>
           <div className="mt-10 flex items-stretch gap-3">
             {/* Cost — 95% */}
-            <div className="flex-1 min-w-0 rounded-full border border-black/[.06] bg-[#f5f6f8] px-6 py-5 flex items-center justify-between gap-4">
+            <div className="flex-1 min-w-0 rounded-full border border-black/[.06] bg-[#fafaf8] px-6 py-5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-[10px] uppercase tracking-[.18em] font-semibold opacity-40">Cost</span>
                 <span className="text-sm opacity-60">{AIRLINE_PREP.cost.note}</span>
@@ -123,7 +123,7 @@ export default function AirlinePrep() {
               onClick={() => setBenefitOpen((v) => !v)}
               aria-expanded={benefitOpen}
               aria-label="Benefit 보기"
-              className="flex-shrink-0 aspect-square rounded-full border border-black/[.06] bg-[#f5f6f8] hover:bg-[#eef0f3] transition-colors flex items-center justify-center"
+              className="flex-shrink-0 aspect-square rounded-full border border-black/[.06] bg-[#fafaf8] hover:bg-[#f0f0ee] transition-colors flex items-center justify-center"
               style={{ width: "clamp(60px, 5%, 80px)", minWidth: 60 }}
             >
               <motion.div animate={{ rotate: benefitOpen ? 180 : 0 }} transition={{ duration: 0.5, ease: [0.65, 0, 0.35, 1] }}>

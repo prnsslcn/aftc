@@ -58,7 +58,7 @@ export default function Contact() {
               </Link>
               <a
                 href={`tel:${CONTACT.phone}`}
-                className="inline-flex items-center gap-3 h-[42px] px-5 bg-[#f5f6f8] text-black text-sm rounded-full hover:scale-[1.03] active:scale-[0.97] transition-transform"
+                className="inline-flex items-center gap-3 h-[42px] px-5 bg-[#fafaf8] text-black text-sm rounded-full hover:scale-[1.03] active:scale-[0.97] transition-transform"
               >
                 <Icon icon="solar:phone-bold" className="text-sm opacity-50" />
                 전화 상담

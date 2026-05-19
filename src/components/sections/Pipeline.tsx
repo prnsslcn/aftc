@@ -500,7 +500,7 @@ export default function Pipeline() {
   const stageRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   return (
-    <section id="pipeline" className="bg-[#f0f2f5] relative overflow-hidden" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
+    <section id="pipeline" className="bg-[#fafaf8] relative overflow-hidden" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
       <AirlineRain />
       <div className="max-w-[80rem] mx-auto relative">
 

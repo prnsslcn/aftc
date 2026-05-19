@@ -22,7 +22,7 @@ function RevealBlock({ children, delay = 0, className = "" }: { children: React.
 
 export default function TrialInquiry() {
   return (
-    <section id="trial" className="bg-[#f0f2f5]" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
+    <section id="trial" className="bg-[#fafaf8]" style={{ padding: "clamp(5rem,8vw,9rem) clamp(0.5rem,5vw,7.75rem)" }}>
       <div className="max-w-[80rem] mx-auto">
         <RevealBlock>
           <p className="text-sm opacity-40 uppercase tracking-widest mb-5">Trial Inquiry</p>

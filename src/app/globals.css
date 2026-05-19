@@ -10,10 +10,10 @@
 :root {
   --background: #fafaf8;
   --foreground: #000000;
-  --color-beige: #f0f2f5;
+  --color-beige: #fafaf8;
   --color-grey: #d5d8dd;
-  --color-grey-light: #f0f2f5;
-  --color-grey-lighter: #f5f6f8;
+  --color-grey-light: #fafaf8;
+  --color-grey-lighter: #fafaf8;
   --radius-md: 12px;
   --spacing: 0.25rem;
 }

@@ -239,7 +239,7 @@ export default function AppUpp() {
   return (
     <section
       id="app-upp"
-      className="bg-[#f0f2f5] relative"
+      className="bg-[#fafaf8] relative"
     >
       {/* Zoom Title — APP · UPP 선발 대비 교육 */}
       <ZoomTitle />
