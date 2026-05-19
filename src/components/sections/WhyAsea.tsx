@@ -81,7 +81,16 @@ export default function WhyAsea() {
 
       {/* Sticky deck */}
       <div ref={deckRef} style={{ height: `${M * 120 + 60}vh` }}>
-        <div className="sticky top-0 overflow-hidden" style={{ height: "100svh" }}>
+        <div
+          className="sticky top-0 overflow-hidden"
+          style={{
+            height: "100svh",
+            // iOS Safari 긴 sticky 컨테이너 jitter 대응 — GPU 레이어로 승격 + paint scope 격리
+            // (transform: translateZ(0) 는 sticky 동작 깨질 수 있어 will-change 만 사용)
+            willChange: "transform",
+            contain: "paint",
+          }}
+        >
 
           {/* Background grid */}
           <div
