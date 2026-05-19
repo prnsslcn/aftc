@@ -86,7 +86,7 @@ function ThreeStageSection() {
     >
       <div
         className="sticky top-0 flex flex-col"
-        style={{ height: "100svh", paddingTop: "70px" }}
+        style={{ height: "100dvh", paddingTop: "70px" }}
       >
         <div className="px-6 md:px-10 flex-shrink-0" style={{ paddingTop: 48, paddingBottom: 44 }}>
           <span
@@ -263,7 +263,7 @@ export default function Hero() {
       <div
         ref={stickyRef}
         className="sticky top-0 overflow-hidden bg-[#fafaf8] z-0"
-        style={{ height: "100svh" }}
+        style={{ height: "100dvh" }}
       >
         <div
           ref={frameRef}
@@ -307,12 +307,10 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Hero main — 일반 flow, 100svh, 스크롤 시 위로 사라짐
-          (URL bar 토글에 따른 Hero 총 높이 변동이 WhyAsea 진동의 원인이라
-          dvh → svh 로 변경해서 문서 높이를 안정화) */}
+      {/* Hero main — 일반 flow, 100dvh, 스크롤 시 위로 사라짐 */}
       <div
         className="relative z-10 text-white pointer-events-none"
-        style={{ marginTop: "-100svh", height: "100svh" }}
+        style={{ marginTop: "-100dvh", height: "100dvh" }}
       >
         <div
           className="flex flex-col justify-end h-full"

@@ -83,29 +83,21 @@ export default function WhyAsea() {
       <div ref={deckRef} style={{ height: `${M * 120 + 60}vh` }}>
         <div
           className="sticky top-0 overflow-hidden"
-          style={{
-            height: "100svh",
-            // iOS Safari 긴 sticky 컨테이너 jitter 대응 — GPU 레이어로 승격 + paint scope 격리
-            // (transform: translateZ(0) 는 sticky 동작 깨질 수 있어 will-change 만 사용)
-            willChange: "transform",
-            contain: "paint",
-          }}
+          style={{ height: "100svh" }}
         >
 
-          {/* Background grid */}
+          {/* Background grid — mask-image 제거 (iOS Safari paint 부하). opacity 낮춰서 끝까지 옅게 표시 */}
           <div
             aria-hidden
             className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage:
-                "linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)",
+                "linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)",
               backgroundSize: "64px 64px",
-              maskImage: "radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 100%)",
-              WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 100%)",
             }}
           />
 
-          {/* Watermark number — outline stroke, bottom-right (outro 에선 숨김) */}
+          {/* Watermark number — solid fill (outro 에선 숨김) */}
           <AnimatePresence mode="wait">
             {!isOutro && (
               <motion.span
@@ -117,8 +109,8 @@ export default function WhyAsea() {
                   bottom: "-0.08em",
                   fontSize: "clamp(16rem,42vw,56rem)",
                   letterSpacing: "-0.1em",
-                  color: "transparent",
-                  WebkitTextStroke: "1.5px rgba(255,255,255,0.05)",
+                  // WebkitTextStroke 는 거대 폰트 + 모바일 환경에서 paint 부하 큼 → 옅은 solid fill 로 대체
+                  color: "rgba(255,255,255,0.04)",
                 }}
                 initial={{ opacity: 0, x: 40 }}
                 animate={{ opacity: 1, x: 0 }}
