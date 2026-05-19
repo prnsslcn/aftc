@@ -150,7 +150,9 @@ function ThreeStageSection() {
                     <p
                       className="tracking-[-0.02em] text-right"
                       style={{
-                        fontSize: "clamp(1.875rem, calc(1.875rem + 2.8vw), 3.625rem)",
+                        // 모바일 (~24px) → 데스크탑 (~58px). 기존 mobile 41px 는 stage 2
+                        // 같은 긴 문단이 sticky viewport 세로를 넘어 잘렸음
+                        fontSize: "clamp(1.5rem, calc(0.5rem + 3.5vw), 3.625rem)",
                         lineHeight: "1.1em",
                         fontWeight: 500,
                       }}
