@@ -28,6 +28,10 @@ const N = WHY_ASEA.length; // 7 principles
 const M = N + 1; // 8 phases (마지막 1개는 outro CTA)
 const EASE = [0.65, 0, 0.35, 1] as const;
 const PX = "clamp(2rem,10vw,14rem)";
+// stage 당 스크롤 길이 (vh). iOS Safari 긴 sticky 컨테이너 jitter 회피 목적으로
+// 기존 120vh → 70vh 로 축소 (총 deck: 1020vh → 600vh)
+const STAGE_VH = 70;
+const TAIL_VH = 40;
 
 function SegmentBar({ scrollYProgress, index }: { scrollYProgress: MotionValue<number>; index: number }) {
   // 각 segment 는 1/M 만큼의 scroll 진행을 차지 (outro 구간은 segment 없음)
@@ -57,7 +61,7 @@ export default function WhyAsea() {
   const item = isOutro ? null : WHY_ASEA[active];
 
   return (
-    <section className="relative bg-[#0a0a0a] text-white" style={{ overflowX: "clip" }}>
+    <section className="relative bg-[#0a0a0a] text-white">
       {/* Intro */}
       <div style={{ padding: `clamp(5rem,8vw,9rem) ${PX} clamp(3rem,5vw,5rem)` }}>
         <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white">
@@ -80,7 +84,7 @@ export default function WhyAsea() {
       </div>
 
       {/* Sticky deck */}
-      <div ref={deckRef} style={{ height: `${M * 120 + 60}vh` }}>
+      <div ref={deckRef} style={{ height: `${M * STAGE_VH + TAIL_VH}vh` }}>
         <div
           className="sticky top-0 overflow-hidden"
           style={{ height: "100svh" }}
