@@ -21,19 +21,89 @@ const TRACK_B = [
   "국내 항공사 입사",
 ];
 
-function TrackCard({ letter, dest, steps, color, delay }: {
+type Logo = { src: string; scale?: number };
+
+// scale — 타이트 크롭된 소스(콘텐츠가 박스 전체를 채움)는 1보다 작은 값으로 시각적 축소
+const US_LOGOS: Logo[] = [
+  { src: "/airlines/us/Delta_Air_Lines-Logo.svg" },
+  { src: "/airlines/us/American_Airlines-Logo.svg" },
+  { src: "/airlines/us/United_Airlines-Logo.svg" },
+  { src: "/airlines/us/Southwest_Airlines-Logo.svg" },
+  { src: "/airlines/us/Alaska_Airlines-Logo.svg" },
+  { src: "/airlines/us/JetBlue-Logo.svg" },
+  { src: "/airlines/us/SkyWest_Airlines-Logo.svg", scale: 0.65 },
+  { src: "/airlines/us/Republic_Airways-Logo.png", scale: 0.6 },
+  { src: "/airlines/us/Allegiant_Air-Logo.svg" },
+  { src: "/airlines/us/Hawaiian_Airlines-Logo.svg" },
+  { src: "/airlines/us/Spirit_Airlines-Logo.svg" },
+];
+
+const KR_LOGOS: Logo[] = [
+  { src: "/airlines/kr/Korean_Air-Logo.svg" },
+  { src: "/airlines/kr/Asiana_Airlines-Logo.svg" },
+  { src: "/airlines/kr/Jin_Air-Logo.png", scale: 0.55 },
+  { src: "/airlines/kr/Air_Premia-Logo.png", scale: 0.55 },
+  { src: "/airlines/kr/Jeju_Air-Logo.svg" },
+  { src: "/airlines/kr/Tway_Air-Logo.svg" },
+  { src: "/airlines/kr/Air_Busan-Logo.svg" },
+  { src: "/airlines/kr/Air_Seoul-Logo.svg" },
+  { src: "/airlines/kr/Eastar_Jet-Logo.svg" },
+];
+
+function LogoMarquee({ logos }: { logos: Logo[] }) {
+  // 로고 개수에 비례한 속도 (개당 약 2.5초). 너무 느리면 정지처럼 보임
+  const duration = logos.length * 2.5;
+  // 끊김 없는 루프를 위해 두 번 복제
+  const doubled = [...logos, ...logos];
+  return (
+    <div
+      aria-hidden
+      className="relative overflow-hidden mt-8 -mx-2"
+      style={{
+        maskImage:
+          "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
+        WebkitMaskImage:
+          "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
+      }}
+    >
+      <div
+        className="flex items-center w-max animate-marquee"
+        style={{ animationDuration: `${duration}s` }}
+      >
+        {doubled.map((logo, i) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={`${logo.src}-${i}`}
+            src={logo.src}
+            alt=""
+            className="w-auto flex-shrink-0 object-contain select-none mr-10 md:mr-14"
+            style={{
+              opacity: 0.9,
+              // height/max-width 는 globals.css 의 .animate-marquee > img 에서 --scale 변수 기반으로 계산
+              ["--scale" as string]: logo.scale ?? 1,
+            } as React.CSSProperties}
+            draggable={false}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TrackCard({ letter, dest, steps, color, delay, logos }: {
   letter: string;
   dest: string;
   steps: string[];
   color: string;
   delay: number;
+  logos: Logo[];
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-15%" });
   return (
     <motion.div
       ref={ref}
-      className="border border-black/[.08] rounded-2xl p-7 md:p-9 bg-white/40"
+      className="border border-black/[.08] rounded-2xl p-7 md:p-9 bg-white/40 flex flex-col"
       initial={{ opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay, ease: EASE }}
@@ -72,6 +142,12 @@ function TrackCard({ letter, dest, steps, color, delay }: {
           );
         })}
       </ol>
+
+      {/* Partner airlines marquee — mt-auto 로 카드 하단에 자연스럽게 정렬 */}
+      <div className="mt-auto pt-8">
+        <div className="border-t border-black/[.06]" />
+        <LogoMarquee logos={logos} />
+      </div>
     </motion.div>
   );
 }
@@ -125,8 +201,8 @@ export default function Tracks() {
 
       {/* Two tracks */}
       <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
-        <TrackCard letter="A" dest="미국 / 국내 항공사" steps={TRACK_A} color={ACCENT_RED} delay={0.32} />
-        <TrackCard letter="B" dest="국내 항공사" steps={TRACK_B} color={ACCENT} delay={0.42} />
+        <TrackCard letter="A" dest="미국 / 국내 항공사" steps={TRACK_A} color={ACCENT_RED} delay={0.32} logos={US_LOGOS} />
+        <TrackCard letter="B" dest="국내 항공사" steps={TRACK_B} color={ACCENT} delay={0.42} logos={KR_LOGOS} />
       </div>
     </section>
   );

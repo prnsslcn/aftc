@@ -56,6 +56,36 @@ body {
   50% { transform: translateY(-10px); }
 }
 
+/* Marquee — infinite horizontal scroll for partner logos */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation-name: marquee;
+  animation-duration: 30s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+/* Marquee logo sizing — 개별 --scale (default 1) 에 비례한 height/max-width.
+   transform 대신 실제 layout box 를 축소시켜 gap 도 자연스럽게 조정 */
+.animate-marquee > img {
+  height: calc(42px * var(--scale, 1));
+  max-width: calc(150px * var(--scale, 1));
+}
+@media (min-width: 768px) {
+  .animate-marquee > img {
+    height: calc(54px * var(--scale, 1));
+    max-width: calc(180px * var(--scale, 1));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation-play-state: paused;
+  }
+}
+
 /* Info table */
 .info-table td {
   padding: 12px 0;
