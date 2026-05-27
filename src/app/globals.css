@@ -56,6 +56,259 @@ body {
   50% { transform: translateY(-10px); }
 }
 
+/* ─────────────────────────────────────────────────────────
+   Shopify Design carousel — verbatim from shopify.design
+   ───────────────────────────────────────────────────────── */
+:root {
+  --color-black: #0a0a0a;
+  --color-white: #ffffff;
+  --color-body: #0a0a0a;
+  --page-gutter: clamp(1rem, 5vw, 5rem);
+  --page-pad-mobile: 1rem;
+  --radius-card: 24px;
+  --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.15);
+  --shadow-card-hover-off: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 25px 70px rgba(0, 0, 0, 0.2);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring-medium: cubic-bezier(0.45, 1.45, 0.55, 1);
+  --ease-spring-bouncy: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.carousel-section { --carousel-headline-top-safety: 0px; }
+@media (max-height: 820px) and (min-width: 769px) {
+  .carousel-section { --carousel-headline-top-safety: clamp(24px, calc((820px - 100vh) * 0.6), 84px); }
+}
+
+/* Shopify text-1 (headline) + text-5 (tagline) */
+:root {
+  --text-1: clamp(64px, 18vw, 160px);
+  --text-5: clamp(16px, 1.4vw, 20px);
+}
+.headline {
+  --side-bearing: -0.08em;
+  margin-left: var(--side-bearing);
+  user-select: none;
+  text-align: center;
+  text-wrap: pretty;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.text-1 {
+  font-family: var(--font-display, system-ui), sans-serif;
+  font-weight: 700;
+  font-size: var(--text-1);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--color-black);
+}
+.text-1.text-1--carousel { line-height: 0.9; }
+.text-5 {
+  font-size: var(--text-5);
+  color: var(--color-black);
+  text-wrap: pretty;
+  white-space: pre-line;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.carousel-headline-stack {
+  padding-top: calc(100px + var(--carousel-headline-top-safety));
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  margin: 0 auto;
+  overflow: visible;
+}
+.carousel-tagline.text-5 {
+  margin-top: 64px;
+  color: var(--color-black);
+  text-align: center;
+  max-width: 1100px;
+  text-wrap: pretty;
+  padding: 0 1rem;
+}
+
+/* Sticky 수평 스크롤 — outer 가 vertical scroll, container 가 sticky inner, track 이 2-row grid */
+.carousel-container {
+  --card-width: 480;
+  --card-height: 280;
+  --card-gap: 24;
+  --card-row-gap: 24;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.carousel-track {
+  display: flex;
+  flex-direction: column;
+  row-gap: calc(var(--card-row-gap) * 1px);
+  width: max-content;
+  will-change: transform;
+}
+
+.carousel-track-row {
+  display: flex;
+  gap: calc(var(--card-gap) * 1px);
+}
+
+/* 첫 카드가 viewport 중앙에 도착하도록 */
+.carousel-track-row--top {
+  padding-left: calc(50vw - calc(var(--card-width) * 0.5px));
+  padding-right: calc(50vw - calc(var(--card-width) * 0.5px));
+}
+
+/* Row 2 는 half-card 만큼 우측으로 offset → 벽돌(brick) 레이아웃, 컬럼이 어긋남 */
+.carousel-track-row--bottom {
+  padding-left: calc(
+    50vw - calc(var(--card-width) * 0.5px) +
+    calc((var(--card-width) + var(--card-gap)) * 0.5px)
+  );
+}
+
+.carousel-card {
+  flex: 0 0 calc(var(--card-width) * 1px);
+  width: calc(var(--card-width) * 1px);
+  height: calc(var(--card-height) * 1px);
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: inherit;
+  font: inherit;
+  outline: none;
+}
+.carousel-card--interactive { cursor: pointer; }
+.carousel-card:focus-visible .carousel-card-shell {
+  outline: 2px solid var(--color-body);
+  outline-offset: 2px;
+}
+
+/* Entrance — 단순 translateX(100vw) + scale(2). 카드별 delay 로 스태거 */
+.carousel-card-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  opacity: 0;
+  transform: translateX(100vw) scale(2);
+  transition:
+    transform 1.5s var(--ease-out-expo) var(--carousel-enter-delay, 0ms),
+    opacity 0.4s var(--ease-out-expo) var(--carousel-enter-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+.carousel-container.carousel-container-entered .carousel-card-shell {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+/* Hoverable — added after entrance completes */
+.carousel-card-shell.carousel-card-hoverable {
+  --hover-speed: 0.65s;
+  box-shadow: var(--shadow-card-hover-off);
+  transition:
+    transform var(--hover-speed) var(--ease-spring-bouncy),
+    box-shadow var(--hover-speed) var(--ease-spring-bouncy);
+}
+@media (hover: hover) and (pointer: fine) {
+  .carousel-card-shell.carousel-card-hoverable:hover {
+    transform: scale(1.015);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .carousel-card-shell.carousel-card-hoverable:hover .carousel-card-media {
+    transform: scale(1.04);
+  }
+  .carousel-card-shell.carousel-card-hoverable:active {
+    transform: scale(0.97);
+    box-shadow: var(--shadow-card-hover-off);
+  }
+}
+
+.carousel-card-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  color: var(--card-fg);
+  user-select: none;
+  overflow: hidden;
+  padding: calc(var(--card-width) * 0.068px);
+}
+
+.carousel-card-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s var(--ease-spring);
+}
+.carousel-card-media--single { transform: rotate(var(--media-rotation, 2deg)); }
+
+.carousel-card-media-frame {
+  position: relative;
+  border-radius: calc(var(--card-width) * 0.058px);
+  box-shadow: var(--shadow-medium);
+  overflow: hidden;
+}
+.carousel-card-media-frame .carousel-card-media-img {
+  max-width: calc(var(--card-width) * 0.7px);
+  max-height: calc(var(--card-height) * 0.6px);
+  display: block;
+  object-fit: cover;
+}
+
+.carousel-card-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 6px;
+  color: var(--card-footer-fg);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.carousel-card-footer-right { opacity: 0.4; }
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-card-shell {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel-section { margin-top: 0; }
+  .carousel-container {
+    --card-width: 280;
+    --card-height: 180;
+    --card-gap: 16;
+    --card-row-gap: 16;
+  }
+  .carousel-tagline { margin-top: 32px; }
+  .carousel-card-shell { --carousel-enter-scale: 1.3; }
+}
+
 /* Marquee — infinite horizontal scroll for partner logos */
 @keyframes marquee {
   from { transform: translateX(0); }
