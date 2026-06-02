@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { motion, useInView } from "framer-motion";
 import {
-  GROUND_SCHOOL,
   COURSE_P1,
   COURSE_P2,
   COURSE_ERAU,
@@ -20,6 +20,169 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
       transition={{ duration: 0.7, delay, ease: [0.65, 0, 0.35, 1] }} className={className}>
       {children}
     </motion.div>
+  );
+}
+
+/* Ground School 과목별 이미지 (Unsplash / Pexels 무료 라이선스, /public/images/ground/).
+   매핑 없는 5개 과목 (FAR, Aircraft Instrument, Airspace, Weight & Balance, Aviation Weather) 은
+   빈 흰 카드로 렌더링 — 추후 이미지 추가 시 매핑만 추가하면 됨 */
+const SUBJECT_IMAGES: Record<string, string> = {
+  "Aerodynamics": "/images/ground/02.jpg",
+  "Aircraft System": "/images/ground/03.jpg",
+  "Airport & Airport Operation": "/images/ground/05.jpg",
+  "Navigation": "/images/ground/07.jpg",
+  "Performance": "/images/ground/08.jpg",
+  "Aviation Weather Service": "/images/ground/11.jpg",
+  "Aeromedical & Night Operation": "/images/ground/12.jpg",
+  "Safety of Flight": "/images/ground/13.jpg",
+};
+
+/* Hero-grid 3-col 분배 — 5+4+4 = 13 과목. aspect ratio 는 컬럼별 시각적 다양성 위해 혼합.
+   2-col 모바일 모드일 때는 HeroGridSection 에서 자동 재분배 */
+type GridCard = { subject: string; aspect: string };
+const COL_1_CARDS: GridCard[] = [
+  { subject: "FAR Introduction", aspect: "1/1" },
+  { subject: "Aerodynamics", aspect: "6/5" },
+  { subject: "Aircraft System", aspect: "6/5" },
+  { subject: "Aircraft Instrument", aspect: "1/1" },
+  { subject: "Airport & Airport Operation", aspect: "9/16" },
+];
+const COL_2_CARDS: GridCard[] = [
+  { subject: "Airspace", aspect: "6/5" },
+  { subject: "Navigation", aspect: "4/5" },
+  { subject: "Performance", aspect: "16/10" },
+  { subject: "Weight & Balance", aspect: "1/1" },
+];
+const COL_3_CARDS: GridCard[] = [
+  { subject: "Aviation Weather", aspect: "3/4" },
+  { subject: "Aviation Weather Service", aspect: "6/5" },
+  { subject: "Aeromedical & Night Operation", aspect: "4/5" },
+  { subject: "Safety of Flight", aspect: "16/10" },
+];
+
+/* Shopify B5 verbatim — 컬럼/카드 인덱스로 CSS 변수 계산.
+   3-col 일 때 ±350px / yBase 300 / yStep 100 — 2-col 보다 훨씬 큰 값 */
+function computeCardVars(colIndex: number, cardIndex: number, totalCols: number) {
+  const hash = colIndex * 7 + cardIndex * 13;
+  const xRatio = totalCols === 1 ? 0 : (colIndex / (totalCols - 1)) * 2 - 1;
+  const compact = totalCols <= 2;
+  const xAmp = compact ? 80 : 350;
+  const yBase = compact ? 120 : 300;
+  const yStep = compact ? 40 : 100;
+  return {
+    xOffset: Math.round(xRatio * xAmp),
+    yOffset: yBase + cardIndex * yStep,
+    duration: 1.5 + (hash % 4) * 0.2,
+  };
+}
+
+/* Hero-grid 섹션 — Shopify H5 verbatim, 3-col desktop / 2-col mobile (ResizeObserver) */
+function HeroGridSection() {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [totalCols, setTotalCols] = useState(3);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      if (entry.contentRect.width !== 0) {
+        setTotalCols(entry.contentRect.width < 768 ? 2 : 3);
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const allCols = totalCols === 3 ? [COL_1_CARDS, COL_2_CARDS, COL_3_CARDS] : [
+    /* 2-col 으로 재분배 — 컬럼 3 카드들을 컬럼 1/2 에 번갈아 추가 */
+    [...COL_1_CARDS, ...COL_3_CARDS.filter((_, i) => i % 2 === 0)],
+    [...COL_2_CARDS, ...COL_3_CARDS.filter((_, i) => i % 2 === 1)],
+  ];
+
+  return (
+    <div ref={gridRef} className="mt-14 md:mt-20 hero-grid">
+      {allCols.map((col, colIndex) => (
+        <div
+          key={colIndex}
+          className="hero-grid-col"
+          style={{ ["--col-offset" as string]: colIndex * 0.08 } as React.CSSProperties}
+        >
+          {col.map((card, cardIndex) => (
+            <HeroGridCard
+              key={card.subject}
+              card={card}
+              colIndex={colIndex}
+              cardIndex={cardIndex}
+              totalCols={totalCols}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* Hero-grid 카드 — Shopify V5 verbatim:
+   1. IntersectionObserver threshold 0 (useInView) 로 wrapper 진입 감지
+   2. .card-in 추가 → animation 시작
+   3. animationend → .card-in 제거 + .card-static 추가 (hover 활성)
+   B5 함수로 컬럼/카드 인덱스 + totalCols 로 --card-x/y/dur 계산 */
+function HeroGridCard({
+  card,
+  colIndex,
+  cardIndex,
+  totalCols,
+}: {
+  card: GridCard;
+  colIndex: number;
+  cardIndex: number;
+  totalCols: number;
+}) {
+  const { xOffset, yOffset, duration } = computeCardVars(colIndex, cardIndex, totalCols);
+  const cardRef = useRef<HTMLDivElement>(null);
+  // Shopify V5 는 IntersectionObserver threshold 0, rootMargin 없음 — wrapper 가 viewport 진입 시점에 즉시 트리거
+  const inView = useInView(cardRef, { once: true });
+  const [stage, setStage] = useState<"initial" | "in" | "static">("initial");
+
+  useEffect(() => {
+    if (inView && stage === "initial") setStage("in");
+  }, [inView, stage]);
+
+  const imageSrc = SUBJECT_IMAGES[card.subject];
+
+  return (
+    <div
+      ref={cardRef}
+      className="hero-grid-card-wrap"
+      style={
+        {
+          ["--card-aspect" as string]: card.aspect,
+          ["--card-x" as string]: `${xOffset}px`,
+          ["--card-y" as string]: `${yOffset}px`,
+          ["--card-dur" as string]: `${duration}s`,
+          ["--hero-card-delay" as string]: "0ms",
+          ["--card-bg" as string]: "#fff",
+        } as React.CSSProperties
+      }
+    >
+      <button
+        type="button"
+        aria-label={card.subject}
+        className={`hero-grid-card ${stage === "in" ? "card-in" : ""} ${stage === "static" ? "card-static" : ""}`}
+        onAnimationEnd={() => stage === "in" && setStage("static")}
+      >
+        {imageSrc && (
+          <Image
+            src={imageSrc}
+            alt={card.subject}
+            fill
+            sizes="(max-width: 768px) 50vw, 33vw"
+            quality={82}
+            className="hero-grid-card-poster"
+          />
+        )}
+      </button>
+    </div>
   );
 }
 
@@ -109,40 +272,23 @@ export default function Programs() {
           </Reveal>
 
 
-          {/* 교육 과정 — Ground School + FTD */}
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-2 items-start">
-            {/* Ground School */}
-            <Reveal>
-              <div className="bg-[#fafaf8] py-10 md:pr-12 md:border-r md:border-black/[.06]">
-                <p className="text-[11px] uppercase tracking-[.2em] text-emerald-600 font-semibold mb-3">Ground School</p>
-                <h3 className="tracking-[-0.03em] mb-6" style={{ fontSize: "clamp(1.3rem, 2.5vw, 1.75rem)", fontWeight: 600 }}>이론 교육 13과목</h3>
-                <div className="space-y-0">
-                  {GROUND_SCHOOL.map((subject, i) => (
-                    <div key={subject} className="flex items-baseline gap-4 py-2 border-b border-black/[.03]">
-                      <span className="font-mono text-[11px] opacity-20 w-5 text-right flex-shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                      <span className="opacity-55" style={{ fontSize: "clamp(0.9rem, 1.2vw, 1.05rem)" }}>{subject}</span>
-                    </div>
-                  ))}
-                </div>
+          {/* Ground School — FTD Training 과 동일한 carousel-headline-stack 구조 */}
+          <section className="carousel-section mt-24 md:mt-32">
+            <div className="carousel-headline-stack">
+              <h3 className="headline text-1 text-1--carousel">Ground</h3>
+              <div className="headline carousel-line-2 text-1 text-1--carousel" aria-hidden="true">
+                School
               </div>
-            </Reveal>
+              <p className="carousel-tagline text-5">
+                해외 비행학교 진학 전 반드시 알아야 할{" "}
+                <strong className="font-semibold">이론 교육 13과목</strong> 체계적 학습
+                <br />
+                FAA 표준 커리큘럼을 기반으로 비행 훈련 즉시 실전에 임할 수 있도록 준비합니다.
+              </p>
+            </div>
 
-            {/* FTD Training */}
-            <Reveal delay={0.08}>
-              <div className="bg-[#fafaf8] py-10 md:pl-12">
-                <p className="text-[11px] uppercase tracking-[.2em] text-blue-600 font-semibold mb-3">FTD Training</p>
-                <h3 className="tracking-[-0.03em] mb-6" style={{ fontSize: "clamp(1.3rem, 2.5vw, 1.75rem)", fontWeight: 600 }}>FTD 실습</h3>
-                <p className="opacity-55 leading-relaxed max-w-[40ch]" style={{ fontSize: "clamp(0.95rem, 1.2vw, 1.05rem)" }}>
-                  C172 FTD (Flight Training Device) 기반 실습 환경.
-                  Checklist · Procedure · Maneuver · Navigation · Instrument Interpretation 까지 체계적으로 훈련합니다.
-                </p>
-                <div className="mt-6 flex items-center gap-2 text-xs opacity-40 font-mono uppercase tracking-[.2em]">
-                  <Icon icon="solar:alt-arrow-down-linear" className="text-base" />
-                  Scroll for Gallery
-                </div>
-              </div>
-            </Reveal>
-          </div>
+            <HeroGridSection />
+          </section>
         </div>
       </div>
 

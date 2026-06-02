@@ -67,12 +67,18 @@ body {
   --page-pad-mobile: 1rem;
   --radius-card: 24px;
   --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.15);
-  --shadow-card-hover-off: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-card-hover: 0 25px 70px rgba(0, 0, 0, 0.2);
+  /* Shopify verbatim */
+  --shadow-card-hover-off: 0px 12px 31px 0px rgba(0, 0, 0, 0);
+  --shadow-card-hover: 0px 12px 31px 0px rgba(0, 0, 0, 0.12);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-spring-medium: cubic-bezier(0.45, 1.45, 0.55, 1);
-  --ease-spring-bouncy: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* Shopify 의 CSS linear() spring curve verbatim — 위에서 떨어지듯 도착하는 hover/entrance 의 핵심 */
+  --ease-spring-bouncy: linear(
+    0, 0.008, 0.032 2%, 0.13 4.4%, 0.26 6.6%, 0.681 13%, 0.891 17.1%, 0.968,
+    1.028, 1.073, 1.103 25.2%, 1.114, 1.119, 1.12, 1.115 31.4%, 1.098 34.4%,
+    1.042 41.6%, 1.017 45.4%, 0.998 49.5%, 0.988 53.9%, 0.986 60.4%, 1.001 80.9% 100%
+  );
 }
 
 .carousel-section { --carousel-headline-top-safety: 0px; }
@@ -337,6 +343,132 @@ body {
   .animate-marquee {
     animation-play-state: paused;
   }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Shopify hero-grid — verbatim from shopify.design
+   ───────────────────────────────────────────────────────── */
+.hero-grid {
+  --hero-grid-cols: 3;
+  --grid-max: 80rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--hero-grid-cols), 1fr);
+  gap: clamp(0.5rem, 1.5vw, 1.5rem);
+  max-width: var(--grid-max);
+  margin: 20px auto 0;
+}
+
+@media (max-width: 768px) {
+  .hero-grid {
+    --hero-grid-cols: 2;
+  }
+}
+
+.hero-grid-col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1.5vw, 1.5rem);
+}
+
+/* Wrapper div — holds animation vars + provides aspect-ratio sizing */
+.hero-grid-card-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--card-aspect, 6/5);
+}
+
+.hero-grid-card {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 100%; /* fill wrapper which has aspect-ratio */
+  padding: 0;
+  background: var(--card-bg, #f0f0f0);
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  opacity: 0;
+  transform: translate(var(--card-x, 0), var(--card-y, 500px)) scale(1.5);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  outline: none;
+}
+
+.hero-grid-card:focus-visible {
+  outline: 2px solid var(--color-body);
+  outline-offset: 2px;
+}
+
+.hero-grid-card.card-static {
+  --hover-speed: 0.65s;
+  box-shadow: var(--shadow-card-hover-off);
+  transition:
+    transform var(--hover-speed) var(--ease-spring-bouncy),
+    box-shadow var(--hover-speed) var(--ease-spring-bouncy);
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-grid-card.card-static:hover {
+    transform: scale(1.015);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .hero-grid-card.card-static:active {
+    transform: scale(0.97);
+    box-shadow: var(--shadow-card-hover-off);
+  }
+}
+
+.hero-grid-card.card-in {
+  animation: card-slide-in var(--card-dur, 1.8s) var(--ease-out-expo) var(--hero-card-delay, 0s) both;
+  will-change: transform, opacity;
+}
+
+@keyframes card-slide-in {
+  0% {
+    opacity: 0;
+    transform: translate(var(--card-x, 0), var(--card-y, 500px)) scale(1.5);
+  }
+  5% { opacity: 1; }
+  to {
+    opacity: 1;
+    transform: translate(0) scale(1);
+  }
+}
+
+/* Mobile — scale down entrance distance + scale */
+@media (max-width: 768px) {
+  .hero-grid-card {
+    border-radius: 14px;
+    transform: translate(var(--card-x, 0), var(--card-y, 120px)) scale(1.15);
+  }
+  @keyframes card-slide-in {
+    0% {
+      opacity: 0;
+      transform: translate(var(--card-x, 0), var(--card-y, 120px)) scale(1.15);
+    }
+    5% { opacity: 1; }
+    to {
+      opacity: 1;
+      transform: translate(0) scale(1);
+    }
+  }
+}
+
+/* Image fills card */
+.hero-grid-card-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* Info table */
