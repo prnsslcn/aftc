@@ -141,7 +141,7 @@ function ProgramsEditorial() {
                 className="mt-5 tracking-[-0.02em]"
                 style={{
                   fontSize: "clamp(1.5rem, 2.2vw, 2.125rem)",
-                  fontWeight: 600,
+                  fontWeight: 800,
                   lineHeight: 1.2,
                 }}
               >
@@ -186,7 +186,7 @@ function Highlights() {
                 className="mt-6 tracking-[-0.02em]"
                 style={{
                   fontSize: "clamp(1.375rem, 1.9vw, 1.875rem)",
-                  fontWeight: 600,
+                  fontWeight: 800,
                   lineHeight: 1.25,
                 }}
               >
