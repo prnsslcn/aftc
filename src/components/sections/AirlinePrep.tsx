@@ -134,6 +134,11 @@ export default function AirlinePrep() {
               </motion.div>
             </button>
           </div>
+
+          {/* Transition note — 패키지 도중 입사 확정 시 OE 대비교육으로 전환 */}
+          <p className="mt-3 text-xs md:text-sm opacity-50 leading-relaxed text-center md:text-left">
+            * {AIRLINE_PREP.transitionNote}
+          </p>
         </RevealBlock>
 
         {/* Benefit — 토글 시 출력 */}

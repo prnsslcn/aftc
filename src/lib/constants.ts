@@ -65,12 +65,15 @@ export const COURSE_P1 = {
   rows: [
     { label: "교육 대상", value: "미국 비행학교 입교 예정자" },
     { label: "교육 기간", value: "4주 집중 과정" },
-    { label: "교육 시간", value: "총 80시간 (이론 72시간 / 시뮬레이터 8시간)" },
-    { label: "교육 내용", value: "dummy" },
+    {
+      label: "교육 시간",
+      value: "총 110시간 (이론 70시간 / FTD 10시간 / AATD 10시간 / BATD 20시간)",
+    },
+    { label: "교육 내용", value: "PPL Oral Test 대비 및 PPL Procedure" },
     { label: "개강", value: "2026년 중" },
     { label: "교육 장소", value: "아세아항공직업전문학교 (강의실 / C172 FTD 실습실)" },
   ],
-  cost: "₩800,000",
+  cost: "₩2,400,000",
   costNote: "(C172 FTD 비용 포함)",
   benefits: PHASE_BENEFITS,
 };
@@ -83,11 +86,14 @@ export const COURSE_P2 = {
   rows: [
     { label: "교육 대상", value: "비행 유학 사전교육 Phase 1 수료자" },
     { label: "교육 기간", value: "4주" },
-    { label: "교육 시간", value: "총 80시간 (이론 60시간 / 시뮬레이터 20시간)" },
+    {
+      label: "교육 시간",
+      value: "총 100시간 (이론 60시간 / FTD 10시간 / AATD 10시간 / BATD 10시간)",
+    },
     { label: "교육 내용", value: "PPL Oral Test 대비 및 기초 IR" },
     { label: "교육 장소", value: "아세아항공직업전문학교 (강의실 / C172 FTD 실습실)" },
   ],
-  cost: "₩800,000",
+  cost: "₩2,400,000",
   costNote: "(A320, B737 FTD 체험 포함)",
   benefits: PHASE_BENEFITS,
 };
@@ -100,11 +106,14 @@ export const COURSE_ERAU = {
   rows: [
     { label: "교육 대상", value: "미국 대학교 항공운항학과 입학 예정자" },
     { label: "교육 기간", value: "8주 과정" },
-    { label: "교육 시간", value: "총 160시간 (이론 140시간 / FTD 20시간)" },
+    {
+      label: "교육 시간",
+      value: "총 240시간 (이론 160시간 / FTD 20시간 / AATD 20시간 / BATD 40시간)",
+    },
     { label: "개강", value: "2026년 5월 개강 확정", highlight: true },
     { label: "교육 장소", value: "아세아항공직업전문학교 (강의실 / C172 FTD 실습실)" },
   ],
-  cost: "₩1,200,000",
+  cost: "₩4,000,000",
   costNote: "(C172 FTD 비용 포함)",
   footnote: "* Embry-Riddle Aeronautical University 신입생과 함께 진행",
 };
@@ -327,7 +336,9 @@ export const AIRLINE_PREP = {
     { icon: "solar:users-group-rounded-bold", title: "스터디 지원", desc: "수강생 간 협업 학습 환경 제공" },
     { icon: "solar:airbuds-case-charge-bold", title: "A320 · B737 FTD 교육", desc: "합리적인 가격으로 진행되는 FTD 실습" },
   ],
-  cost: { value: "₩200,000", note: "8회 패키지" },
+  cost: { value: "₩200,000", note: "4회 패키지" },
+  transitionNote:
+    "패키지 도중 입사 확정 시 A320 · B737을 활용한 OE 대비교육으로 전환",
   benefit: {
     title: "매 회 음료 무료 지원",
     desc: "만월경 자판기 이용 가능",

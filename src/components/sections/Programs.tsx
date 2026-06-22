@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import Image from "next/image";
+import { useRef } from "react";
 import { Icon } from "@iconify/react";
 import { motion, useInView } from "framer-motion";
 import {
@@ -23,165 +22,60 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
-/* Ground School 과목별 이미지 (Unsplash / Pexels 무료 라이선스, /public/images/ground/).
-   매핑 없는 5개 과목 (FAR, Aircraft Instrument, Airspace, Weight & Balance, Aviation Weather) 은
-   빈 흰 카드로 렌더링 — 추후 이미지 추가 시 매핑만 추가하면 됨 */
-const SUBJECT_IMAGES: Record<string, string> = {
-  "Aerodynamics": "/images/ground/02.jpg",
-  "Aircraft System": "/images/ground/03.jpg",
-  "Airport & Airport Operation": "/images/ground/05.jpg",
-  "Navigation": "/images/ground/07.jpg",
-  "Performance": "/images/ground/08.jpg",
-  "Aviation Weather Service": "/images/ground/11.jpg",
-  "Aeromedical & Night Operation": "/images/ground/12.jpg",
-  "Safety of Flight": "/images/ground/13.jpg",
-};
-
-/* Hero-grid 3-col 분배 — 5+4+4 = 13 과목. aspect ratio 는 컬럼별 시각적 다양성 위해 혼합.
-   2-col 모바일 모드일 때는 HeroGridSection 에서 자동 재분배 */
-type GridCard = { subject: string; aspect: string };
-const COL_1_CARDS: GridCard[] = [
-  { subject: "FAR Introduction", aspect: "1/1" },
-  { subject: "Aerodynamics", aspect: "6/5" },
-  { subject: "Aircraft System", aspect: "6/5" },
-  { subject: "Aircraft Instrument", aspect: "1/1" },
-  { subject: "Airport & Airport Operation", aspect: "9/16" },
-];
-const COL_2_CARDS: GridCard[] = [
-  { subject: "Airspace", aspect: "6/5" },
-  { subject: "Navigation", aspect: "4/5" },
-  { subject: "Performance", aspect: "16/10" },
-  { subject: "Weight & Balance", aspect: "1/1" },
-];
-const COL_3_CARDS: GridCard[] = [
-  { subject: "Aviation Weather", aspect: "3/4" },
-  { subject: "Aviation Weather Service", aspect: "6/5" },
-  { subject: "Aeromedical & Night Operation", aspect: "4/5" },
-  { subject: "Safety of Flight", aspect: "16/10" },
+/* Ground School 13과목 — AppUpp StickyStacking 패턴 재사용.
+   각 항목이 sticky 로 viewport 중앙에 차례로 등장, marginTop 음수로 80% 겹쳐서 자연스럽게 누적 */
+const SUBJECTS: { subject: string; icon: string }[] = [
+  { subject: "FAR Introduction", icon: "solar:book-bookmark-bold" },
+  { subject: "Aerodynamics", icon: "solar:wind-bold" },
+  { subject: "Aircraft System", icon: "solar:settings-bold" },
+  { subject: "Aircraft Instrument", icon: "solar:speedometer-bold" },
+  { subject: "Airport & Airport Operation", icon: "solar:buildings-2-bold" },
+  { subject: "Airspace", icon: "solar:planet-3-bold" },
+  { subject: "Navigation", icon: "solar:compass-bold" },
+  { subject: "Performance", icon: "solar:chart-2-bold" },
+  { subject: "Weight & Balance", icon: "solar:scale-bold" },
+  { subject: "Aviation Weather", icon: "solar:cloud-bold" },
+  { subject: "Aviation Weather Service", icon: "solar:satellite-bold" },
+  { subject: "Aeromedical & Night Operation", icon: "solar:moon-bold" },
+  { subject: "Safety of Flight", icon: "solar:shield-check-bold" },
 ];
 
-/* Shopify B5 verbatim — 컬럼/카드 인덱스로 CSS 변수 계산.
-   3-col 일 때 ±350px / yBase 300 / yStep 100 — 2-col 보다 훨씬 큰 값 */
-function computeCardVars(colIndex: number, cardIndex: number, totalCols: number) {
-  const hash = colIndex * 7 + cardIndex * 13;
-  const xRatio = totalCols === 1 ? 0 : (colIndex / (totalCols - 1)) * 2 - 1;
-  const compact = totalCols <= 2;
-  const xAmp = compact ? 80 : 350;
-  const yBase = compact ? 120 : 300;
-  const yStep = compact ? 40 : 100;
-  return {
-    xOffset: Math.round(xRatio * xAmp),
-    yOffset: yBase + cardIndex * yStep,
-    duration: 1.5 + (hash % 4) * 0.2,
-  };
-}
-
-/* Hero-grid 섹션 — Shopify H5 verbatim, 3-col desktop / 2-col mobile (ResizeObserver) */
-function HeroGridSection() {
-  const gridRef = useRef<HTMLDivElement>(null);
-  const [totalCols, setTotalCols] = useState(3);
-
-  useEffect(() => {
-    const el = gridRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(([entry]) => {
-      if (entry.contentRect.width !== 0) {
-        setTotalCols(entry.contentRect.width < 768 ? 2 : 3);
-      }
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  const allCols = totalCols === 3 ? [COL_1_CARDS, COL_2_CARDS, COL_3_CARDS] : [
-    /* 2-col 으로 재분배 — 컬럼 3 카드들을 컬럼 1/2 에 번갈아 추가 */
-    [...COL_1_CARDS, ...COL_3_CARDS.filter((_, i) => i % 2 === 0)],
-    [...COL_2_CARDS, ...COL_3_CARDS.filter((_, i) => i % 2 === 1)],
-  ];
-
+function SubjectStacking() {
+  const count = SUBJECTS.length;
+  /* 폰트 44px / 1.25em 간격 / 공식에서 -1em shift 로 stack 을 아래로 밀어 nav 와 viewport 바닥 양쪽에서 클리어런스 확보.
+     count 13 기준 첫 항목 -6.875em / 마지막 +8.125em → 900px viewport 에서 첫 y≈148, 마지막 y≈808 */
   return (
-    <div ref={gridRef} className="mt-14 md:mt-20 hero-grid">
-      {allCols.map((col, colIndex) => (
+    <div className="relative flex flex-col items-center">
+      {SUBJECTS.map((s, index) => (
         <div
-          key={colIndex}
-          className="hero-grid-col"
-          style={{ ["--col-offset" as string]: colIndex * 0.08 } as React.CSSProperties}
+          key={s.subject}
+          className="sticky w-full"
+          style={{
+            top: 0,
+            height: "100vh",
+            paddingTop: "50vh",
+            marginTop: index === 0 ? 0 : "calc(-80vh + 1.25em)",
+            fontSize: "clamp(24px, 5vw, 44px)",
+            fontWeight: 800,
+          }}
         >
-          {col.map((card, cardIndex) => (
-            <HeroGridCard
-              key={card.subject}
-              card={card}
-              colIndex={colIndex}
-              cardIndex={cardIndex}
-              totalCols={totalCols}
+          <div
+            className="flex items-center justify-center gap-3 md:gap-4 px-4"
+            style={{
+              transform: `translateY(calc((${index} - ${count * 0.5 - 1}) * 1.25em))`,
+            }}
+          >
+            <Icon
+              icon={s.icon}
+              className="flex-shrink-0"
+              style={{ fontSize: "clamp(20px, 4.5vw, 40px)" }}
             />
-          ))}
+            <span className="tracking-[-0.02em] whitespace-nowrap">{s.subject}</span>
+          </div>
         </div>
       ))}
-    </div>
-  );
-}
-
-/* Hero-grid 카드 — Shopify V5 verbatim:
-   1. IntersectionObserver threshold 0 (useInView) 로 wrapper 진입 감지
-   2. .card-in 추가 → animation 시작
-   3. animationend → .card-in 제거 + .card-static 추가 (hover 활성)
-   B5 함수로 컬럼/카드 인덱스 + totalCols 로 --card-x/y/dur 계산 */
-function HeroGridCard({
-  card,
-  colIndex,
-  cardIndex,
-  totalCols,
-}: {
-  card: GridCard;
-  colIndex: number;
-  cardIndex: number;
-  totalCols: number;
-}) {
-  const { xOffset, yOffset, duration } = computeCardVars(colIndex, cardIndex, totalCols);
-  const cardRef = useRef<HTMLDivElement>(null);
-  // Shopify V5 는 IntersectionObserver threshold 0, rootMargin 없음 — wrapper 가 viewport 진입 시점에 즉시 트리거
-  const inView = useInView(cardRef, { once: true });
-  const [stage, setStage] = useState<"initial" | "in" | "static">("initial");
-
-  useEffect(() => {
-    if (inView && stage === "initial") setStage("in");
-  }, [inView, stage]);
-
-  const imageSrc = SUBJECT_IMAGES[card.subject];
-
-  return (
-    <div
-      ref={cardRef}
-      className="hero-grid-card-wrap"
-      style={
-        {
-          ["--card-aspect" as string]: card.aspect,
-          ["--card-x" as string]: `${xOffset}px`,
-          ["--card-y" as string]: `${yOffset}px`,
-          ["--card-dur" as string]: `${duration}s`,
-          ["--hero-card-delay" as string]: "0ms",
-          ["--card-bg" as string]: "#fff",
-        } as React.CSSProperties
-      }
-    >
-      <button
-        type="button"
-        aria-label={card.subject}
-        className={`hero-grid-card ${stage === "in" ? "card-in" : ""} ${stage === "static" ? "card-static" : ""}`}
-        onAnimationEnd={() => stage === "in" && setStage("static")}
-      >
-        {imageSrc && (
-          <Image
-            src={imageSrc}
-            alt={card.subject}
-            fill
-            sizes="(max-width: 768px) 50vw, 33vw"
-            quality={82}
-            className="hero-grid-card-poster"
-          />
-        )}
-      </button>
+      {/* 마지막 항목 머무는 buffer */}
+      <div style={{ height: "30vh" }} />
     </div>
   );
 }
@@ -287,7 +181,7 @@ export default function Programs() {
               </p>
             </div>
 
-            <HeroGridSection />
+            <SubjectStacking />
           </section>
         </div>
       </div>
