@@ -60,15 +60,19 @@ export const COURSE_COMMON_NOTE =
 export const COURSE_P1 = {
   badge: "Phase 1 · 4주 집중 과정",
   title: "비행 유학 사전교육 Phase 1",
+  shortTitle: "Phase 1",
   description:
     "미국 비행학교 입교 예정자를 위한 4주 집중 과정. 단기간 내 핵심 이론과 FTD 실습을 완료합니다.",
+  hoursTotal: 110,
+  hoursBreakdown: [
+    { label: "이론", value: 70 },
+    { label: "FTD", value: 10 },
+    { label: "AATD", value: 10 },
+    { label: "BATD", value: 20 },
+  ],
   rows: [
     { label: "교육 대상", value: "미국 비행학교 입교 예정자" },
     { label: "교육 기간", value: "4주 집중 과정" },
-    {
-      label: "교육 시간",
-      value: "총 110시간 (이론 70시간 / FTD 10시간 / AATD 10시간 / BATD 20시간)",
-    },
     { label: "교육 내용", value: "PPL Oral Test 대비 및 PPL Procedure" },
     { label: "개강", value: "2026년 중" },
     { label: "교육 장소", value: "아세아항공직업전문학교 (강의실 / C172 FTD 실습실)" },
@@ -81,15 +85,19 @@ export const COURSE_P1 = {
 export const COURSE_P2 = {
   badge: "Phase 2 · 4주 심화 과정",
   title: "비행 유학 사전교육 Phase 2",
+  shortTitle: "Phase 2",
   description:
     "Phase 1 수료자를 위한 심화 과정. PPL Oral Test 대비와 기초 IR 훈련을 집중적으로 다룹니다.",
+  hoursTotal: 100,
+  hoursBreakdown: [
+    { label: "이론", value: 60 },
+    { label: "FTD", value: 10 },
+    { label: "AATD", value: 10 },
+    { label: "BATD", value: 10 },
+  ],
   rows: [
     { label: "교육 대상", value: "비행 유학 사전교육 Phase 1 수료자" },
     { label: "교육 기간", value: "4주" },
-    {
-      label: "교육 시간",
-      value: "총 100시간 (이론 60시간 / FTD 10시간 / AATD 10시간 / BATD 10시간)",
-    },
     { label: "교육 내용", value: "PPL Oral Test 대비 및 기초 IR" },
     { label: "교육 장소", value: "아세아항공직업전문학교 (강의실 / C172 FTD 실습실)" },
   ],
@@ -101,21 +109,27 @@ export const COURSE_P2 = {
 export const COURSE_ERAU = {
   badge: "ERAU 연계 · 8주 과정",
   title: "Embry-Riddle 연계과정",
+  shortTitle: "ERAU 연계",
   description:
     "미국 대학교 항공운항학과 입학 예정자를 위한 8주 과정. 영어 교육(Essay 작성 등)이 포함됩니다.",
+  hoursTotal: 240,
+  hoursBreakdown: [
+    { label: "이론", value: 160 },
+    { label: "FTD", value: 20 },
+    { label: "AATD", value: 20 },
+    { label: "BATD", value: 40 },
+  ],
   rows: [
     { label: "교육 대상", value: "미국 대학교 항공운항학과 입학 예정자" },
     { label: "교육 기간", value: "8주 과정" },
-    {
-      label: "교육 시간",
-      value: "총 240시간 (이론 160시간 / FTD 20시간 / AATD 20시간 / BATD 40시간)",
-    },
     { label: "개강", value: "2026년 5월 개강 확정", highlight: true },
     { label: "교육 장소", value: "아세아항공직업전문학교 (강의실 / C172 FTD 실습실)" },
   ],
   cost: "₩4,000,000",
   costNote: "(C172 FTD 비용 포함)",
   footnote: "* Embry-Riddle Aeronautical University 신입생과 함께 진행",
+  recommended: true,
+  recommendedLabel: "MOST POPULAR",
 };
 
 export const PIPELINE_STEPS = [

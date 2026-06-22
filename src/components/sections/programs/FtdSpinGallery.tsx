@@ -298,13 +298,14 @@ export default function FtdSpinGallery() {
         </div>
       </div>
 
-      {/* Genie 팝업 — 클릭한 카드 위치에서 fullscreen 으로 확장 */}
+      {/* Genie 팝업 — grill-booking 스타일: 라이트 화이트 BG + cursor-close-x (circle+X 커스텀 커서).
+         별도 닫기 버튼 없음. bg 클릭 또는 ESC 로 닫음 */}
       <AnimatePresence>
         {openState && (
           <>
             <motion.div
               key="genie-bg"
-              className="fixed inset-0 z-[400] bg-black/85 backdrop-blur-md cursor-zoom-out"
+              className="close-cursor fixed inset-0 z-[400] bg-white"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -313,7 +314,7 @@ export default function FtdSpinGallery() {
             />
             <motion.div
               key={`genie-frame-${openState.index}`}
-              className="fixed z-[401] overflow-hidden shadow-2xl pointer-events-auto cursor-default"
+              className="pointer-events-auto fixed z-[401] cursor-default overflow-hidden shadow-2xl"
               initial={{
                 left: openState.fromRect.left,
                 top: openState.fromRect.top,
@@ -348,31 +349,6 @@ export default function FtdSpinGallery() {
                 draggable={false}
               />
             </motion.div>
-            <motion.button
-              key="genie-close"
-              type="button"
-              className="fixed top-6 right-6 z-[402] w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, delay: 0.25 }}
-              onClick={() => setOpenState(null)}
-              aria-label="닫기"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
-            </motion.button>
-            <motion.p
-              key="genie-count"
-              className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[402] font-mono text-[11px] tracking-[.25em] text-white/50 tabular-nums"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, delay: 0.3 }}
-            >
-              {String(openState.index + 1).padStart(2, "0")} / {String(IMAGES.length).padStart(2, "0")}
-            </motion.p>
           </>
         )}
       </AnimatePresence>

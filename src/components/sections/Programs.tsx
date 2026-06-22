@@ -80,42 +80,170 @@ function SubjectStacking() {
   );
 }
 
-/* ═══ Course info display ═══ */
-function CourseInfo({ course, accent }: { course: typeof COURSE_P1 | typeof COURSE_P2 | typeof COURSE_ERAU; accent: string }) {
+/* ═══ Course Card — A. Stripe/Linear 풍 pricing card.
+   constraints: CTA 없음 / 비용 focus 안 함 / ERAU = #1767b1 인버트 카드.
+   Hours hero 가 메인 anchor, 비용은 하단 보조정보. ═══ */
+type CourseLike = typeof COURSE_P1 | typeof COURSE_P2 | typeof COURSE_ERAU;
+const ERAU_ACCENT = "#1767b1";
+
+function CourseCard({ course }: { course: CourseLike }) {
+  const recommended = "recommended" in course && course.recommended;
+  const benefits = "benefits" in course ? course.benefits : undefined;
+  const footnote = "footnote" in course ? course.footnote : undefined;
+
+  /* 색상 토큰 — 추천 카드는 ERAU blue 인버트 */
+  const tx = recommended
+    ? {
+        wrap: "bg-[#1767b1] text-white border border-white/[.08] md:-translate-y-2 shadow-[0_30px_80px_-20px_rgba(23,103,177,.5)]",
+        eyebrow: "text-white/65",
+        desc: "text-white/70",
+        divider: "bg-white/[.18]",
+        hoursLabel: "text-white/65",
+        hoursNum: "text-white",
+        hoursUnit: "text-white/55",
+        chipBg: "bg-white/[.12] text-white",
+        bulletIcon: "text-white/45",
+        bulletLabel: "text-white/55",
+        bulletValue: "text-white",
+        bulletHighlight: "#fde68a",
+        benefitsBox: "bg-white/[.08] border border-white/[.1]",
+        benefitsTitle: "text-white/70",
+        benefitsItem: "text-white/85",
+        costBorder: "border-white/[.15]",
+        costLabel: "text-white/50",
+        costValue: "text-white/85",
+        costNote: "text-white/45",
+        footnote: "text-white/45",
+        ribbon: "bg-white text-[#1767b1]",
+      }
+    : {
+        wrap: "bg-white text-[#0a0a0a] border border-black/[.06] shadow-[0_2px_24px_-12px_rgba(0,0,0,.08)]",
+        eyebrow: "text-black/40",
+        desc: "text-black/55",
+        divider: "bg-black/[.08]",
+        hoursLabel: "text-black/40",
+        hoursNum: "text-[#0a0a0a]",
+        hoursUnit: "text-black/35",
+        chipBg: "bg-black/[.04] text-black/70",
+        bulletIcon: "text-black/25",
+        bulletLabel: "text-black/40",
+        bulletValue: "text-black/85",
+        bulletHighlight: "#16a34a",
+        benefitsBox: "bg-emerald-50 border border-emerald-200/60",
+        benefitsTitle: "text-emerald-700",
+        benefitsItem: "text-emerald-900/80",
+        costBorder: "border-black/[.08]",
+        costLabel: "text-black/40",
+        costValue: "text-black/75",
+        costNote: "text-black/35",
+        footnote: "text-black/25",
+        ribbon: "",
+      };
+
   return (
-    <div>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="inline-block rounded-full px-3 py-1 text-[10px] uppercase tracking-[.15em] font-semibold"
-          style={{ background: `${accent}15`, color: accent }}>
-          {course.badge}
+    <article
+      className={`relative flex flex-col h-full rounded-3xl p-7 md:p-9 transition-colors ${tx.wrap}`}
+    >
+      {/* Recommended ribbon */}
+      {recommended && "recommendedLabel" in course && course.recommendedLabel && (
+        <span
+          className={`absolute top-5 right-5 inline-flex items-center gap-1.5 rounded-full text-[10px] uppercase tracking-[.2em] font-bold px-3 py-1.5 ${tx.ribbon}`}
+        >
+          <Icon icon="solar:star-bold" className="text-xs" />
+          {course.recommendedLabel}
         </span>
+      )}
+
+      {/* Header */}
+      <div>
+        <p className={`text-[10px] uppercase tracking-[.22em] font-semibold ${tx.eyebrow}`}>
+          {course.badge}
+        </p>
+        <h3
+          className="mt-3 tracking-[-0.03em]"
+          style={{
+            fontSize: "clamp(1.625rem, 2.6vw, 2.125rem)",
+            fontWeight: 600,
+            lineHeight: 1.1,
+          }}
+        >
+          {course.shortTitle}
+        </h3>
+        <p className={`mt-3 text-sm leading-relaxed max-w-[34ch] ${tx.desc}`}>
+          {course.description}
+        </p>
       </div>
-      <h4 className="tracking-[-0.03em] mb-3" style={{ fontSize: "clamp(1.5rem, 2.5vw, 2rem)", fontWeight: 600 }}>
-        {course.title}
-      </h4>
-      <p className="opacity-40 text-sm mb-6 max-w-[50ch]">{course.description}</p>
-      <div className="space-y-0">
-        {course.rows.map((row) => (
-          <div key={row.label} className="flex py-3 border-b border-black/[.04]">
-            <span className="opacity-35 w-24 flex-shrink-0 text-sm">{row.label}</span>
-            <span className={"highlight" in row && row.highlight ? "font-medium" : "opacity-60"} style={{ color: "highlight" in row && row.highlight ? "#16a34a" : undefined }}>
-              {row.value}
+
+      {/* Divider */}
+      <div className={`my-8 h-px ${tx.divider}`} />
+
+      {/* Hours hero — 메인 anchor (price 대신 시간을 hero 로) */}
+      <div>
+        <p className={`text-[10px] uppercase tracking-[.22em] font-semibold mb-3 ${tx.hoursLabel}`}>
+          교육 시간
+        </p>
+        <div className="flex items-baseline gap-1.5">
+          <p
+            className={`tabular-nums tracking-[-0.04em] ${tx.hoursNum}`}
+            style={{
+              fontSize: "clamp(3rem, 5vw, 4.25rem)",
+              fontWeight: 700,
+              lineHeight: 0.9,
+            }}
+          >
+            {course.hoursTotal}
+          </p>
+          <span className={`text-xl md:text-2xl font-normal ${tx.hoursUnit}`}>hr</span>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {course.hoursBreakdown.map((b) => (
+            <span
+              key={b.label}
+              className={`text-[11px] tracking-[.02em] px-2.5 py-1 rounded-md tabular-nums ${tx.chipBg}`}
+            >
+              <span className="opacity-65 mr-1">{b.label}</span>
+              <span className="font-semibold">{b.value}</span>
             </span>
-          </div>
-        ))}
-        <div className="flex py-3">
-          <span className="opacity-35 w-24 flex-shrink-0 text-sm">비용</span>
-          <span className="font-semibold">{course.cost} <span className="opacity-35 font-normal text-sm">{course.costNote}</span></span>
+          ))}
         </div>
       </div>
 
-      {"benefits" in course && course.benefits && course.benefits.length > 0 && (
-        <div className="mt-5 rounded-xl p-4" style={{ background: `${accent}0d`, border: `1px solid ${accent}1f` }}>
-          <p className="text-[10px] uppercase tracking-[.18em] font-semibold mb-2" style={{ color: accent }}>Benefits</p>
-          <ul className="space-y-1.5">
-            {course.benefits.map((b) => (
-              <li key={b} className="flex items-start gap-2 text-sm opacity-70">
-                <Icon icon="solar:check-circle-bold" className="text-base flex-shrink-0 mt-0.5" style={{ color: accent }} />
+      {/* Key bullets */}
+      <ul className="mt-8 space-y-3.5">
+        {course.rows.map((row) => {
+          const highlight = "highlight" in row && row.highlight;
+          return (
+            <li key={row.label} className="flex items-start gap-3">
+              <Icon
+                icon="solar:check-circle-bold"
+                className={`text-base flex-shrink-0 mt-0.5 ${tx.bulletIcon}`}
+              />
+              <div className="min-w-0 flex-1">
+                <p className={`text-[10px] uppercase tracking-[.18em] font-semibold mb-0.5 ${tx.bulletLabel}`}>
+                  {row.label}
+                </p>
+                <p
+                  className={`text-[13.5px] leading-snug ${highlight ? "font-semibold" : tx.bulletValue}`}
+                  style={{ color: highlight ? tx.bulletHighlight : undefined }}
+                >
+                  {row.value}
+                </p>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Benefits */}
+      {benefits && benefits.length > 0 && (
+        <div className={`mt-7 rounded-xl px-4 py-3.5 ${tx.benefitsBox}`}>
+          <p className={`text-[10px] uppercase tracking-[.18em] font-bold mb-1.5 ${tx.benefitsTitle}`}>
+            Benefits
+          </p>
+          <ul className="space-y-1">
+            {benefits.map((b) => (
+              <li key={b} className={`flex items-start gap-2 text-[13px] leading-snug ${tx.benefitsItem}`}>
+                <Icon icon="solar:gift-bold" className="text-sm flex-shrink-0 mt-0.5" />
                 <span>{b}</span>
               </li>
             ))}
@@ -123,10 +251,27 @@ function CourseInfo({ course, accent }: { course: typeof COURSE_P1 | typeof COUR
         </div>
       )}
 
-      {"footnote" in course && course.footnote && (
-        <p className="mt-3 text-xs opacity-25">{course.footnote}</p>
+      {/* Footnote */}
+      {footnote && (
+        <p className={`mt-4 text-[11px] leading-relaxed ${tx.footnote}`}>{footnote}</p>
       )}
-    </div>
+
+      {/* Spacer 로 비용 하단 고정 (CTA 없음) */}
+      <div className="flex-1 min-h-[1.5rem]" />
+
+      {/* Cost — bottom 보조정보, focusing 하지 않음 */}
+      <div className={`mt-8 pt-5 border-t ${tx.costBorder}`}>
+        <div className="flex items-baseline justify-between gap-3">
+          <span className={`text-[10px] uppercase tracking-[.22em] font-semibold ${tx.costLabel}`}>
+            과정 비용
+          </span>
+          <span className={`text-sm tabular-nums tracking-tight font-medium ${tx.costValue}`}>
+            {course.cost}
+          </span>
+        </div>
+        <p className={`mt-1 text-[11px] text-right ${tx.costNote}`}>{course.costNote}</p>
+      </div>
+    </article>
   );
 }
 
@@ -146,7 +291,7 @@ export default function Programs() {
             <p className="text-sm opacity-40 uppercase tracking-widest mb-5">Pre-Flight Education</p>
           </Reveal>
           <Reveal delay={0.08}>
-            <h2 className="tracking-[-0.05em]" style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)", lineHeight: 1, fontWeight: 600 }}>
+            <h2 className="tracking-[-0.05em]" style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)", lineHeight: 1, fontWeight: 800 }}>
               비행 유학 사전교육
             </h2>
           </Reveal>
@@ -199,21 +344,16 @@ export default function Programs() {
               <p className="text-sm opacity-40 uppercase tracking-widest mb-10">Course Options</p>
             </Reveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 items-start">
-              <Reveal>
-                <div className="bg-[#fafaf8] py-10 md:pr-10 md:border-r md:border-black/[.06]">
-                  <CourseInfo course={COURSE_P1} accent="#16a34a" />
-                </div>
+            {/* P1 · P2 · ERAU(추천, 우측) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 items-stretch">
+              <Reveal className="h-full">
+                <CourseCard course={COURSE_P1} />
               </Reveal>
-              <Reveal delay={0.08}>
-                <div className="bg-[#fafaf8] py-10 md:px-10 md:border-r md:border-black/[.06]">
-                  <CourseInfo course={COURSE_P2} accent="#c0425c" />
-                </div>
+              <Reveal delay={0.08} className="h-full">
+                <CourseCard course={COURSE_P2} />
               </Reveal>
-              <Reveal delay={0.16}>
-                <div className="bg-[#fafaf8] py-10 md:pl-10">
-                  <CourseInfo course={COURSE_ERAU} accent="#1767b1" />
-                </div>
+              <Reveal delay={0.16} className="h-full">
+                <CourseCard course={COURSE_ERAU} />
               </Reveal>
             </div>
 

@@ -24,6 +24,12 @@
   word-break: keep-all;
 }
 
+/* 라이트박스 닫기 커서 — circle + X 형태의 커스텀 커서 */
+.close-cursor,
+.close-cursor * {
+  cursor: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='32'%20height='32'%20viewBox='0%200%2032%2032'%3E%3Ccircle%20cx='16'%20cy='16'%20r='15'%20fill='%23191f28'%20fill-opacity='.85'/%3E%3Cpath%20d='M11%2011l10%2010M21%2011l-10%2010'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'/%3E%3C/svg%3E") 16 16, pointer !important;
+}
+
 html {
   background: var(--background);
   overflow-x: clip;
