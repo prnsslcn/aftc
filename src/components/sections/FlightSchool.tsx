@@ -120,7 +120,7 @@ export default function FlightSchool() {
         <RevealBlock delay={0.08}>
           <h2
             className="tracking-[-0.05em]"
-            style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: 1, fontWeight: 600 }}
+            style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: 1, fontWeight: 800 }}
           >
             해외 비행학교
           </h2>

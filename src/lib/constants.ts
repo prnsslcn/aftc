@@ -337,7 +337,7 @@ export const UPP_STAGES: AppUppStage[] = [
   },
 ];
 
-export const AIRLINE_PREP = {
+export const  AIRLINE_PREP = {
   programs: [
     { icon: "solar:book-bookmark-linear", title: "강의", desc: "필기·실기·면접 전형 전과정 정규 강의" },
     { icon: "solar:user-rounded-linear", title: "1:1 코칭", desc: "개별 수준과 목표에 맞춘 1:1 밀착 코칭" },
@@ -354,8 +354,8 @@ export const AIRLINE_PREP = {
   transitionNote:
     "패키지 도중 입사 확정 시 A320 · B737을 활용한 OE 대비교육으로 전환",
   benefit: {
-    title: "매 회 음료 무료 지원",
-    desc: "만월경 자판기 이용 가능",
+    title: "매 회 음료 제공",
+    desc: "무인 카페 이용 가능",
     image: "/images/manwol-vending.png",
   },
 };
