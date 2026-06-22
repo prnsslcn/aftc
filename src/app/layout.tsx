@@ -12,10 +12,83 @@ const outfit = Outfit({
   display: "swap",
 });
 
+const SITE_URL = "https://www.abc-fly.com";
+const SITE_NAME = "아세아 비행교육원";
+const SITE_DESCRIPTION =
+  "아세아 비행교육원 — 예비 조종사 양성부터 항공사 입사까지. 해외 비행유학 사전교육·FTD 실습·항공사 채용 통합 솔루션.";
+
 export const metadata: Metadata = {
-  title: "아세아 비행교육원 | Asea Flight Training Center",
-  description:
-    "아세아 비행교육원 — 예비 조종사 양성부터 항공사 입사까지. 해외 비행유학 사전교육 전문기관.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | Asea Flight Training Center`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "아세아 비행교육원",
+    "Asea Flight Training Center",
+    "비행 유학",
+    "비행유학 사전교육",
+    "Ground School",
+    "FTD",
+    "C172",
+    "A320",
+    "B737",
+    "Embry-Riddle",
+    "Embry-Riddle Aeronautical University",
+    "ERAU",
+    "조종사 양성",
+    "항공사 입사 교육",
+    "APP",
+    "UPP",
+    "PPL",
+    "항공운항학과",
+    "조종사",
+    "비행학교",
+  ],
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: "/",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} | Asea Flight Training Center`,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/images/hero-aircraft.jpg",
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} — 격납고 항공기`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} | Asea Flight Training Center`,
+    description: SITE_DESCRIPTION,
+    images: ["/images/hero-aircraft.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
