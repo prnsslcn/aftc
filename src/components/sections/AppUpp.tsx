@@ -86,7 +86,7 @@ function StageBlock({ stage }: { stage: Stage }) {
                         color: ACCENT,
                       }}
                     >
-                      ASEA Prep
+                      ABC Prep
                     </span>
                   )}
                 </div>
@@ -263,7 +263,7 @@ export default function AppUpp() {
               <span className="font-semibold opacity-100" style={{ color: ACCENT }}>
                 운항 적성검사 · 비행 적성평가 · 면접 코칭
               </span>{" "}
-              세 영역에 대해, 아세아 비행교육원이 체계적인 대비 교육을
+              세 영역에 대해, ABC 비행교육원이 체계적인 대비 교육을
               제공합니다.
             </p>
           </RevealBlock>

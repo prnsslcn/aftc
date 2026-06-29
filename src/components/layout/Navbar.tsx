@@ -107,7 +107,7 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
         }}
       >
         <Link href="/" onClick={(e) => handleClick(e, "/")} className="font-display font-black tracking-tighter text-xl mr-2">
-          ASEA
+          ABC
         </Link>
 
         <div className="hidden md:flex items-center gap-6 text-sm font-medium opacity-60">

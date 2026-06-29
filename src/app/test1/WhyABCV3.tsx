@@ -3,7 +3,7 @@
 import { useRef, useState, useLayoutEffect } from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 
-const WHY_ASEA = [
+const WHY_ABC = [
   { category: "Partnership", title: "Embry-Riddle 항공대학 연계과정을 보유한 교육원" },
   { category: "Expertise", title: "항공정비 교수 시스템 심화강의" },
   { category: "Training", title: "FTD 기반 실습 교육으로 이해도 향상" },
@@ -14,7 +14,7 @@ const WHY_ASEA = [
 ];
 
 const ACCENT = "#1767b1";
-const N = WHY_ASEA.length;
+const N = WHY_ABC.length;
 const EASE = [0.16, 1, 0.3, 1] as const;
 const PX = "clamp(2rem,10vw,14rem)";
 const COMPACT = 60; // px — inactive row height
@@ -26,7 +26,7 @@ function Row({
   expandedH,
 }: {
   index: number;
-  item: (typeof WHY_ASEA)[number];
+  item: (typeof WHY_ABC)[number];
   isActive: boolean;
   expandedH: number;
 }) {
@@ -103,7 +103,7 @@ function Row({
   );
 }
 
-export default function WhyAseaV3() {
+export default function WhyABCV3() {
   const deckRef = useRef<HTMLDivElement>(null);
   const rowsRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -149,7 +149,7 @@ export default function WhyAseaV3() {
           }}
         >
           <span className="text-[#555] font-light">Why </span>
-          <span style={{ color: ACCENT }}>ASEA</span>
+          <span style={{ color: ACCENT }}>ABC</span>
           <span className="text-[#555] font-light">?</span>
         </h2>
       </div>
@@ -166,7 +166,7 @@ export default function WhyAseaV3() {
             style={{ padding: `clamp(0.9rem,1.8vw,1.4rem) ${PX}` }}
           >
             <span className="font-mono text-[10px] tracking-[0.35em] uppercase text-black/25">
-              Why ASEA
+              Why ABC
             </span>
             <motion.span
               key={active}
@@ -185,7 +185,7 @@ export default function WhyAseaV3() {
             className="flex-1 flex flex-col overflow-hidden"
             style={{ paddingLeft: PX, paddingRight: PX }}
           >
-            {WHY_ASEA.map((item, i) => (
+            {WHY_ABC.map((item, i) => (
               <Row
                 key={i}
                 index={i}

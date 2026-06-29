@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-mot
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import Navbar from "@/components/layout/Navbar";
-import WhyAseaSection from "./WhyAseaV2";
+import WhyABCSection from "./WhyABCV2";
 
 /* ═══════════════════════════════════════
    유틸
@@ -21,7 +21,7 @@ const SP = 4;
 const STAGES = [
   "예비 조종사 양성부터 항공사 입사까지 이어지는 통합 교육입니다.",
   "A320, B737, C172 FTD를 기반으로 이론과 실습을 결합한 현장 중심 교육을 제공하며, 엠브리 리들 항공대학교와의 협력으로 검증된 커리큘럼을 운영합니다.",
-  "조종사 커리어의 출발점이 되는 Why ASEA 7가지 강점을 아세아만의 방식으로 뒷받침합니다.",
+  "조종사 커리어의 출발점이 되는 Why ABC 7가지 강점을 ABC만의 방식으로 뒷받침합니다.",
 ];
 const STAGE_COUNT = STAGES.length;
 
@@ -353,7 +353,7 @@ export default function HeroExpand() {
                 animate={ready ? { y: 0 } : {}}
                 transition={{ duration: 1.2, delay: 0, ease: [0, 1, 0.4, 1] }}
               >
-                ASEA
+                ABC
               </motion.h1>
             </div>
             <div className="overflow-hidden">
@@ -393,8 +393,8 @@ export default function HeroExpand() {
         <ThreeStageSection />
       </div>
 
-      {/* Why ASEA */}
-      <WhyAseaSection />
+      {/* Why ABC */}
+      <WhyABCSection />
     </div>
   );
 }

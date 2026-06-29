@@ -40,7 +40,7 @@ export default function Contact() {
 
           <RevealBlock delay={0.08}>
             <p className="mt-8 opacity-40 leading-relaxed max-w-[48ch]" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.375rem)' }}>
-              아세아 비행교육원에서 조종사의 꿈을 시작하세요. 과정 상담 및 지원은
+              ABC 비행교육원에서 조종사의 꿈을 시작하세요. 과정 상담 및 지원은
               아래 연락처로 문의해주세요.
             </p>
           </RevealBlock>

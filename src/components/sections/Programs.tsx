@@ -304,7 +304,7 @@ export default function Programs() {
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mt-4 opacity-50 leading-relaxed max-w-[60ch]" style={{ fontSize: "clamp(1rem, 1.5vw, 1.375rem)" }}>
-              <span className="opacity-100 font-medium">아세아 비행교육원</span>은 이러한 문제를 해결하기 위해
+              <span className="opacity-100 font-medium">ABC 비행교육원</span>은 이러한 문제를 해결하기 위해
               해외 비행학교 교육과정을 기반으로 한 체계적인 사전교육을 제공하며
               이론과 실습(C172 FTD)을 결합한 교육을 통해 학생들이 준비된 상태로 비행훈련을 시작할 수 있도록 지원합니다.
             </p>

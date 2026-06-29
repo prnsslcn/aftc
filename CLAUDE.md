@@ -1,7 +1,7 @@
-# 아세아 비행교육원 웹사이트 (AFTC)
+# ABC 비행교육원 웹사이트 (AFTC)
 
 ## 프로젝트 개요
-아세아 비행교육원(Asea Flight Training Center) 공식 웹사이트.
+ABC 비행교육원(ABC Flight Training Center) 공식 웹사이트.
 해외 비행유학 사전교육을 중심으로, 예비 조종사 양성부터 항공사 입사까지 이어지는 통합 교육 시스템을 소개.
 
 - **GitHub**: `prnsslcn/aftc` (public)
@@ -126,7 +126,7 @@ npm run lint      # ESLint 실행
 
 ### 메인 페이지 섹션 순서
 1. **히어로** — 격납고 항공기 이미지, 줌아웃 스크롤, word-by-word 텍스트
-2. **교육원 소개** — Why Asea 6가지 포인트, 벤토 그리드
+2. **교육원 소개** — Why ABC 6가지 포인트, 벤토 그리드
 3. **풀블리드 중간 이미지** — "Prepare to fly, before you fly"
 4. **비행 유학 사전교육** — Ground School 13과목 + FTD Training 3과목, 4주/8주 과정 카드
 5. **준비중 섹션** — 비행학교 / 항공사 입사과정 플레이스홀더
@@ -143,13 +143,13 @@ npm run lint      # ESLint 실행
 ## 핵심 콘텐츠
 
 ### 교육원
-- **명칭**: 아세아 비행교육원 (Asea Flight Training Center)
+- **명칭**: ABC 비행교육원 (ABC Flight Training Center)
 - **장비**: A320, B737, C172 FTD (Flight Training Device)
 - **교육장소**: 아세아항공직업전문학교 (강의실 / C172 FTD 실습실)
 - **협력**: Embry-Riddle Aeronautical University (엠브리 리들 항공대학교)
 - **담당자**: 박노훈 (010-5192-0332)
 
-### Why Asea (6가지)
+### Why ABC (6가지)
 1. 엠브리리들 항공대학 연계과정 보유
 2. FTD 기반 실습 교육으로 이해도 향상
 3. 해외 비행학교 연계 맞춤형 관리
@@ -186,7 +186,7 @@ aftc/
 │       ├── hero-aircraft.jpg
 │       ├── hero1.mp4 ~ hero4.mp4, wing.mp4
 │       ├── plane1.png ~ plane3.png
-│       ├── ASEA-logo.webp, main-logo.webp
+│       ├── ABC-logo.webp, main-logo.webp
 │       ├── Embry-Riddle_Aeronautical_University_seal.svg
 │       ├── AeroGuard_*, Hillsboro_Aero_Academy.svg, Phoenix_East_Aviation.svg,
 │       │   PU-H-Full-RGB.svg, northdakota-full-rgb.svg, UAA_*, korean.webp 등

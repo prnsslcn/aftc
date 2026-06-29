@@ -1,11 +1,11 @@
 import Hero from "@/components/sections/Hero";
-import WhyAsea from "@/components/sections/WhyAsea";
+import WhyABC from "@/components/sections/WhyABC";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <WhyAsea />
+      <WhyABC />
     </>
   );
 }

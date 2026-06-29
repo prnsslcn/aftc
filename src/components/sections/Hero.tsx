@@ -18,7 +18,7 @@ const SP = 4;
 const STAGES = [
   "예비 조종사 양성부터 항공사 입사까지\n\n이어지는 통합 교육입니다.",
   "A320, B737, C172 FTD를 기반으로\n\n이론과 실습을 결합한 현장 중심 교육을 제공하며,\n\n\nEmbry-Riddle 항공대학교와의 협력으로\n\n검증된 커리큘럼을 운영합니다.",
-  "조종사 커리어의 출발점이 되는\n\nWhy ASEA 7가지 강점을\n\n아세아만의 방식으로 뒷받침합니다.",
+  "조종사 커리어의 출발점이 되는\n\nWhy ABC 7가지 강점을\n\nABC만의 방식으로 뒷받침합니다.",
 ];
 const STAGE_COUNT = STAGES.length;
 
@@ -326,7 +326,7 @@ export default function Hero() {
               animate={ready ? { y: 0 } : {}}
               transition={{ duration: 1.2, delay: 0, ease: [0.65, 0, 0.35, 1] }}
             >
-              ASEA
+              ABC
             </motion.h1>
           </div>
           <div className="overflow-hidden">

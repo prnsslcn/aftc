@@ -56,7 +56,7 @@ export default function Pipeline() {
             className="mt-10 opacity-55 leading-relaxed max-w-[62ch]"
             style={{ fontSize: "clamp(1.0625rem, 1.4vw, 1.375rem)" }}
           >
-            아세아 비행교육원은 사전교육 · 해외 비행유학 · 항공사 입사준비로 이어지는 통합 시스템을 통해 조종사 커리어 전과정을 설계합니다. 단순한 교육 제공이 아닌, 커리어의 완성을 목표로 합니다.
+            ABC 비행교육원은 사전교육 · 해외 비행유학 · 항공사 입사준비로 이어지는 통합 시스템을 통해 조종사 커리어 전과정을 설계합니다. 단순한 교육 제공이 아닌, 커리어의 완성을 목표로 합니다.
           </p>
         </Reveal>
 

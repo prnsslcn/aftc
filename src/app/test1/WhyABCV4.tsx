@@ -8,7 +8,7 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 
-const WHY_ASEA = [
+const WHY_ABC = [
   { category: "Partnership", title: "Embry-Riddle 항공대학 연계과정을 보유한 교육원" },
   { category: "Expertise", title: "항공정비 교수 시스템 심화강의" },
   { category: "Training", title: "FTD 기반 실습 교육으로 이해도 향상" },
@@ -19,7 +19,7 @@ const WHY_ASEA = [
 ];
 
 const ACCENT = "#1767b1";
-const N = WHY_ASEA.length;
+const N = WHY_ABC.length;
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 function NavItem({
@@ -29,7 +29,7 @@ function NavItem({
   isPast,
 }: {
   index: number;
-  item: (typeof WHY_ASEA)[number];
+  item: (typeof WHY_ABC)[number];
   isActive: boolean;
   isPast: boolean;
 }) {
@@ -70,7 +70,7 @@ function NavItem({
   );
 }
 
-export default function WhyAseaV4() {
+export default function WhyABCV4() {
   const deckRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
@@ -84,7 +84,7 @@ export default function WhyAseaV4() {
     setActive(idx);
   });
 
-  const item = WHY_ASEA[active];
+  const item = WHY_ABC[active];
 
   return (
     <section className="relative bg-[#080c14] text-white">
@@ -108,7 +108,7 @@ export default function WhyAseaV4() {
           }}
         >
           <span className="text-white/30 font-light">Why </span>
-          <span style={{ color: ACCENT }}>ASEA</span>
+          <span style={{ color: ACCENT }}>ABC</span>
           <span className="text-white/30 font-light">?</span>
         </h2>
       </div>
@@ -128,9 +128,9 @@ export default function WhyAseaV4() {
             }}
           >
             <p className="font-mono text-[9px] tracking-[0.4em] uppercase text-white/20 mb-8">
-              Why ASEA
+              Why ABC
             </p>
-            {WHY_ASEA.map((it, i) => (
+            {WHY_ABC.map((it, i) => (
               <NavItem
                 key={i}
                 index={i}

@@ -10,7 +10,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 
-const WHY_ASEA = [
+const WHY_ABC = [
   {
     category: "Partnership",
     title: "Embry-Riddle 항공대학 연계과정을 보유한 교육원",
@@ -43,7 +43,7 @@ const WHY_ASEA = [
 
 const ACCENT = "#1767b1";
 const EASE = [0.16, 1, 0.3, 1] as const;
-const N = WHY_ASEA.length; // 7
+const N = WHY_ABC.length; // 7
 
 // 각 카드 전환 phase 구성 — phase 전체 동안 slide-in + 기존 카드 shift 동시 진행
 const PHASE_VH = 120; // 한 카드 전환 당 스크롤 거리
@@ -98,7 +98,7 @@ function StackLine({
   scrollYProgress,
 }: {
   index: number;
-  item: (typeof WHY_ASEA)[number];
+  item: (typeof WHY_ABC)[number];
   scrollYProgress: MotionValue<number>;
 }) {
   const isFirst = index === 0;
@@ -259,7 +259,7 @@ function StackingDeck() {
                 className="text-[11px] tracking-[0.3em] uppercase font-mono font-medium font-display"
                 style={{ color: ACCENT }}
               >
-                {WHY_ASEA[active].category}
+                {WHY_ABC[active].category}
               </motion.span>
             </div>
             <span className="text-[10px] tracking-[0.3em] uppercase opacity-40 font-mono whitespace-nowrap">
@@ -270,7 +270,7 @@ function StackingDeck() {
         </div>
 
         {/* 스택 라인들 */}
-        {WHY_ASEA.map((item, i) => (
+        {WHY_ABC.map((item, i) => (
           <StackLine
             key={i}
             index={i}
@@ -308,7 +308,7 @@ function StackingDeck() {
   );
 }
 
-export default function WhyAseaSection() {
+export default function WhyABCSection() {
   return (
     <section className="relative z-20 bg-white text-black">
       {/* Intro 헤더 — 바로 흰색 배경 */}
@@ -336,7 +336,7 @@ export default function WhyAseaSection() {
               }}
             >
               <span className="text-[#555] font-light">Why </span>
-              <span style={{ color: ACCENT }}>ASEA</span>
+              <span style={{ color: ACCENT }}>ABC</span>
               <span className="text-[#555] font-light">?</span>
             </h2>
           </RevealBlock>
@@ -345,7 +345,7 @@ export default function WhyAseaSection() {
               className="mt-8 max-w-[48ch] opacity-50 leading-relaxed"
               style={{ fontSize: "clamp(1rem, 1.4vw, 1.25rem)" }}
             >
-              아세아 비행교육원이 구축한 7가지 원칙.
+              ABC 비행교육원이 구축한 7가지 원칙.
               스크롤하면 한 줄씩 쌓입니다.
             </p>
           </RevealBlock>

@@ -207,7 +207,7 @@ export const FLIGHT_SCHOOLS = [
   },
 ];
 
-// APP / UPP — ASEA가 대비시키는 3가지 핵심 영역
+// APP / UPP — ABC가 대비시키는 3가지 핵심 영역
 export const APP_UPP_COVERED_AREAS = [
   {
     key: "aptitude" as const,

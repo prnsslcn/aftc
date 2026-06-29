@@ -13,20 +13,20 @@ const outfit = Outfit({
 });
 
 const SITE_URL = "https://www.abc-fly.com";
-const SITE_NAME = "아세아 비행교육원";
+const SITE_NAME = "ABC 비행교육원";
 const SITE_DESCRIPTION =
-  "아세아 비행교육원 — 예비 조종사 양성부터 항공사 입사까지. 해외 비행유학 사전교육·FTD 실습·항공사 채용 통합 솔루션.";
+  "ABC 비행교육원 — 예비 조종사 양성부터 항공사 입사까지. 해외 비행유학 사전교육·FTD 실습·항공사 채용 통합 솔루션.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Asea Flight Training Center`,
+    default: `${SITE_NAME} | ABC Flight Training Center`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
   keywords: [
-    "아세아 비행교육원",
-    "Asea Flight Training Center",
+    "ABC 비행교육원",
+    "ABC Flight Training Center",
     "비행 유학",
     "비행유학 사전교육",
     "Ground School",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: "/",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} | Asea Flight Training Center`,
+    title: `${SITE_NAME} | ABC Flight Training Center`,
     description: SITE_DESCRIPTION,
     images: [
       {
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} | Asea Flight Training Center`,
+    title: `${SITE_NAME} | ABC Flight Training Center`,
     description: SITE_DESCRIPTION,
     images: ["/images/hero-aircraft.jpg"],
   },
@@ -85,8 +85,11 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/icon.png",
-    shortcut: "/icon.png",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    shortcut: "/icon.svg",
     apple: "/icon.png",
   },
 };

@@ -13,7 +13,7 @@ import {
 import { Icon } from "@iconify/react";
 import { CONTACT } from "@/lib/constants";
 
-const WHY_ASEA = [
+const WHY_ABC = [
   { category: "Partnership", title: "Embry-Riddle 항공대학 연계과정을 보유한 교육원" },
   { category: "Expertise", title: "항공정비 교수 시스템 심화강의" },
   { category: "Training", title: "FTD 기반 실습 교육으로 이해도 향상" },
@@ -24,7 +24,7 @@ const WHY_ASEA = [
 ];
 
 const ACCENT = "#467ee9";
-const N = WHY_ASEA.length; // 7 principles
+const N = WHY_ABC.length; // 7 principles
 const M = N + 1; // 8 phases (마지막 1개는 outro CTA)
 const EASE = [0.65, 0, 0.35, 1] as const;
 const PX = "clamp(2rem,10vw,14rem)";
@@ -43,7 +43,7 @@ function SegmentBar({ scrollYProgress, index }: { scrollYProgress: MotionValue<n
   );
 }
 
-export default function WhyAsea() {
+export default function WhyABC() {
   const deckRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
@@ -58,7 +58,7 @@ export default function WhyAsea() {
   });
 
   const isOutro = active === N; // active === 7 → outro stage
-  const item = isOutro ? null : WHY_ASEA[active];
+  const item = isOutro ? null : WHY_ABC[active];
 
   return (
     <section className="relative bg-[#0a0a0a] text-white">
@@ -72,14 +72,14 @@ export default function WhyAsea() {
           style={{ fontSize: "clamp(4rem,10vw,9rem)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.9 }}
         >
           <span className="text-white font-light">Why </span>
-          <span style={{ color: ACCENT }}>ASEA</span>
+          <span style={{ color: ACCENT }}>ABC</span>
           <span className="text-white font-light">?</span>
         </h2>
         <p
           className="mt-6 text-white leading-relaxed max-w-[40ch]"
           style={{ fontSize: "clamp(0.9rem,1.3vw,1.1rem)" }}
         >
-          아세아 비행교육원이 구축한 7가지 원칙.
+          ABC 비행교육원이 구축한 7가지 원칙.
         </p>
       </div>
 
@@ -134,7 +134,7 @@ export default function WhyAsea() {
             transition={{ duration: 0.55, ease: EASE }}
           >
             <span className="font-mono text-[10px] tracking-[0.35em] uppercase text-white">
-              Why ASEA
+              Why ABC
             </span>
             <AnimatePresence mode="wait">
               {!isOutro && (
@@ -245,7 +245,7 @@ export default function WhyAsea() {
                   transition={{ duration: 0.65, ease: EASE }}
                   className="flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-white/35"
                 >
-                  <p>&copy; 2026 아세아 비행교육원</p>
+                  <p>&copy; 2026 ABC 비행교육원</p>
                   <p>{CONTACT.location} · {CONTACT.phone}</p>
                 </motion.div>
               ) : (
