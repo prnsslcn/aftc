@@ -165,35 +165,106 @@ export default function WhyABC() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -36 }}
                   transition={{ duration: 0.65, ease: EASE }}
+                  className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-14 items-center"
                 >
-                  <h3
-                    className="font-display tracking-[-0.04em]"
-                    style={{
-                      fontSize: "clamp(3.5rem, 9vw, 8.5rem)",
-                      fontWeight: 100,
-                      lineHeight: 0.95,
-                    }}
-                  >
-                    Your flight career
-                    <br />
-                    starts here.
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-3 mt-10">
-                    <Link
-                      href="/apply"
-                      className="inline-flex items-center gap-3 h-[48px] pl-6 pr-2 bg-white text-black text-sm font-medium rounded-full hover:scale-[1.03] active:scale-[0.97] transition-transform"
+                  {/* 좌측 — headline + CTA 버튼 (md 이상 3/5) */}
+                  <div className="md:col-span-3">
+                    <h3
+                      className="font-display tracking-[-0.04em]"
+                      style={{
+                        fontSize: "clamp(2.5rem, 6vw, 5.25rem)",
+                        fontWeight: 100,
+                        lineHeight: 0.95,
+                      }}
                     >
-                      과정 문의 및 지원
-                      <span className="w-8 h-8 rounded-full bg-black/[.08] flex items-center justify-center">
-                        <Icon icon="solar:arrow-right-up-linear" className="text-sm" />
-                      </span>
-                    </Link>
+                      Your flight career
+                      <br />
+                      starts here.
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-3 mt-8 md:mt-10">
+                      <Link
+                        href="/apply"
+                        className="inline-flex items-center gap-3 h-[48px] pl-6 pr-2 bg-white text-black text-sm font-medium rounded-full hover:scale-[1.03] active:scale-[0.97] transition-transform"
+                      >
+                        과정 문의 및 지원
+                        <span className="w-8 h-8 rounded-full bg-black/[.08] flex items-center justify-center">
+                          <Icon icon="solar:arrow-right-up-linear" className="text-sm" />
+                        </span>
+                      </Link>
+                      <a
+                        href={`tel:${CONTACT.phone}`}
+                        className="inline-flex items-center gap-3 h-[48px] px-6 bg-white/[.06] text-white text-sm font-medium rounded-full border border-white/10 hover:bg-white/[.12] active:scale-[0.97] transition-all"
+                      >
+                        <Icon icon="solar:phone-bold" className="text-sm opacity-70" />
+                        전화 상담
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* 우측 — 지도 (md 이상 2/5). border 없이 바깥쪽으로 radial mask fade 로 자연스럽게 blend */}
+                  <div className="md:col-span-2">
                     <a
-                      href={`tel:${CONTACT.phone}`}
-                      className="inline-flex items-center gap-3 h-[48px] px-6 bg-white/[.06] text-white text-sm font-medium rounded-full border border-white/10 hover:bg-white/[.12] active:scale-[0.97] transition-all"
+                      href={CONTACT.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${CONTACT.location} 위치 Google Maps 에서 열기`}
+                      className="group block"
                     >
-                      <Icon icon="solar:phone-bold" className="text-sm opacity-70" />
-                      전화 상담
+                      {/* 지도 wrapper — 살짝 rounded corners + overflow-hidden 으로 iframe attribution 클립.
+                         4방향 linear gradient 로 사각형 fade */}
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+                        <iframe
+                          src={CONTACT.mapEmbedUrl}
+                          className="absolute left-0 top-0 w-full pointer-events-none"
+                          style={{
+                            height: "calc(100% + 44px)",
+                            border: 0,
+                            filter:
+                              "invert(0.92) hue-rotate(180deg) contrast(0.95) brightness(0.9) saturate(0.85)",
+                          }}
+                          loading="lazy"
+                          aria-hidden="true"
+                          title=""
+                        />
+                        {/* Rectangular vignette — 4개 linear gradient (상/하/좌/우) 로 사각형 fade */}
+                        <div
+                          className="absolute inset-0 pointer-events-none"
+                          style={{
+                            background: [
+                              "linear-gradient(to bottom, transparent 68%, rgba(10,10,10,0.3) 84%, #0a0a0a 100%)",
+                              "linear-gradient(to top, transparent 68%, rgba(10,10,10,0.3) 84%, #0a0a0a 100%)",
+                              "linear-gradient(to left, transparent 68%, rgba(10,10,10,0.3) 84%, #0a0a0a 100%)",
+                              "linear-gradient(to right, transparent 68%, rgba(10,10,10,0.3) 84%, #0a0a0a 100%)",
+                            ].join(", "),
+                          }}
+                          aria-hidden="true"
+                        />
+                      </div>
+
+                      {/* 주소 캡션 — 지도 아래, fade 영향 없음 */}
+                      <div className="mt-4 md:mt-5 flex items-start gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <Icon
+                              icon="solar:map-point-bold"
+                              className="text-white/70 text-base flex-shrink-0"
+                            />
+                            <p className="font-medium text-sm md:text-base text-white truncate">
+                              {CONTACT.location}
+                            </p>
+                          </div>
+                          <p className="mt-1 text-xs md:text-sm text-white/60 truncate">
+                            {CONTACT.address}
+                          </p>
+                          <p className="mt-0.5 text-[11px] md:text-xs text-white/40 truncate">
+                            {CONTACT.nearest}
+                          </p>
+                        </div>
+                        <Icon
+                          icon="solar:arrow-right-up-linear"
+                          className="text-white/40 group-hover:text-white/70 transition-colors flex-shrink-0 mt-1"
+                        />
+                      </div>
                     </a>
                   </div>
                 </motion.div>

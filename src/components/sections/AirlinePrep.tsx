@@ -198,6 +198,20 @@ function Highlights() {
               >
                 {h.desc}
               </p>
+              {"details" in h && h.details && h.details.length > 0 && (
+                <ul className="mt-4 space-y-1.5 max-w-[42ch]">
+                  {h.details.map((d) => (
+                    <li
+                      key={d}
+                      className="opacity-45 leading-snug flex gap-2"
+                      style={{ fontSize: "clamp(0.875rem, 1vw, 0.9375rem)" }}
+                    >
+                      <span className="opacity-60 flex-shrink-0">—</span>
+                      <span>{d}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </RevealBlock>
         ))}
@@ -223,7 +237,14 @@ function BenefitClosing() {
               className="opacity-75 leading-relaxed"
               style={{ fontSize: "clamp(1.0625rem, 1.3vw, 1.25rem)", fontWeight: 600 }}
             >
-              패키지 비용: {AIRLINE_PREP.cost.value} ({AIRLINE_PREP.cost.note})
+              패키지 비용:{" "}
+              {"originalValue" in AIRLINE_PREP.cost && AIRLINE_PREP.cost.originalValue && (
+                <span className="line-through opacity-40 font-normal mr-2">
+                  {AIRLINE_PREP.cost.originalValue}
+                </span>
+              )}
+              <span style={{ color: ACCENT }}>{AIRLINE_PREP.cost.value}</span>{" "}
+              ({AIRLINE_PREP.cost.note})
             </p>
             <p
               className="opacity-75 leading-relaxed"

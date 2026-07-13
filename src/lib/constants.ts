@@ -19,6 +19,14 @@ export const FORM_ENTRIES = {
 export const CONTACT = {
   phone: "02-715-5398",
   location: "아세아항공직업전문학교",
+  address: "서울 영등포구 당산로32길 16",
+  nearest: "영등포구청역 인근",
+  /* Google Maps — API key 불필요한 embed / search URL (한국어 query 자동 인식).
+     embed 는 검색 기반 → Google 이 자동으로 핀 표시 (좌상단 place info card 도 함께 노출) */
+  mapEmbedUrl:
+    "https://maps.google.com/maps?q=%EC%95%84%EC%84%B8%EC%95%84%ED%95%AD%EA%B3%B5%EC%A7%81%EC%97%85%EC%A0%84%EB%AC%B8%ED%95%99%EA%B5%90&z=17&output=embed",
+  mapUrl:
+    "https://www.google.com/maps/search/?api=1&query=%EC%95%84%EC%84%B8%EC%95%84%ED%95%AD%EA%B3%B5%EC%A7%81%EC%97%85%EC%A0%84%EB%AC%B8%ED%95%99%EA%B5%90",
 };
 
 export const NAV_ITEMS = [
@@ -342,15 +350,24 @@ export const  AIRLINE_PREP = {
     { icon: "solar:book-bookmark-linear", title: "강의", desc: "필기·실기·면접 전형 전과정 정규 강의" },
     { icon: "solar:user-rounded-linear", title: "1:1 코칭", desc: "개별 수준과 목표에 맞춘 1:1 밀착 코칭" },
     { icon: "solar:document-text-linear", title: "항공사 필기 모의고사", desc: "실제 출제 경향을 반영한 모의고사" },
+    { icon: "solar:pen-new-square-linear", title: "자기소개서 컨설팅", desc: "지원자의 특징을 살린 자기소개서" },
     { icon: "solar:chat-round-line-linear", title: "면접 컨설팅", desc: "지원서·자기소개·답변 전략 1:1 컨설팅" },
     { icon: "solar:videocamera-record-linear", title: "모의면접", desc: "전현직 임직원 출신 면접관과의 실전 모의면접" },
   ],
   highlights: [
     { icon: "solar:medal-ribbon-star-bold", title: "전현직 임직원 출신의 면접관", desc: "현장 경험을 바탕으로 한 실전 코칭" },
     { icon: "solar:users-group-rounded-bold", title: "스터디 지원", desc: "수강생 간 협업 학습 환경 제공" },
-    { icon: "solar:airbuds-case-charge-bold", title: "A320 · B737 FTD 교육", desc: "합리적인 가격으로 진행되는 FTD 실습" },
+    {
+      icon: "solar:airbuds-case-charge-bold",
+      title: "A320 · B737 FTD 교육",
+      desc: "합리적인 가격으로 진행되는 FTD 실습",
+      details: [
+        "A320 FTD: 아세아항공직업전문학교에서 진행",
+        "B737 FTD: B737 시뮬레이터 보유 업체와 제휴",
+      ],
+    },
   ],
-  cost: { value: "₩200,000", note: "4회 패키지" },
+  cost: { value: "₩200,000", originalValue: "₩250,000", note: "4회 패키지" },
   transitionNote:
     "패키지 도중 입사 확정 시 A320 · B737을 활용한 OE 대비교육으로 전환",
   benefit: {
