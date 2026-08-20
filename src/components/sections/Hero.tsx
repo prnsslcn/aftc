@@ -182,16 +182,10 @@ export default function Hero() {
   const maskRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const loadCompleteRef = useRef(false);
-  const [ready, setReady] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const lenis = useLenis();
 
-  // 페이지 로드 pill → video 타이머
-  useEffect(() => {
-    const t1 = setTimeout(() => setLoaded(true), 100);
-    const t2 = setTimeout(() => setReady(true), 1600);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
+  // pill / 텍스트 reveal 은 CSS keyframes 로 위임 (hydration 타이밍 무관 확실 실행).
+  // loadCompleteRef 는 mask 의 onAnimationEnd 에서 true 로 세팅 (scroll tick 에서 clipPath 직접 조작 gate).
 
   // hash 진입 (예: /pipeline → /#intro) 시 로드 애니 완료 후 해당 섹션으로 smooth-scroll
   useEffect(() => {
@@ -271,7 +265,7 @@ export default function Hero() {
           ref={frameRef}
           className="absolute overflow-hidden inset-2 lg:inset-3 rounded-[8px] lg:rounded-[20px]"
         >
-          <motion.div
+          <div
             ref={maskRef}
             className="absolute bg-black"
             style={{
@@ -280,18 +274,16 @@ export default function Hero() {
               width: "100%",
               height: "100%",
               transform: "translate(-50%, -50%)",
-              // SSR/pre-hydration flash 방지 — Framer initial 이 적용되기 전에도 pill 상태 유지
+              // CSS keyframe 기반 — hydration/Framer 대기 없이 첫 paint 즉시 pill → full 실행
               clipPath: "inset(50% 50% 50% 50% round 200px)",
+              animation:
+                "hero-pill-reveal 2s cubic-bezier(0.87, 0, 0.13, 1) 0.3s forwards",
             }}
-            initial={{ clipPath: "inset(50% 50% 50% 50% round 200px)" }}
-            // animate 를 항상 명시 (empty object 대신) → Framer 가 target 정확히 인지하여 확실히 transition
-            animate={{
-              clipPath: loaded
-                ? "inset(0% round 20px)"
-                : "inset(50% 50% 50% 50% round 200px)",
+            onAnimationEnd={(e) => {
+              if ((e as React.AnimationEvent).animationName === "hero-pill-reveal") {
+                loadCompleteRef.current = true;
+              }
             }}
-            transition={{ duration: 2, delay: 0.3, ease: [0.87, 0, 0.13, 1] }}
-            onAnimationComplete={() => { loadCompleteRef.current = true; }}
           >
             <video
               ref={videoRef}
@@ -312,7 +304,7 @@ export default function Hero() {
                   "linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.7) 60%, #0a0a0a 100%)",
               }}
             />
-          </motion.div>
+          </div>
         </div>
       </div>
 
@@ -326,34 +318,32 @@ export default function Hero() {
           style={{ paddingLeft: SP * 20, paddingRight: SP * 5, paddingBottom: SP * 10 }}
         >
           <div className="overflow-hidden">
-            <motion.h1
+            <h1
               className="font-display font-bold tracking-[-0.05em] leading-none"
               style={{
                 fontSize: "clamp(4rem, 13vw, 12rem)",
                 transform: "translateY(110%)",
+                animation:
+                  "hero-text-reveal 1.2s cubic-bezier(0.65, 0, 0.35, 1) 1.6s forwards",
               }}
-              initial={{ y: "110%" }}
-              animate={{ y: ready ? 0 : "110%" }}
-              transition={{ duration: 1.2, delay: 0, ease: [0.65, 0, 0.35, 1] }}
             >
               ABC
-            </motion.h1>
+            </h1>
           </div>
           <div className="overflow-hidden">
-            <motion.p
+            <p
               className="font-display font-bold tracking-[-0.04em] leading-none"
               style={{
                 fontSize: "clamp(1.5rem, 10vw, 10rem)",
                 lineHeight: 1.3,
                 color: "rgba(255,255,255,0.4)",
                 transform: "translateY(110%)",
+                animation:
+                  "hero-text-reveal 1.2s cubic-bezier(0.65, 0, 0.35, 1) 1.75s forwards",
               }}
-              initial={{ y: "110%" }}
-              animate={{ y: ready ? 0 : "110%" }}
-              transition={{ duration: 1.2, delay: 0.15, ease: [0.65, 0, 0.35, 1] }}
             >
               Flight Training Center
-            </motion.p>
+            </p>
           </div>
           <div style={{ height: SP * 5 }} />
         </div>
