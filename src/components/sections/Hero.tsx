@@ -280,9 +280,16 @@ export default function Hero() {
               width: "100%",
               height: "100%",
               transform: "translate(-50%, -50%)",
+              // SSR/pre-hydration flash 방지 — Framer initial 이 적용되기 전에도 pill 상태 유지
+              clipPath: "inset(50% 50% 50% 50% round 200px)",
             }}
             initial={{ clipPath: "inset(50% 50% 50% 50% round 200px)" }}
-            animate={loaded ? { clipPath: "inset(0% round 20px)" } : {}}
+            // animate 를 항상 명시 (empty object 대신) → Framer 가 target 정확히 인지하여 확실히 transition
+            animate={{
+              clipPath: loaded
+                ? "inset(0% round 20px)"
+                : "inset(50% 50% 50% 50% round 200px)",
+            }}
             transition={{ duration: 2, delay: 0.3, ease: [0.87, 0, 0.13, 1] }}
             onAnimationComplete={() => { loadCompleteRef.current = true; }}
           >
@@ -321,9 +328,12 @@ export default function Hero() {
           <div className="overflow-hidden">
             <motion.h1
               className="font-display font-bold tracking-[-0.05em] leading-none"
-              style={{ fontSize: "clamp(4rem, 13vw, 12rem)" }}
+              style={{
+                fontSize: "clamp(4rem, 13vw, 12rem)",
+                transform: "translateY(110%)",
+              }}
               initial={{ y: "110%" }}
-              animate={ready ? { y: 0 } : {}}
+              animate={{ y: ready ? 0 : "110%" }}
               transition={{ duration: 1.2, delay: 0, ease: [0.65, 0, 0.35, 1] }}
             >
               ABC
@@ -336,9 +346,10 @@ export default function Hero() {
                 fontSize: "clamp(1.5rem, 10vw, 10rem)",
                 lineHeight: 1.3,
                 color: "rgba(255,255,255,0.4)",
+                transform: "translateY(110%)",
               }}
               initial={{ y: "110%" }}
-              animate={ready ? { y: 0 } : {}}
+              animate={{ y: ready ? 0 : "110%" }}
               transition={{ duration: 1.2, delay: 0.15, ease: [0.65, 0, 0.35, 1] }}
             >
               Flight Training Center
