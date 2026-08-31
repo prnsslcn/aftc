@@ -1,159 +1,217 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
+import { Lottie, type LottieHandle } from "lottie-react";
 import { NAV_ITEMS } from "@/lib/constants";
-import { useLenis } from "@/components/providers/SmoothScrollProvider";
-import { usePageTransition } from "@/components/layout/PageTransition";
+import { useNavClick } from "@/components/layout/useNavClick";
 
+const PLANE_ICON = "/icons/motion/plane_right.json";
+const PLANE_SIZE = 42;
+
+/* Hover 시 처음부터 재생. mouseLeave 해도 중단하지 않고 남은 사이클을 마치게 둠. */
+function PlaneHoverIcon() {
+  const handleRef = useRef<LottieHandle>(null);
+  return (
+    <span
+      className="inline-flex items-center justify-center"
+      style={{ width: PLANE_SIZE, height: PLANE_SIZE }}
+      onMouseEnter={() => {
+        handleRef.current?.seek({ frame: 0 });
+        handleRef.current?.play();
+      }}
+    >
+      <Lottie
+        src={PLANE_ICON}
+        lottieRef={handleRef}
+        autoplay={false}
+        loop={false}
+        style={{ width: PLANE_SIZE, height: PLANE_SIZE }}
+      />
+    </span>
+  );
+}
+
+/* 글로벌 Navbar — 중앙 pill (플레인 아이콘 only).
+   Hero 우측 셀 인라인 nav 와 완전 별개.
+   홈 데스크탑 Hero 구간에서는 hidden (뷰포트 위쪽),
+   HeroTransitionReveal panel 이 Hero 를 덮는 순간 ease-in-out 으로 아래로 내려옴.
+   Plane hover 시 아래로 드롭다운 (droplet-style reveal). */
 export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }) {
-  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [autoThreshold, setAutoThreshold] = useState(99999);
-  const threshold = scrollThreshold ?? autoThreshold;
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [transitionRange, setTransitionRange] = useState(1);
+  const [visible, setVisible] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const { scrollY } = useScroll();
-  const lenis = useLenis();
   const pathname = usePathname();
-  const router = useRouter();
-  const { runLeave, runEnter, inTransition, awaitNextChildrenChange } = usePageTransition();
-
-  // 홈은 스크롤 임계 통과 시 pill 채움, 그 외 페이지는 항상 채움 상태
-  const isHome = pathname === "/";
-  const filled = !isHome || scrolled;
-
-  // scrollThreshold prop 미제공 시 4× viewport 로 자동 계산 (test1 패턴)
-  useEffect(() => {
-    if (scrollThreshold === undefined) {
-      setAutoThreshold(window.innerHeight * 4);
-    }
-  }, [scrollThreshold]);
-
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > threshold));
-
-  function handleClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
+  const handleClick = useNavClick(() => {
     setMobileOpen(false);
+    setExpanded(false);
+  });
 
-    // nav 트리거 스크롤은 천천히 + 출발/도착 모두 부드럽게 (ease-in-out cubic)
-    const opts = {
-      duration: 2,
-      easing: (t: number) =>
-        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  const isHome = pathname === "/";
+
+  /* 라우트 진입 시 visible 재계산:
+     - 홈 외 → 항상 visible
+     - 홈 데스크탑 → 현재 scrollY 기준 (Hero 구간에 있으면 hidden)
+     - 홈 모바일 → 항상 visible
+     page transition 의 scroll reset 이 늦게 반영되는 경우 대비해 raf + setTimeout 2회 재검사. */
+  useEffect(() => {
+    if (!isHome) {
+      setVisible(true);
+      return;
+    }
+    if (!isDesktop) {
+      setVisible(true);
+      return;
+    }
+    const check = () => setVisible(window.scrollY >= transitionRange);
+    check();
+    const raf = requestAnimationFrame(check);
+    const t = setTimeout(check, 500);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t);
     };
+  }, [isHome, isDesktop, transitionRange]);
 
-    // 같은 페이지 anchor (#xxx)
-    if (href.startsWith("#")) {
-      e.preventDefault();
-      if (href === "#") {
-        lenis?.scrollTo(0, opts);
-        return;
-      }
-      const target = document.querySelector(href);
-      if (target) lenis?.scrollTo(target as HTMLElement, opts);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const updateMQ = () => setIsDesktop(mq.matches);
+    updateMQ();
+    mq.addEventListener("change", updateMQ);
+    const updateRange = () => setTransitionRange(window.innerHeight);
+    updateRange();
+    window.addEventListener("resize", updateRange);
+    return () => {
+      mq.removeEventListener("change", updateMQ);
+      window.removeEventListener("resize", updateRange);
+    };
+  }, []);
+
+  /* 스크롤 → visibility:
+     - scrollThreshold prop (test1) 있으면 그 임계
+     - 홈 데스크탑: HeroTransitionReveal panel 이 Hero 를 완전히 덮는 시점 (scrollY ≥ viewportH) 부터
+     - 홈 모바일: 항상 visible */
+  useMotionValueEvent(scrollY, "change", (v) => {
+    if (scrollThreshold !== undefined) {
+      setVisible(v > scrollThreshold);
       return;
     }
-
-    // 경로 + (선택적) anchor
-    const hashIndex = href.indexOf("#");
-    const path = hashIndex >= 0 ? href.slice(0, hashIndex) || "/" : href;
-    const anchor = hashIndex >= 0 ? href.slice(hashIndex) : "";
-
-    if (pathname === path) {
-      // 같은 페이지: scroll 만
-      e.preventDefault();
-      if (!anchor || anchor === "#") {
-        lenis?.scrollTo(0, opts);
-        return;
-      }
-      const target = document.querySelector(anchor);
-      if (target) lenis?.scrollTo(target as HTMLElement, opts);
+    if (!isHome) return;
+    if (!isDesktop) {
+      setVisible(true);
       return;
     }
-
-    // 다른 페이지: leave 애니메이션 먼저 실행 → router.push → children commit 대기 → enter (Barba 패턴)
-    e.preventDefault();
-    if (inTransition()) return;
-
-    (async () => {
-      await runLeave();
-      // children prop 이 새 페이지로 commit 될 때까지 대기 (React 19 concurrent rendering 대응)
-      const childrenChanged = awaitNextChildrenChange();
-      router.push(href);
-      await Promise.race([
-        childrenChanged,
-        // 안전 타임아웃 — children change 가 안 잡히는 edge case 대비
-        new Promise<void>((r) => setTimeout(() => r(), 500)),
-      ]);
-      // commit 후 paint 한 프레임 더 대기
-      await new Promise<void>((r) => requestAnimationFrame(() => r()));
-      await runEnter(path === "/");
-    })();
-  }
+    setVisible(v >= transitionRange);
+  });
 
   return (
     <>
-      <nav
-        className="fixed top-6 left-1/2 z-[210] flex items-center gap-6 px-6 py-3 rounded-full transition-all duration-500"
-        style={{
-          transform: "translateX(-50%)",
-          backgroundColor: filled ? "rgba(255,255,255,0.85)" : "transparent",
-          backdropFilter: filled ? "blur(20px) saturate(180%)" : "none",
-          WebkitBackdropFilter: filled ? "blur(20px) saturate(180%)" : "none",
-          boxShadow: filled ? "0 8px 40px rgba(0,0,0,0.1)" : "none",
-          border: filled ? "1px solid rgba(0,0,0,0.08)" : "1px solid transparent",
-          color: filled ? "#000" : "#fff",
+      {/* Fixed wrapper — 등장 애니메이션(위→아래) + hover 영역 (pill + dropdown 통합) */}
+      <motion.div
+        className="fixed top-6 left-1/2 z-[210]"
+        initial={false}
+        animate={{
+          opacity: visible ? 1 : 0,
+          y: visible ? 0 : -140,
         }}
+        transition={{ duration: 0.8, ease: [0.65, 0, 0.35, 1] }}
+        style={{
+          x: "-50%",
+          pointerEvents: visible ? "auto" : "none",
+        }}
+        onMouseEnter={() => visible && isDesktop && setExpanded(true)}
+        onMouseLeave={() => setExpanded(false)}
       >
-        <Link href="/" onClick={(e) => handleClick(e, "/")} className="font-display font-black tracking-tighter text-xl mr-2">
-          ABC
-        </Link>
-
-        <div className="hidden md:flex items-center gap-6 text-sm font-medium opacity-60">
-          {NAV_ITEMS.map((item) => (
+        {/* 통합 컨테이너 — pill 좌우 확장 + 세로 확장을 CSS transition 으로 오버랩.
+            확장: padding 즉시 (0-750ms) / grid-rows 450ms 후 시작 (450-1200ms)
+            축소: grid-rows 즉시 (0-750ms) / padding 450ms 후 시작 (450-1200ms)
+            → 두 phase 가 부드럽게 오버랩. */}
+        <nav
+          className="flex flex-col items-stretch py-4"
+          style={{
+            borderRadius: 28,
+            overflow: "hidden",
+            paddingLeft: expanded && isDesktop ? 100 : 10,
+            paddingRight: expanded && isDesktop ? 100 : 10,
+            transition: `padding 750ms cubic-bezier(0.16, 1, 0.3, 1) ${
+              expanded ? "0ms" : "450ms"
+            }`,
+            backgroundColor: "rgba(255,255,255,0.85)",
+            backdropFilter: "blur(20px) saturate(180%)",
+            WebkitBackdropFilter: "blur(20px) saturate(180%)",
+            boxShadow: "0 8px 40px rgba(0,0,0,0.1)",
+            border: "1px solid rgba(0,0,0,0.08)",
+            color: "#000",
+          }}
+        >
+          {/* Row 1: plane (+ mobile hamburger) */}
+          <div className="flex items-center justify-center gap-2">
             <Link
-              key={item.label}
-              href={item.href}
-              onClick={(e) => handleClick(e, item.href)}
-              className="hover:opacity-100 transition-opacity whitespace-nowrap"
+              href="/"
+              onClick={(e) => handleClick(e, "/")}
+              className="flex items-center -my-1"
+              aria-label="ABC 비행교육원 홈"
             >
-              {item.label}
+              <PlaneHoverIcon />
             </Link>
-          ))}
-        </div>
 
-        <Link
-          href="/apply"
-          onClick={(e) => handleClick(e, "/apply")}
-          className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500 whitespace-nowrap"
-          style={{
-            backgroundColor: filled ? "#000" : "rgba(255,255,255,0.15)",
-            color: filled ? "#fff" : "inherit",
-          }}
-        >
-          과정 문의
-        </Link>
-        <Link
-          href="/trial"
-          onClick={(e) => handleClick(e, "/trial")}
-          className="hidden md:flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-500 whitespace-nowrap"
-          style={{
-            backgroundColor: filled ? "#6b7280" : "rgba(255,255,255,0.15)",
-            color: filled ? "#fff" : "inherit",
-          }}
-        >
-          체험 문의
-        </Link>
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="md:hidden p-1 ml-2"
+              aria-label="메뉴 열기"
+            >
+              <Icon icon="solar:hamburger-menu-linear" className="text-xl" />
+            </button>
+          </div>
 
-        <button
-          onClick={() => setMobileOpen(true)}
-          className="md:hidden p-1"
-          aria-label="메뉴 열기"
-        >
-          <Icon icon="solar:hamburger-menu-linear" className="text-xl" />
-        </button>
-      </nav>
+          {/* Row 2: items — grid-template-rows 0fr → 1fr 트릭 (height 측정 없이 부드러운 세로 성장).
+              데스크탑 전용. 확장 시 padding 이 진행 중일 때 300ms 딜레이 후 시작 → seamless overlap.
+              축소 시 즉시 collapse 시작 → padding 이 300ms 후 이어받음. */}
+          <div
+            className="hidden md:grid"
+            style={{
+              gridTemplateRows: expanded && isDesktop ? "1fr" : "0fr",
+              opacity: expanded && isDesktop ? 1 : 0,
+              transition: `grid-template-rows 750ms cubic-bezier(0.16, 1, 0.3, 1) ${
+                expanded ? "450ms" : "0ms"
+              }, opacity 750ms cubic-bezier(0.16, 1, 0.3, 1) ${
+                expanded ? "450ms" : "0ms"
+              }`,
+            }}
+          >
+            <div style={{ overflow: "hidden" }}>
+              <div className="mt-4 flex flex-col">
+                {NAV_ITEMS.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={(e) => handleClick(e, item.href)}
+                    className="group block px-5 py-3 text-base font-bold text-[#0a0a0a] whitespace-nowrap text-center"
+                  >
+                    <span className="relative inline-block after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-[#0a0a0a] after:transition-[width] after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:after:w-full">
+                      {item.label}
+                    </span>
+                  </Link>
+                ))}
+                <Link
+                  href="/apply"
+                  onClick={(e) => handleClick(e, "/apply")}
+                  className="mt-3 flex items-center justify-center gap-2 px-5 py-3 text-base font-bold rounded-full bg-[#0a0a0a] text-white whitespace-nowrap transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5"
+                >
+                  과정 문의
+                </Link>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </motion.div>
 
       <AnimatePresence>
         {mobileOpen && (
@@ -200,19 +258,6 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
                 className="mt-4 inline-block bg-black text-white rounded-full px-8 py-4 text-lg font-semibold"
               >
                 과정 문의하기
-              </Link>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.45 }}
-            >
-              <Link
-                href="/trial"
-                onClick={(e) => handleClick(e, "/trial")}
-                className="bg-[#6b7280] text-white rounded-full px-8 py-4 text-lg font-semibold"
-              >
-                체험 문의하기
               </Link>
             </motion.div>
           </motion.div>

@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { useLenis } from "@/components/providers/SmoothScrollProvider";
+import { useNavClick } from "@/components/layout/useNavClick";
+import { NAV_ITEMS } from "@/lib/constants";
 
 /* ═══════════════════════════════════════
    Hero — mp4 → pixel art (밝기 → 톤 매핑)
@@ -35,6 +38,7 @@ export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const lenis = useLenis();
+  const handleNavClick = useNavClick();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -234,7 +238,8 @@ export default function Hero() {
       style={{ minHeight: "100dvh" }}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 border-b border-black/[.15]">
-        <div className="p-5 md:p-8 lg:p-10 md:border-r md:border-black/[.15]">
+        {/* 모바일에서는 상단 nav pill (top-6 + 66px 높이) 과 겹치지 않도록 pt-24 로 여유 확보 */}
+        <div className="pt-24 px-5 pb-5 md:p-8 lg:p-10 md:border-r md:border-black/[.15]">
           <h1
             className="font-display tracking-[-0.045em] text-[#0a0a0a]"
             style={{
@@ -247,7 +252,30 @@ export default function Hero() {
             Flight Training Center
           </h1>
         </div>
-        <div className="p-5 md:p-8 lg:p-10 flex flex-col justify-end">
+        <div className="p-5 md:p-8 lg:p-10 flex flex-col justify-end md:justify-between gap-6">
+          {/* Hero 인라인 nav — 데스크탑 전용, 그리드 우측 셀 상단.
+              글로벌 Navbar 와 완전 별개 (글로벌은 Hero 구간엔 hidden).
+              justify-between 으로 셀 좌우 균형, font-bold, hover 시 underline slide (좌→우). */}
+          <nav className="hidden md:flex items-center justify-between gap-4 text-sm font-bold text-[#0a0a0a]">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
+                className="relative whitespace-nowrap py-1 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#0a0a0a] after:transition-[width] after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] hover:after:w-full"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Link
+              href="/apply"
+              onClick={(e) => handleNavClick(e, "/apply")}
+              className="flex items-center gap-2 px-4 py-1.5 text-sm font-bold rounded-full bg-[#0a0a0a] text-white whitespace-nowrap transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5"
+            >
+              과정 문의
+            </Link>
+          </nav>
+
           <p
             className="font-mono uppercase tracking-[.22em] text-[#0a0a0a]/75 leading-relaxed max-w-[38ch] self-end text-right md:text-left"
             style={{ fontSize: "clamp(10px, 0.8vw, 12px)" }}
