@@ -1,370 +1,309 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { useLenis } from "@/components/providers/SmoothScrollProvider";
+import { useNavClick } from "@/components/layout/useNavClick";
+import { NAV_ITEMS } from "@/lib/constants";
 
 /* ═══════════════════════════════════════
-   유틸
+   Hero — mp4 → pixel art (밝기 → 톤 매핑)
+   비디오 프레임을 오프스크린에서 다운샘플 → 셀별 luminance → 팔레트 인덱스
    ═══════════════════════════════════════ */
-function clamp(min: number, max: number, v: number) { return Math.max(min, Math.min(v, max)); }
-function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
 
-const SP = 4;
+/* Grayscale mono 팔레트 — 밝기 밴드별 gray tone */
+const PALETTE_HEX = [
+  "#fafaf8", // 0 background (skip)
+  "#0a0a0a", // 1 black — 최심
+  "#4a4e55", // 2 mid-dark gray
+  "#7d8087", // 3 mid-light gray
+  "#3a3e45", // 4 deep gray (매핑상 skip 유지)
+  "#b8bbc0", // 5 lightest visible gray
+] as const;
 
-/* ═══════════════════════════════════════
-   3-stage 콘텐츠
-   ═══════════════════════════════════════ */
-const STAGES = [
-  "예비 조종사 양성부터 항공사 입사까지\n\n이어지는 통합 교육입니다.",
-  "아세아항공직업전문학교, Embry-Riddle 항공대학교와의 협력으로\n\n검증된 커리큘럼을 운영합니다.",
-  "조종사 커리어의 출발점이 되는\n\nWhy ABC 7가지 강점을\n\nABC만의 방식으로 뒷받침합니다.",
-];
-const STAGE_COUNT = STAGES.length;
+const VIDEO_SRC = "/images/hero_aviation.mp4";
 
-/* ═══════════════════════════════════════
-   CharReveal — 글자 단위 opacity 전환
-   원본: chars opacity 0.5 초기 → 순차 1.0 (charFadeValue: 0.5)
-   ═══════════════════════════════════════ */
-const CHAR_FADE_VALUE = 0.5;
-
-function CharReveal({
-  text,
-  progress,
-}: {
-  text: string;
-  progress: number;
-}) {
-  const chars = text.split("");
-  const v = Math.min(progress * 1.5, 1);
-  const m = Math.floor(v * chars.length);
-  const partial = v * chars.length - m;
-
-  return (
-    <>
-      {chars.map((ch, i) => {
-        if (ch === "\n") return <br key={i} />;
-        let opacity: number;
-        if (i < m) opacity = 1;
-        else if (i === m) opacity = CHAR_FADE_VALUE + partial * (1 - CHAR_FADE_VALUE);
-        else opacity = CHAR_FADE_VALUE;
-        return (
-          <span key={i} style={{ opacity, display: "inline-block", whiteSpace: "pre" }}>
-            {ch === " " ? " " : ch}
-          </span>
-        );
-      })}
-    </>
-  );
+/* 밝기 (0..1) → 팔레트 인덱스.
+   navy (#0e2f7a) 밴드는 하늘/배경 dominant → skip 처리 */
+function lumToIdx(lum: number): number {
+  if (lum > 0.80) return 5; // yellow
+  if (lum > 0.60) return 3; // red
+  if (lum > 0.40) return 2; // blue
+  if (lum > 0.20) return 0; // navy 밴드 skip (배경)
+  if (lum > 0.05) return 1; // black (airplane 실루엣)
+  return 0;
 }
 
-/* ═══════════════════════════════════════
-   ThreeStageSection — 3단계 스크롤 텍스트
-   ═══════════════════════════════════════ */
-function ThreeStageSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
-
-  const [p, setP] = useState(0);
-  useMotionValueEvent(scrollYProgress, "change", (v) => setP(v));
-
-  const stageIndex = Math.min(STAGE_COUNT - 1, Math.floor(p * STAGE_COUNT));
-  const stageLocalP = clamp(0, 1, p * STAGE_COUNT - stageIndex);
-
-  const barScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const planeLeft = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
-  return (
-    <section
-      ref={ref}
-      id="intro"
-      className="relative z-10 text-white"
-      style={{ height: `${(STAGE_COUNT + 1) * 100}svh` }}
-    >
-      <div
-        className="sticky top-0 flex flex-col"
-        style={{ height: "100dvh", paddingTop: "70px" }}
-      >
-        <div className="px-6 md:px-10 flex-shrink-0" style={{ paddingTop: 48, paddingBottom: 44 }}>
-          <span
-            className="inline-block rounded-full px-3 py-1.5 text-[11px] md:text-xs uppercase tracking-[.25em]"
-            // style={{
-            //   background: "rgba(255,255,255,0.1)",
-            //   color: "#fff",
-            // }}
-          >
-            What we do
-          </span>
-        </div>
-
-        <div className="px-6 md:px-10 flex-1 flex flex-col">
-          <div
-            className="relative w-full"
-            style={{ height: "1px", background: "rgba(255,255,255,0.2)" }}
-          >
-            <motion.div
-              className="absolute inset-0 bg-white origin-left"
-              style={{ scaleX: barScale }}
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <motion.img
-              src="/images/plane1.png"
-              alt=""
-              aria-hidden
-              className="absolute select-none pointer-events-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: p > 0.005 && p < 0.995 ? 1 : 0 }}
-              transition={{ duration: 1.2, ease: [0.65, 0, 0.35, 1] }}
-              style={{
-                top: "50%",
-                left: planeLeft,
-                x: "-50%",
-                y: "-57%",
-                height: "clamp(72px, 10vw, 120px)",
-                width: "auto",
-              }}
-            />
-          </div>
-
-          <div className="pt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-y-8 lg:gap-x-8 items-start">
-            <div className="hidden lg:block" />
-            <div className="relative w-full">
-              {STAGES.map((text, i) => {
-                const isActive = i === stageIndex;
-                const itemP = isActive ? stageLocalP : 0;
-                const y = isActive ? 0 : i < stageIndex ? -30 : 30;
-                return (
-                  <motion.div
-                    key={i}
-                    className="top-0 left-0 w-full flex flex-col"
-                    animate={{ opacity: isActive ? 1 : 0, y }}
-                    transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
-                    style={{
-                      position: i === 0 ? "relative" : "absolute",
-                      visibility: isActive ? "visible" : "hidden",
-                    }}
-                  >
-                    <p
-                      className="tracking-[-0.02em] text-right"
-                      style={{
-                        // 모바일 (~24px) → 데스크탑 (~58px). 기존 mobile 41px 는 stage 2
-                        // 같은 긴 문단이 sticky viewport 세로를 넘어 잘렸음
-                        fontSize: "clamp(1.5rem, calc(0.5rem + 3.5vw), 3.625rem)",
-                        lineHeight: "1.1em",
-                        fontWeight: 500,
-                      }}
-                    >
-                      <CharReveal text={text} progress={itemP} />
-                    </p>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex-shrink-0" style={{ paddingBottom: 44 }} />
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════
-   Hero — pill → video 로드 + 3-stage 스크롤
-   ═══════════════════════════════════════ */
 export default function Hero() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef<HTMLDivElement>(null);
-  const maskRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const loadCompleteRef = useRef(false);
   const lenis = useLenis();
+  const handleNavClick = useNavClick();
 
-  // pill / 텍스트 reveal 은 CSS keyframes 로 위임 (hydration 타이밍 무관 확실 실행).
-  // loadCompleteRef 는 mask 의 onAnimationEnd 에서 true 로 세팅 (scroll tick 에서 clipPath 직접 조작 gate).
-
-  // hash 진입 (예: /pipeline → /#intro) 시 로드 애니 완료 후 해당 섹션으로 smooth-scroll
   useEffect(() => {
     if (typeof window === "undefined") return;
     const hash = window.location.hash;
-    if (!hash) return;
-    if (!lenis) return;
-
-    // load(100ms) + ready(1600ms) + 텍스트 reveal(1200ms) 종료 직후
+    if (!hash || !lenis) return;
     const t = setTimeout(() => {
       const target = document.querySelector(hash) as HTMLElement | null;
       if (!target) return;
       const targetY = target.getBoundingClientRect().top + window.scrollY;
-      // ease-in-out cubic — 출발/도착 모두 부드럽게
       lenis.scrollTo(targetY, {
-        duration: 2,
+        duration: 1.6,
         easing: (t: number) =>
           t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
       });
-    }, 2900);
+    }, 700);
     return () => clearTimeout(t);
   }, [lenis]);
 
-  // 스크롤 기반 애니메이션: 영상 프레임 확장 + mask radius 동기화 + 블러
   useEffect(() => {
-    let raf = false;
-    function tick() {
-      const video = videoRef.current;
-      const frame = frameRef.current;
-      const mask = maskRef.current;
-      if (!video || !frame) { raf = false; return; }
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    if (!canvas || !video) return;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return;
 
-      const sy = window.scrollY;
-      const vh = window.innerHeight;
+    let raf = 0;
+    let cols = 0;
+    let rows = 0;
+    let cellCanvas = 0;
+    let innerCanvas = 0;
+    let padCanvas = 0;
+    let cwCanvas = 0;
+    let chCanvas = 0;
+    let offCanvas: HTMLCanvasElement | null = null;
+    let offCtx: CanvasRenderingContext2D | null = null;
+    let disposed = false;
 
-      // 트리거 범위를 늘려서 (vh * 0.5) iOS 스크롤 inertia 가 한 번에 trigger 를 넘기지 않게 함
-      const frameP = clamp(0, 1, sy / (vh * 0.5));
-      const isDesktop = window.matchMedia("(min-width: 1025px)").matches;
-      // 데스크탑은 큰 letterbox + 라운드, 모바일은 작은 letterbox + 작은 라운드
-      const padStart = isDesktop ? 12 : 8;
-      const radiusStart = isDesktop ? 20 : 8;
-      // pad 끝값을 -1 로 두어 닫힐 때 sticky 를 1px 덮어쓰게 (overdraw) → 좌/우 sub-pixel 갭 차단
-      const pad = lerp(padStart, -1, frameP);
-      const radius = lerp(radiusStart, 0, frameP);
-      frame.style.inset = `${pad}px`;
-      frame.style.width = `calc(100% - ${pad * 2}px)`;
-      frame.style.height = `calc(100% - ${pad * 2}px)`;
-      frame.style.borderRadius = `${radius}px`;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      if (mask && loadCompleteRef.current) {
-        mask.style.clipPath = `inset(0% round ${radius}px)`;
-      }
+    function setup() {
+      const rect = canvas!.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-      const blurP = clamp(0, 1, (sy - vh) / (vh * 0.5));
-      const blur = lerp(0, 22, blurP);
-      const brightness = lerp(1, 0.4, blurP);
-      video.style.filter = `blur(${blur}px) brightness(${brightness})`;
-      video.style.transform = `scale(${1 + blur * 0.01})`;
+      /* S 프리셋 — 파인 해상도 (프리미엄) — 목표 cols 고정, cellCss 는 창 폭에 맞춰 조정
+         셀 크기는 [3, 10] CSS px 로 clamp */
+      const TARGET_COLS = window.innerWidth < 768 ? 160 : 240;
+      const cellCss = Math.max(
+        3,
+        Math.min(10, Math.round(rect.width / TARGET_COLS))
+      );
+      const innerCss = Math.max(2, cellCss - 1); // 1px gap (셀 사이 여백)
+      const padCss = (cellCss - innerCss) / 2;
 
-      raf = false;
+      cellCanvas = cellCss * dpr;
+      innerCanvas = innerCss * dpr;
+      padCanvas = padCss * dpr;
+
+      cols = Math.max(24, Math.floor(rect.width / cellCss));
+      rows = Math.max(12, Math.floor(rect.height / cellCss));
+
+      cwCanvas = cols * cellCanvas;
+      chCanvas = rows * cellCanvas;
+      canvas!.width = cwCanvas;
+      canvas!.height = chCanvas;
+      ctx!.imageSmoothingEnabled = false;
+
+      /* 다운샘플용 오프스크린 — 그리드 해상도 */
+      offCanvas = document.createElement("canvas");
+      offCanvas.width = cols;
+      offCanvas.height = rows;
+      offCtx = offCanvas.getContext("2d", { willReadFrequently: true });
+      if (offCtx) offCtx.imageSmoothingEnabled = true; // 브라우저 area filter 사용
     }
-    function onScroll() { if (!raf) { requestAnimationFrame(tick); raf = true; } }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    tick();
-    return () => window.removeEventListener("scroll", onScroll);
+
+    /* Reveal fade-in — 최초 렌더 시 각 셀이 랜덤 시점에 등장 */
+    let revealStartMs = 0;
+    const REVEAL_SPREAD_MS = 1300; // 셀들이 등장하는 시간 분포
+    const CELL_FADE_MS = 200; // 각 셀 fade-in 지속
+
+    function paint(nowTs: number) {
+      if (!offCanvas || !offCtx) return;
+      if (video!.readyState < 2) return;
+      const vw = video!.videoWidth;
+      const vh = video!.videoHeight;
+      if (vw === 0 || vh === 0) return;
+
+      /* Cover 스케일: 그리드 aspect 맞춰 원본 crop */
+      const vAspect = vw / vh;
+      const gAspect = cols / rows;
+      let sx = 0, sy = 0, sw = vw, sh = vh;
+      if (vAspect > gAspect) {
+        sw = vh * gAspect;
+        sx = (vw - sw) / 2;
+      } else {
+        sh = vw / gAspect;
+        sy = (vh - sh) / 2;
+      }
+      offCtx.drawImage(video!, sx, sy, sw, sh, 0, 0, cols, rows);
+      const src = offCtx.getImageData(0, 0, cols, rows).data;
+
+      ctx!.fillStyle = PALETTE_HEX[0];
+      ctx!.fillRect(0, 0, cwCanvas, chCanvas);
+
+      if (!revealStartMs) revealStartMs = nowTs;
+      const revealElapsed = nowTs - revealStartMs;
+      const revealDone = revealElapsed >= REVEAL_SPREAD_MS + CELL_FADE_MS;
+
+      let currentIdx = -1;
+      let currentAlpha = 1;
+      ctx!.globalAlpha = 1;
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const i = (y * cols + x) * 4;
+          const r = src[i];
+          const g = src[i + 1];
+          const b = src[i + 2];
+          /* Rec. 601 luminance */
+          const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+          const idx = lumToIdx(lum);
+          if (idx === 0) continue;
+
+          /* Reveal fade-in — 셀별 랜덤 시점 (stable hash) */
+          let alpha = 1;
+          if (!revealDone) {
+            let h = (x * 374761393 + y * 668265263) | 0;
+            h = ((h ^ (h >>> 13)) * 1274126177) | 0;
+            const cellStart = ((h >>> 0) / 0xffffffff) * REVEAL_SPREAD_MS;
+            const dt = revealElapsed - cellStart;
+            if (dt <= 0) continue;
+            alpha = dt >= CELL_FADE_MS ? 1 : dt / CELL_FADE_MS;
+          }
+          if (alpha !== currentAlpha) {
+            ctx!.globalAlpha = alpha;
+            currentAlpha = alpha;
+          }
+
+          if (idx !== currentIdx) {
+            ctx!.fillStyle = PALETTE_HEX[idx];
+            currentIdx = idx;
+          }
+          ctx!.fillRect(
+            x * cellCanvas + padCanvas,
+            y * cellCanvas + padCanvas,
+            innerCanvas,
+            innerCanvas
+          );
+        }
+      }
+      if (currentAlpha !== 1) ctx!.globalAlpha = 1;
+    }
+
+    function tick(ts: number) {
+      if (disposed) return;
+      paint(ts);
+      raf = requestAnimationFrame(tick);
+    }
+
+    function onResize() {
+      setup();
+    }
+
+    setup();
+
+    /* 비디오 재생 */
+    const v = video!;
+    v.muted = true;
+    v.loop = true;
+    v.playsInline = true;
+    const playPromise = v.play();
+    if (playPromise) playPromise.catch(() => {});
+
+    if (reduce) {
+      /* 저모션: 정지 프레임 한 장만 그림 */
+      v.pause();
+      const onSeeked = () => {
+        paint(performance.now());
+        v.removeEventListener("seeked", onSeeked);
+      };
+      v.addEventListener("seeked", onSeeked);
+      v.currentTime = 0.5;
+    } else {
+      raf = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   return (
-    <div ref={heroRef} className="relative">
-      {/* 영상 레이어 — sticky */}
-      <div
-        ref={stickyRef}
-        className="sticky top-0 overflow-hidden bg-[#fafaf8] z-0"
-        style={{ height: "100dvh" }}
-      >
-        <div
-          ref={frameRef}
-          className="absolute overflow-hidden inset-2 lg:inset-3 rounded-[8px] lg:rounded-[20px]"
-        >
-          <div
-            ref={maskRef}
-            className="absolute bg-black"
+    <section
+      className="relative w-full flex flex-col bg-[#fafaf8] overflow-hidden"
+      style={{ minHeight: "100dvh" }}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-black/[.15]">
+        {/* 모바일에서는 상단 nav pill (top-6 + 66px 높이) 과 겹치지 않도록 pt-24 로 여유 확보 */}
+        <div className="pt-24 px-5 pb-5 md:p-8 lg:p-10 md:border-r md:border-black/[.15]">
+          <h1
+            className="font-display tracking-[-0.045em] text-[#0a0a0a]"
             style={{
-              top: "50%",
-              left: "50%",
-              width: "100%",
-              height: "100%",
-              transform: "translate(-50%, -50%)",
-              // CSS keyframe 기반 — hydration/Framer 대기 없이 첫 paint 즉시 pill → full 실행
-              clipPath: "inset(50% 50% 50% 50% round 200px)",
-              animation:
-                "hero-pill-reveal 2s cubic-bezier(0.87, 0, 0.13, 1) 0.3s forwards",
-            }}
-            onAnimationEnd={(e) => {
-              if ((e as React.AnimationEvent).animationName === "hero-pill-reveal") {
-                loadCompleteRef.current = true;
-              }
+              fontSize: "clamp(2.25rem, 5.5vw, 5rem)",
+              fontWeight: 800,
+              lineHeight: 0.95,
             }}
           >
-            <video
-              ref={videoRef}
-              className="absolute inset-0 w-full h-full object-cover"
-              autoPlay loop muted playsInline preload="metadata"
-              style={{ transformOrigin: "center", opacity: 0.875 }}
+            ABC<br />
+            Flight Training Center
+          </h1>
+        </div>
+        <div className="p-5 md:p-8 lg:p-10 flex flex-col justify-end md:justify-between gap-6">
+          {/* Hero 인라인 nav — 데스크탑 전용, 그리드 우측 셀 상단.
+              글로벌 Navbar 와 완전 별개 (글로벌은 Hero 구간엔 hidden).
+              justify-between 으로 셀 좌우 균형, font-bold, hover 시 underline slide (좌→우). */}
+          <nav className="hidden md:flex items-center justify-between gap-4 text-sm font-bold text-[#0a0a0a]">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
+                className="relative whitespace-nowrap py-1 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#0a0a0a] after:transition-[width] after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] hover:after:w-full"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Link
+              href="/apply"
+              onClick={(e) => handleNavClick(e, "/apply")}
+              className="flex items-center gap-2 px-4 py-1.5 text-sm font-bold rounded-full bg-[#0a0a0a] text-white whitespace-nowrap transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5"
             >
-              <source src="/images/wing.mp4" type="video/mp4" />
-            </video>
-            <div className="absolute inset-0 bg-black/30" />
-            {/* Bottom fade — 다음 섹션(#0a0a0a)과 자연스럽게 연결 */}
-            <div
-              aria-hidden
-              className="absolute inset-x-0 bottom-0 pointer-events-none"
-              style={{
-                height: "40vh",
-                background:
-                  "linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.7) 60%, #0a0a0a 100%)",
-              }}
-            />
-          </div>
+              과정 문의
+            </Link>
+          </nav>
+
+          <p
+            className="font-mono uppercase tracking-[.22em] text-[#0a0a0a]/75 leading-relaxed max-w-[38ch] self-end text-right md:text-left"
+            style={{ fontSize: "clamp(10px, 0.8vw, 12px)" }}
+          >
+            A flight training center for future airline pilots.
+            <br className="hidden md:block" />
+            {" "}Ground School · FTD · Airline Prep.
+          </p>
         </div>
       </div>
 
-      {/* Hero main — 일반 flow, 100dvh, 스크롤 시 위로 사라짐 */}
-      <div
-        className="relative z-10 text-white pointer-events-none"
-        style={{ marginTop: "-100dvh", height: "100dvh" }}
-      >
-        <div
-          className="flex flex-col justify-end h-full"
-          style={{ paddingLeft: SP * 20, paddingRight: SP * 5, paddingBottom: SP * 10 }}
-        >
-          <div className="overflow-hidden">
-            <h1
-              className="font-display font-bold tracking-[-0.05em] leading-none"
-              style={{
-                fontSize: "clamp(4rem, 13vw, 12rem)",
-                transform: "translateY(110%)",
-                animation:
-                  "hero-text-reveal 1.2s cubic-bezier(0.65, 0, 0.35, 1) 1.6s forwards",
-              }}
-            >
-              ABC
-            </h1>
-          </div>
-          <div className="overflow-hidden">
-            <p
-              className="font-display font-bold tracking-[-0.04em] leading-none"
-              style={{
-                fontSize: "clamp(1.5rem, 10vw, 10rem)",
-                lineHeight: 1.3,
-                color: "rgba(255,255,255,0.4)",
-                transform: "translateY(110%)",
-                animation:
-                  "hero-text-reveal 1.2s cubic-bezier(0.65, 0, 0.35, 1) 1.75s forwards",
-              }}
-            >
-              Flight Training Center
-            </p>
-          </div>
-          <div style={{ height: SP * 5 }} />
-        </div>
-
-        {/* Scroll indicator */}
-        <div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-          style={{ opacity: 0.5 }}
-        >
-          <motion.svg
-            width="10" height="14" viewBox="0 0 10 14" fill="none"
-            animate={{ y: [0, 3, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <path d="M5 1v12M1 9l4 4 4-4" stroke="currentColor" strokeWidth="1.5" />
-          </motion.svg>
-          <span className="text-[10px] opacity-80 tracking-widest uppercase">Scroll to explore</span>
-        </div>
+      <div className="relative flex-1 overflow-hidden">
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 block w-full h-full"
+          aria-hidden="true"
+        />
+        <video
+          ref={videoRef}
+          src={VIDEO_SRC}
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="absolute w-px h-px opacity-0 pointer-events-none"
+          aria-hidden="true"
+        />
       </div>
-
-      {/* 3-stage 스크롤 텍스트 */}
-      <ThreeStageSection />
-    </div>
+    </section>
   );
 }
