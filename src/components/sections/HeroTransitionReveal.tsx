@@ -66,12 +66,12 @@ export default function HeroTransitionReveal({
           height: "100dvh",
         }}
       >
-        {/* 한 줄 문장 — flex center 기준, scale + y translate 로 애니메이션 */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        {/* 한 줄 문장 (데스크탑) / 3 줄 분리 (모바일) — flex center, scale + y translate 로 애니메이션.
+            <br className="md:hidden" /> 로 모바일에서만 강제 개행. */}
+        <div className="absolute inset-0 flex items-center justify-center px-5">
           <motion.h2
-            className="whitespace-nowrap text-white font-display font-black tracking-[-0.025em] text-center break-keep-all"
+            className="text-white font-display font-black tracking-[-0.025em] text-left break-keep-all md:whitespace-nowrap text-[1.75rem] md:text-[2.75rem] leading-[1.3]"
             style={{
-              fontSize: "2.64vw",
               scale: textScale,
               y: textY,
               opacity: textOpacity,
@@ -80,16 +80,17 @@ export default function HeroTransitionReveal({
               MozOsxFontSmoothing: "grayscale",
             }}
           >
-            예비 조종사 양성부터 항공사 입사까지 이어지는 통합 조종사 교육
-            시스템을 갖춘 교육원입니다.
+            예비 조종사 양성부터<br className="md:hidden" />
+            {" "}항공사 입사까지 이어지는<br className="md:hidden" />
+            {" "}통합 조종사 교육 시스템을 갖춘<br className="md:hidden" />
+            {" "}비행교육원입니다.
           </motion.h2>
         </div>
 
-        {/* Body 문단 1 — 헤드라인 아래 중앙 (top: 50dvh), slide up + scale */}
+        {/* Body 문단 1 — 모바일에선 헤드라인 아래 (top:52dvh), 데스크탑은 기존 50dvh */}
         <motion.div
-          className="absolute inset-x-0 px-6 md:px-12 lg:px-20 flex justify-center"
+          className="absolute inset-x-0 px-5 md:px-12 lg:px-20 flex justify-center top-[52dvh] md:top-[50dvh]"
           style={{
-            top: "50dvh",
             opacity: body1Opacity,
             y: body1Y,
             scale: body1Scale,
@@ -97,9 +98,8 @@ export default function HeroTransitionReveal({
           }}
         >
           <p
-            className="max-w-4xl text-white leading-relaxed break-keep-all text-center"
+            className="max-w-4xl text-white break-keep-all text-justify text-[1rem] md:text-[1.35rem] leading-[1.55]"
             style={{
-              fontSize: "clamp(1.2rem, 1.44vw, 1.5rem)",
               WebkitFontSmoothing: "antialiased",
               MozOsxFontSmoothing: "grayscale",
             }}
@@ -111,11 +111,10 @@ export default function HeroTransitionReveal({
           </p>
         </motion.div>
 
-        {/* Body 문단 2 — Body 1 아래 (top: 72dvh), Body 1 이후 slide up + scale */}
+        {/* Body 문단 2 — 모바일에선 body1 과 충돌 회피 위해 top:68dvh, 데스크탑은 기존 72dvh */}
         <motion.div
-          className="absolute inset-x-0 px-6 md:px-12 lg:px-20 flex justify-center"
+          className="absolute inset-x-0 px-5 md:px-12 lg:px-20 flex justify-center top-[72dvh] md:top-[72dvh]"
           style={{
-            top: "72dvh",
             opacity: body2Opacity,
             y: body2Y,
             scale: body2Scale,
@@ -123,9 +122,8 @@ export default function HeroTransitionReveal({
           }}
         >
           <p
-            className="max-w-4xl text-white leading-relaxed break-keep-all text-center"
+            className="max-w-4xl text-white break-keep-all text-justify text-[1rem] md:text-[1.35rem] leading-[1.55]"
             style={{
-              fontSize: "clamp(1.2rem, 1.44vw, 1.5rem)",
               WebkitFontSmoothing: "antialiased",
               MozOsxFontSmoothing: "grayscale",
             }}
