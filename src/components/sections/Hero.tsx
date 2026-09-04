@@ -256,7 +256,7 @@ export default function Hero() {
           {/* Hero 인라인 nav — 데스크탑 전용, 그리드 우측 셀 상단.
               글로벌 Navbar 와 완전 별개 (글로벌은 Hero 구간엔 hidden).
               justify-between 으로 셀 좌우 균형, font-bold, hover 시 underline slide (좌→우). */}
-          <nav className="hidden md:flex items-center justify-between gap-4 text-sm font-bold text-[#0a0a0a]">
+          <nav className="hidden md:flex items-center justify-between gap-4 text-sm font-normal text-[#0a0a0a]">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.label}
