@@ -130,7 +130,7 @@ export default function WhyABC() {
                   </span>
                 )}
                 <h3
-                  className="font-extrabold tracking-[-0.025em] leading-[1.2] break-keep-all text-[#0a0a0a]"
+                  className="font-light tracking-[-0.025em] leading-[1.2] break-keep-all text-[#0a0a0a]"
                   style={{ fontSize: "clamp(1.25rem, 2vw, 1.9rem)" }}
                 >
                   {item.title}
