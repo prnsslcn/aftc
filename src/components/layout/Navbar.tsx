@@ -54,13 +54,19 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
   });
 
   const isHome = pathname === "/";
+  const isAdmin = pathname.startsWith("/admin");
 
   /* 라우트 진입 시 visible 재계산:
+     - /admin/* → 항상 hidden (관리자 페이지는 자체 헤더 사용)
      - 홈 외 → 항상 visible
      - 홈 데스크탑 → 현재 scrollY 기준 (Hero 구간에 있으면 hidden)
      - 홈 모바일 → 항상 visible
      page transition 의 scroll reset 이 늦게 반영되는 경우 대비해 raf + setTimeout 2회 재검사. */
   useEffect(() => {
+    if (isAdmin) {
+      setVisible(false);
+      return;
+    }
     if (!isHome) {
       setVisible(true);
       return;
@@ -77,7 +83,7 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
       cancelAnimationFrame(raf);
       clearTimeout(t);
     };
-  }, [isHome, isDesktop, transitionRange]);
+  }, [isAdmin, isHome, isDesktop, transitionRange]);
 
 
   useEffect(() => {
@@ -99,6 +105,7 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
      - 홈 데스크탑: HeroTransitionReveal panel 이 Hero 를 완전히 덮는 시점 (scrollY ≥ viewportH) 부터
      - 홈 모바일: 항상 visible */
   useMotionValueEvent(scrollY, "change", (v) => {
+    if (isAdmin) return;
     if (scrollThreshold !== undefined) {
       setVisible(v > scrollThreshold);
       return;

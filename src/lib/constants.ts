@@ -36,6 +36,7 @@ export const NAV_ITEMS = [
   { label: "비행학교", href: "/flight-school", active: true },
   { label: "항공사 입사과정", href: "/airline-prep", active: true },
   { label: "APP / UPP", href: "/app-upp", active: true },
+  { label: "공지사항", href: "/notices", active: true },
 ];
 
 export const GROUND_SCHOOL = [
