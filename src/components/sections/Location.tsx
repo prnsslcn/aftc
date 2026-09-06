@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 /* Location — 찾아오시는 길.
    한 화면(100dvh)에 담기게 컴팩트 레이아웃.
    Naver 는 iframe embed 를 차단하므로 지도는 Google Maps embed 로 렌더,
@@ -13,7 +15,7 @@ const NAVER_MAP_LINK = `https://map.naver.com/p/search/${encodeURIComponent(
 
 export default function Location() {
   return (
-    <section className="min-h-[100dvh] flex flex-col bg-[#0a0a0a] text-[#fafaf8] px-6 md:px-10 lg:px-16 pt-24 pb-10 md:pt-28 md:pb-14">
+    <section className="relative min-h-[100dvh] flex flex-col bg-[#0a0a0a] text-[#fafaf8] px-6 md:px-10 lg:px-16 pt-24 pb-10 md:pt-28 md:pb-14">
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col">
         {/* Header + Address — 인라인 컴팩트 */}
         <div className="mb-8 md:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
@@ -68,6 +70,14 @@ export default function Location() {
           </a>
         </div>
       </div>
+
+      {/* 관리자 로그인 진입점 — 우측 하단 조용히 */}
+      <Link
+        href="/admin/login"
+        className="absolute right-4 bottom-4 md:right-6 md:bottom-6 text-[10px] md:text-xs font-mono uppercase tracking-[.22em] text-white/25 hover:text-white/70 transition-colors"
+      >
+        Admin
+      </Link>
     </section>
   );
 }
