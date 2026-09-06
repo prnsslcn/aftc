@@ -25,8 +25,11 @@ export const noticeSchema = z.object({
 });
 export type NoticeInput = z.infer<typeof noticeSchema>;
 
-/* 첨부 업로드 시 파일 메타 검증 */
-export const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
+/* 첨부 업로드 시 파일 메타 검증.
+   Vercel Hobby 플랜의 serverless function body 상한이 4.5MB 이므로 4MB 로 제한.
+   Pro 업그레이드 시 20MB 등으로 올릴 수 있음. */
+export const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB
+export const MAX_FILE_SIZE_LABEL = "4MB";
 export const ALLOWED_FILE_TYPES = [
   "application/pdf",
   "image/png",

@@ -8,6 +8,7 @@ import {
   noticeSchema,
   isAllowedFileType,
   MAX_FILE_SIZE,
+  MAX_FILE_SIZE_LABEL,
   type ActionResult,
 } from "@/lib/validation";
 import type { NoticeRow, AttachmentRow } from "@/lib/db/types";
@@ -164,7 +165,7 @@ export async function addAttachment(
     return { ok: false, error: "파일이 없습니다." };
   }
   if (file.size > MAX_FILE_SIZE) {
-    return { ok: false, error: "파일 크기가 20MB 를 초과합니다." };
+    return { ok: false, error: `파일 크기가 ${MAX_FILE_SIZE_LABEL} 를 초과합니다.` };
   }
   if (!isAllowedFileType(file.type)) {
     return { ok: false, error: "허용되지 않는 파일 형식입니다 (PDF · 이미지만)." };
