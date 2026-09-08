@@ -3,18 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { Lottie, type LottieHandle } from "lottie-react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { useNavClick } from "@/components/layout/useNavClick";
 
-const PLANE_ICON = "/icons/motion/plane_right.json";
-const PLANE_SIZE = 42;
+const PLANE_ICON_DARK = "/icons/motion/plane_right.json";      // 검정 plane — 라이트 배경용
+const PLANE_ICON_LIGHT = "/icons/motion/plane_right_white.json"; // 흰 plane — 다크 배경용
+const PLANE_SIZE = 32;
 
-/* Hover 시 처음부터 재생. mouseLeave 해도 중단하지 않고 남은 사이클을 마치게 둠. */
-function PlaneHoverIcon() {
+/* Plane Lottie 로고 — 마우스 hover 시 처음부터 재생, 사이클 완료까지 진행.
+   theme 에 따라 다른 JSON 로드 (라이트 배경엔 검정, 다크 배경엔 흰 plane). */
+function PlaneHoverIcon({ theme }: { theme: "light" | "dark" }) {
   const handleRef = useRef<LottieHandle>(null);
+  const src = theme === "dark" ? PLANE_ICON_LIGHT : PLANE_ICON_DARK;
   return (
     <span
       className="inline-flex items-center justify-center"
@@ -25,7 +28,8 @@ function PlaneHoverIcon() {
       }}
     >
       <Lottie
-        src={PLANE_ICON}
+        key={src}
+        src={src}
         lottieRef={handleRef}
         autoplay={false}
         loop={false}
@@ -35,195 +39,185 @@ function PlaneHoverIcon() {
   );
 }
 
-/* 글로벌 Navbar — 중앙 pill (플레인 아이콘 only).
-   Hero 우측 셀 인라인 nav 와 완전 별개.
-   홈 데스크탑 Hero 구간에서는 hidden (뷰포트 위쪽),
-   HeroTransitionReveal panel 이 Hero 를 덮는 순간 ease-in-out 으로 아래로 내려옴.
-   Plane hover 시 아래로 드롭다운 (droplet-style reveal). */
-export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }) {
+type NavTheme = "light" | "dark";
+
+/* 글로벌 상단 minimal fixed nav — Midday 스타일 참조.
+   - Full-width, top-0
+   - 각 섹션의 data-nav-theme 속성을 스크롤로 감지해 nav 배경/텍스트 색을 라이트↔다크로 전환
+   - /admin/* 에서는 렌더 안 함
+   - scrollThreshold prop 은 무시 (backwards compat 용) */
+export default function Navbar(_props?: { scrollThreshold?: number }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-  const [transitionRange, setTransitionRange] = useState(1);
-  const [visible, setVisible] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const { scrollY } = useScroll();
+  const [theme, setTheme] = useState<NavTheme>("light");
   const pathname = usePathname();
-  const handleClick = useNavClick(() => {
-    setMobileOpen(false);
-    setExpanded(false);
-  });
-
-  const isHome = pathname === "/";
-  const isAdmin = pathname.startsWith("/admin");
-
-  /* 라우트 진입 시 visible 재계산:
-     - /admin/* → 항상 hidden (관리자 페이지는 자체 헤더 사용)
-     - 홈 외 → 항상 visible
-     - 홈 데스크탑 → 현재 scrollY 기준 (Hero 구간에 있으면 hidden)
-     - 홈 모바일 → 항상 visible
-     page transition 의 scroll reset 이 늦게 반영되는 경우 대비해 raf + setTimeout 2회 재검사. */
-  useEffect(() => {
-    if (isAdmin) {
-      setVisible(false);
-      return;
-    }
-    if (!isHome) {
-      setVisible(true);
-      return;
-    }
-    if (!isDesktop) {
-      setVisible(true);
-      return;
-    }
-    const check = () => setVisible(window.scrollY >= transitionRange);
-    check();
-    const raf = requestAnimationFrame(check);
-    const t = setTimeout(check, 500);
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(t);
-    };
-  }, [isAdmin, isHome, isDesktop, transitionRange]);
-
+  const handleClick = useNavClick(() => setMobileOpen(false));
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const updateMQ = () => setIsDesktop(mq.matches);
-    updateMQ();
-    mq.addEventListener("change", updateMQ);
-    const updateRange = () => setTransitionRange(window.innerHeight);
-    updateRange();
-    window.addEventListener("resize", updateRange);
-    return () => {
-      mq.removeEventListener("change", updateMQ);
-      window.removeEventListener("resize", updateRange);
-    };
-  }, []);
+    if (typeof window === "undefined") return;
 
-  /* 스크롤 → visibility:
-     - scrollThreshold prop (test1) 있으면 그 임계
-     - 홈 데스크탑: HeroTransitionReveal panel 이 Hero 를 완전히 덮는 시점 (scrollY ≥ viewportH) 부터
-     - 홈 모바일: 항상 visible */
-  useMotionValueEvent(scrollY, "change", (v) => {
-    if (isAdmin) return;
-    if (scrollThreshold !== undefined) {
-      setVisible(v > scrollThreshold);
-      return;
-    }
-    if (!isHome) return;
-    if (!isDesktop) {
-      setVisible(true);
-      return;
-    }
-    setVisible(v >= transitionRange);
-  });
+    const detect = () => {
+      const zone = 40; // nav 하단 근처
+      const sections = document.querySelectorAll<HTMLElement>("[data-nav-theme]");
+      let current: NavTheme | null = null;
+      for (const s of sections) {
+        const rect = s.getBoundingClientRect();
+        if (rect.top <= zone && rect.bottom >= zone) {
+          const t = s.getAttribute("data-nav-theme");
+          if (t === "dark" || t === "light") current = t;
+        }
+      }
+      /* 매칭되는 섹션 없으면 라이트로 fallback (data-nav-theme 미표시 서브페이지 대응) */
+      setTheme(current ?? "light");
+    };
+
+    detect();
+    /* pathname 변경 시 새 섹션이 마운트되기 전 detect 이 돌아 실패할 수 있으므로,
+       다음 프레임 + PageTransition 완료 이후에도 다시 검사. */
+    const raf1 = requestAnimationFrame(detect);
+    const t1 = setTimeout(detect, 400);
+    const t2 = setTimeout(detect, 1500);
+
+    let scrollRaf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(scrollRaf);
+      scrollRaf = requestAnimationFrame(detect);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(scrollRaf);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
+
+  if (pathname.startsWith("/admin")) return null;
+
+  const isDark = theme === "dark";
+  const navStyle = isDark
+    ? {
+        backgroundColor: "rgba(10,10,10,0.35)",
+        backdropFilter: "blur(6px) saturate(140%)",
+        WebkitBackdropFilter: "blur(6px) saturate(140%)",
+        // borderBottom: "1px solid rgba(255,255,255,0.05)",
+        color: "#ffffff",
+      }
+    : {
+        backgroundColor: "rgba(250,250,248,0.55)",
+        backdropFilter: "blur(6px) saturate(140%)",
+        WebkitBackdropFilter: "blur(6px) saturate(140%)",
+        // borderBottom: "1px solid rgba(0,0,0,0.06)",
+        color: "#0a0a0a",
+      };
+
+  const linkClass = isDark
+    ? "text-white hover:text-white"
+    : "text-[#0a0a0a] hover:text-[#0a0a0a]";
+
+  const iconBtnClass = isDark
+    ? "text-white/80 hover:text-white"
+    : "text-[#0a0a0a]/70 hover:text-[#0a0a0a]";
+
+  /* 현재 경로가 해당 링크의 대상인지. 앵커 (#/#xxx) 는 별도 페이지가 아니므로 false. */
+  const isActive = (href: string): boolean => {
+    if (href.startsWith("#") || href.startsWith("/#")) return false;
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
+  /* 밑줄 span 클래스 — active 면 항상 full, 아니면 hover 시 slide */
+  const underlineClass = (active: boolean) =>
+    `relative inline-block py-1 after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:bg-current after:transition-[width] after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] ${
+      active ? "after:w-full" : "after:w-0 group-hover:after:w-full"
+    }`;
 
   return (
     <>
-      {/* Fixed wrapper — 등장 애니메이션(위→아래) + hover 영역 (pill + dropdown 통합) */}
-      <motion.div
-        className="fixed top-6 left-1/2 z-[210]"
-        initial={false}
-        animate={{
-          opacity: visible ? 1 : 0,
-          y: visible ? 0 : -140,
-        }}
-        transition={{ duration: 0.8, ease: [0.65, 0, 0.35, 1] }}
-        style={{
-          x: "-50%",
-          pointerEvents: visible ? "auto" : "none",
-        }}
-        onMouseEnter={() => visible && isDesktop && setExpanded(true)}
-        onMouseLeave={() => setExpanded(false)}
-      >
-        {/* 통합 컨테이너 — pill 좌우 확장 + 세로 확장을 CSS transition 으로 오버랩.
-            확장: padding 즉시 (0-750ms) / grid-rows 450ms 후 시작 (450-1200ms)
-            축소: grid-rows 즉시 (0-750ms) / padding 450ms 후 시작 (450-1200ms)
-            → 두 phase 가 부드럽게 오버랩. */}
-        <nav
-          className="flex flex-col items-stretch py-4"
-          style={{
-            borderRadius: 28,
-            overflow: "hidden",
-            paddingLeft: expanded && isDesktop ? 100 : 10,
-            paddingRight: expanded && isDesktop ? 100 : 10,
-            transition: `padding 750ms cubic-bezier(0.16, 1, 0.3, 1) ${
-              expanded ? "0ms" : "450ms"
-            }`,
-            backgroundColor: "rgba(255,255,255,0.85)",
-            backdropFilter: "blur(20px) saturate(180%)",
-            WebkitBackdropFilter: "blur(20px) saturate(180%)",
-            boxShadow: "0 8px 40px rgba(0,0,0,0.1)",
-            border: "1px solid rgba(0,0,0,0.08)",
-            color: "#000",
-          }}
+      <nav className="fixed top-0 left-0 right-0 z-[100]">
+        <div
+          className="flex items-center py-3 md:py-4 px-4 md:px-6 lg:px-10 transition-colors duration-300"
+          style={navStyle}
         >
-          {/* Row 1: plane (+ mobile hamburger) */}
-          <div className="flex items-center justify-center gap-2">
+          {/* 좌 — Plane 로고 (Home 링크) */}
+          <Link
+            href="/"
+            onClick={(e) => handleClick(e, "/")}
+            className="flex items-center flex-none -my-1"
+            aria-label="ABC 비행교육원 홈"
+          >
+            <PlaneHoverIcon theme={theme} />
+          </Link>
+
+          {/* 우측 그룹 — nav items + 세로 border + 과정 문의 (텍스트) + mobile hamburger.
+              ml-auto 로 오른쪽 정렬 (container 의 px 로 자연 gutter 유지). */}
+          <div className="ml-auto flex items-center gap-5 md:gap-6">
+            <div className="hidden lg:flex items-center gap-6 xl:gap-7">
+              {NAV_ITEMS.filter((item) => item.href !== "/notices").map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={(e) => handleClick(e, item.href)}
+                  className={`group text-sm font-medium ${linkClass} transition-colors whitespace-nowrap`}
+                >
+                  <span className={underlineClass(isActive(item.href))}>
+                    {item.label}
+                  </span>
+                </Link>
+              ))}
+            </div>
+
+            {/* border — 메인 items 와 공지사항 사이 (lg+ 에서만) */}
+            <span
+              aria-hidden
+              className="hidden lg:block w-px h-4 bg-current opacity-20"
+            />
+
             <Link
-              href="/"
-              onClick={(e) => handleClick(e, "/")}
-              className="flex items-center -my-1"
-              aria-label="ABC 비행교육원 홈"
+              href="/notices"
+              onClick={(e) => handleClick(e, "/notices")}
+              className={`group hidden lg:inline text-sm font-medium ${linkClass} transition-colors whitespace-nowrap`}
             >
-              <PlaneHoverIcon />
+              <span className={underlineClass(isActive("/notices"))}>
+                공지사항
+              </span>
+            </Link>
+
+            {/* border — 공지사항 과 과정 문의 사이 (lg+ 에서만) */}
+            <span
+              aria-hidden
+              className="hidden lg:block w-px h-4 bg-current opacity-20"
+            />
+
+            <Link
+              href="/apply"
+              onClick={(e) => handleClick(e, "/apply")}
+              className={`group hidden md:inline text-sm font-medium ${linkClass} transition-colors whitespace-nowrap`}
+            >
+              <span className={underlineClass(isActive("/apply"))}>
+                과정 문의
+              </span>
             </Link>
 
             <button
+              type="button"
               onClick={() => setMobileOpen(true)}
-              className="md:hidden p-1 ml-2"
+              className={`lg:hidden p-1.5 -mr-1 transition-colors ${iconBtnClass}`}
               aria-label="메뉴 열기"
             >
-              <Icon icon="solar:hamburger-menu-linear" className="text-xl" />
+              <Icon icon="solar:hamburger-menu-linear" className="text-2xl" />
             </button>
           </div>
+        </div>
+      </nav>
 
-          {/* Row 2: items — grid-template-rows 0fr → 1fr 트릭 (height 측정 없이 부드러운 세로 성장).
-              데스크탑 전용. 확장 시 padding 이 진행 중일 때 300ms 딜레이 후 시작 → seamless overlap.
-              축소 시 즉시 collapse 시작 → padding 이 300ms 후 이어받음. */}
-          <div
-            className="hidden md:grid"
-            style={{
-              gridTemplateRows: expanded && isDesktop ? "1fr" : "0fr",
-              opacity: expanded && isDesktop ? 1 : 0,
-              transition: `grid-template-rows 750ms cubic-bezier(0.16, 1, 0.3, 1) ${
-                expanded ? "450ms" : "0ms"
-              }, opacity 750ms cubic-bezier(0.16, 1, 0.3, 1) ${
-                expanded ? "450ms" : "0ms"
-              }`,
-            }}
-          >
-            <div style={{ overflow: "hidden" }}>
-              <div className="mt-4 flex flex-col">
-                {NAV_ITEMS.map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    onClick={(e) => handleClick(e, item.href)}
-                    className="group block px-5 py-3 text-base font-bold text-[#0a0a0a] whitespace-nowrap text-center"
-                  >
-                    <span className="relative inline-block after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-[#0a0a0a] after:transition-[width] after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:after:w-full">
-                      {item.label}
-                    </span>
-                  </Link>
-                ))}
-                <Link
-                  href="/apply"
-                  onClick={(e) => handleClick(e, "/apply")}
-                  className="mt-3 flex items-center justify-center gap-2 px-5 py-3 text-base font-bold rounded-full bg-[#0a0a0a] text-white whitespace-nowrap transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5"
-                >
-                  과정 문의
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </motion.div>
-
+      {/* 모바일 풀스크린 메뉴 */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-[220] bg-white/98 backdrop-blur-3xl flex flex-col items-center justify-center gap-7 text-black"
+            className="fixed inset-0 z-[220] bg-[#0a0a0a]/98 backdrop-blur-3xl flex flex-col items-center justify-center gap-7 text-white"
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             exit={{ clipPath: "inset(0 0 100% 0)" }}
@@ -231,7 +225,7 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
           >
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute top-5 right-5 w-10 h-10 rounded-full bg-black/5 flex items-center justify-center"
+              className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/[.05] flex items-center justify-center"
               aria-label="메뉴 닫기"
             >
               <Icon icon="solar:close-circle-linear" className="text-xl" />
@@ -262,7 +256,7 @@ export default function Navbar({ scrollThreshold }: { scrollThreshold?: number }
               <Link
                 href="/apply"
                 onClick={(e) => handleClick(e, "/apply")}
-                className="mt-4 inline-block bg-black text-white rounded-full px-8 py-4 text-lg font-semibold"
+                className="mt-4 inline-block bg-white text-[#0a0a0a] rounded-full px-8 py-4 text-lg font-semibold"
               >
                 과정 문의하기
               </Link>

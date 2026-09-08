@@ -127,6 +127,7 @@ export default function Intro() {
     <motion.section
       ref={ref}
       id="intro"
+      data-nav-theme="dark"
       className="relative z-20 min-h-[100dvh] flex flex-col items-center justify-center bg-[#0a0a0a] text-white px-6 md:px-10 lg:px-16 py-24 md:py-32"
       style={{
         borderTopLeftRadius: radiusPx,

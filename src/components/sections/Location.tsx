@@ -15,7 +15,7 @@ const NAVER_MAP_LINK = `https://map.naver.com/p/search/${encodeURIComponent(
 
 export default function Location() {
   return (
-    <section className="relative min-h-[100dvh] flex flex-col bg-[#0a0a0a] text-[#fafaf8] px-6 md:px-10 lg:px-16 pt-24 pb-10 md:pt-28 md:pb-14">
+    <section data-nav-theme="dark" className="relative min-h-[100dvh] flex flex-col bg-[#0a0a0a] text-[#fafaf8] px-6 md:px-10 lg:px-16 pt-24 pb-10 md:pt-28 md:pb-14">
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col">
         {/* Header + Address — 인라인 컴팩트 */}
         <div className="mb-8 md:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">

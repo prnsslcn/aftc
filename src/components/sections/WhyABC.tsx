@@ -86,6 +86,7 @@ function MotionIcon({ path }: { path: string }) {
 export default function WhyABC() {
   return (
     <section
+      data-nav-theme="light"
       className="relative z-20 bg-[#fafaf8] py-24 md:py-36 px-6 md:px-10 lg:px-16"
       style={{
         marginTop: "-48px",

@@ -30,7 +30,7 @@ export default async function NoticesPage() {
   `;
 
   return (
-    <main className="min-h-[100dvh] bg-[#0a0a0a] text-white px-6 md:px-10 lg:px-16 pt-32 pb-24">
+    <main data-nav-theme="dark" className="min-h-[100dvh] bg-[#0a0a0a] text-white px-6 md:px-10 lg:px-16 pt-32 pb-24">
       <div className="mx-auto max-w-4xl">
         <div className="mb-14">
           <p className="text-white/45 font-mono uppercase tracking-[.22em] text-xs mb-4">

@@ -46,7 +46,7 @@ export default async function NoticeDetailPage({ params }: Params) {
   const { notice, attachments } = data;
 
   return (
-    <main className="min-h-[100dvh] bg-[#0a0a0a] text-white px-6 md:px-10 lg:px-16 pt-32 pb-24">
+    <main data-nav-theme="dark" className="min-h-[100dvh] bg-[#0a0a0a] text-white px-6 md:px-10 lg:px-16 pt-32 pb-24">
       <article className="mx-auto max-w-3xl">
         <div className="mb-8">
           <Link
