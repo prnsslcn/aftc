@@ -41,15 +41,14 @@ function PlaneHoverIcon({ theme }: { theme: "light" | "dark" }) {
 
 type NavTheme = "light" | "dark";
 
-/* Progressive blur — 위에서 아래로 갈수록 약해지는 blur.
-   블러 강도가 다른 4개 레이어를 mask 로 띠 형태로 겹쳐서 계단 없이 이어지게 함.
-   레이어 영역은 nav 컨텐츠보다 아래로 더 뻗어(BLUR_EXTEND) 경계선 없이 페이드 아웃. */
-const BLUR_EXTEND = 40;
+/* Progressive blur — nav 바 안에서 위 → 아래로 약해지는 blur.
+   블러 강도가 다른 3개 레이어를 mask 띠로 겹쳐 계단 없이 잇는다.
+   겹치는 구간은 앞 레이어 결과가 다시 흐려져 누적되므로 값은 작게 유지.
+   바 밖으로 확장하지 않음 — 제목이 nav 바로 밑에서 시작하는 페이지가 통째로 흐려지는 것 방지. */
 const BLUR_LAYERS = [
-  { blur: 10, mask: "linear-gradient(to bottom, #000 0%, #000 30%, transparent 55%)" },
-  { blur: 6, mask: "linear-gradient(to bottom, transparent 20%, #000 40%, #000 55%, transparent 72%)" },
-  { blur: 3, mask: "linear-gradient(to bottom, transparent 45%, #000 62%, #000 76%, transparent 90%)" },
-  { blur: 1.5, mask: "linear-gradient(to bottom, transparent 68%, #000 82%, transparent 100%)" },
+  { blur: 5, mask: "linear-gradient(to bottom, #000 0%, #000 35%, transparent 65%)" },
+  { blur: 2.5, mask: "linear-gradient(to bottom, transparent 25%, #000 50%, #000 65%, transparent 85%)" },
+  { blur: 1, mask: "linear-gradient(to bottom, transparent 55%, #000 75%, transparent 100%)" },
 ];
 
 /* 글로벌 상단 minimal fixed nav — Midday 스타일 참조.
@@ -137,12 +136,8 @@ export default function Navbar(_props?: { scrollThreshold?: number }) {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-[100]">
-        {/* Blur 스택 — 컨텐츠 뒤, 클릭 통과. 높이는 컨텐츠 + BLUR_EXTEND */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0"
-          style={{ height: `calc(100% + ${BLUR_EXTEND}px)` }}
-        >
+        {/* Blur 스택 — 컨텐츠 뒤, nav 바 영역 안에서만, 클릭 통과 */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
           {BLUR_LAYERS.map((l) => (
             <div
               key={l.blur}
