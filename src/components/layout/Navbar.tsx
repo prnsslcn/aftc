@@ -44,11 +44,12 @@ type NavTheme = "light" | "dark";
 /* Progressive blur — nav 바 안에서 위 → 아래로 약해지는 blur.
    블러 강도가 다른 3개 레이어를 mask 띠로 겹쳐 계단 없이 잇는다.
    겹치는 구간은 앞 레이어 결과가 다시 흐려져 누적되므로 값은 작게 유지.
-   바 밖으로 확장하지 않음 — 제목이 nav 바로 밑에서 시작하는 페이지가 통째로 흐려지는 것 방지. */
+   바 아래로 BLUR_EXTEND 만큼 더 뻗어 꼬리를 길게 — 단, 강한 띠는 바 안에 두고 꼬리는 1px 수준. */
+const BLUR_EXTEND = 48;
 const BLUR_LAYERS = [
-  { blur: 5, mask: "linear-gradient(to bottom, #000 0%, #000 35%, transparent 65%)" },
-  { blur: 2.5, mask: "linear-gradient(to bottom, transparent 25%, #000 50%, #000 65%, transparent 85%)" },
-  { blur: 1, mask: "linear-gradient(to bottom, transparent 55%, #000 75%, transparent 100%)" },
+  { blur: 5, mask: "linear-gradient(to bottom, #000 0%, #000 30%, transparent 55%)" },
+  { blur: 2.5, mask: "linear-gradient(to bottom, transparent 25%, #000 45%, #000 60%, transparent 80%)" },
+  { blur: 1, mask: "linear-gradient(to bottom, transparent 55%, #000 72%, transparent 100%)" },
 ];
 
 /* 글로벌 상단 minimal fixed nav — Midday 스타일 참조.
@@ -136,8 +137,12 @@ export default function Navbar(_props?: { scrollThreshold?: number }) {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-[100]">
-        {/* Blur 스택 — 컨텐츠 뒤, nav 바 영역 안에서만, 클릭 통과 */}
-        <div aria-hidden className="pointer-events-none absolute inset-0">
+        {/* Blur 스택 — 컨텐츠 뒤, 바 아래 BLUR_EXTEND 까지 꼬리, 클릭 통과 */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0"
+          style={{ height: `calc(100% + ${BLUR_EXTEND}px)` }}
+        >
           {BLUR_LAYERS.map((l) => (
             <div
               key={l.blur}
