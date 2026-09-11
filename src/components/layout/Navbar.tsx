@@ -41,6 +41,17 @@ function PlaneHoverIcon({ theme }: { theme: "light" | "dark" }) {
 
 type NavTheme = "light" | "dark";
 
+/* Progressive blur — 위에서 아래로 갈수록 약해지는 blur.
+   블러 강도가 다른 4개 레이어를 mask 로 띠 형태로 겹쳐서 계단 없이 이어지게 함.
+   레이어 영역은 nav 컨텐츠보다 아래로 더 뻗어(BLUR_EXTEND) 경계선 없이 페이드 아웃. */
+const BLUR_EXTEND = 40;
+const BLUR_LAYERS = [
+  { blur: 10, mask: "linear-gradient(to bottom, #000 0%, #000 30%, transparent 55%)" },
+  { blur: 6, mask: "linear-gradient(to bottom, transparent 20%, #000 40%, #000 55%, transparent 72%)" },
+  { blur: 3, mask: "linear-gradient(to bottom, transparent 45%, #000 62%, #000 76%, transparent 90%)" },
+  { blur: 1.5, mask: "linear-gradient(to bottom, transparent 68%, #000 82%, transparent 100%)" },
+];
+
 /* 글로벌 상단 minimal fixed nav — Midday 스타일 참조.
    - Full-width, top-0
    - 각 섹션의 data-nav-theme 속성을 스크롤로 감지해 nav 배경/텍스트 색을 라이트↔다크로 전환
@@ -97,21 +108,10 @@ export default function Navbar(_props?: { scrollThreshold?: number }) {
   if (pathname.startsWith("/admin")) return null;
 
   const isDark = theme === "dark";
-  const navStyle = isDark
-    ? {
-        backgroundColor: "rgba(10,10,10,0.35)",
-        backdropFilter: "blur(6px) saturate(140%)",
-        WebkitBackdropFilter: "blur(6px) saturate(140%)",
-        // borderBottom: "1px solid rgba(255,255,255,0.05)",
-        color: "#ffffff",
-      }
-    : {
-        backgroundColor: "rgba(250,250,248,0.55)",
-        backdropFilter: "blur(6px) saturate(140%)",
-        WebkitBackdropFilter: "blur(6px) saturate(140%)",
-        // borderBottom: "1px solid rgba(0,0,0,0.06)",
-        color: "#0a0a0a",
-      };
+  /* 틴트도 아래로 갈수록 투명 — blur 와 같은 방향으로 사라짐 */
+  const tint = isDark
+    ? "linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.3) 45%, rgba(10,10,10,0) 100%)"
+    : "linear-gradient(to bottom, rgba(250,250,248,0.75) 0%, rgba(250,250,248,0.4) 45%, rgba(250,250,248,0) 100%)";
 
   const linkClass = isDark
     ? "text-white hover:text-white"
@@ -137,9 +137,33 @@ export default function Navbar(_props?: { scrollThreshold?: number }) {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-[100]">
+        {/* Blur 스택 — 컨텐츠 뒤, 클릭 통과. 높이는 컨텐츠 + BLUR_EXTEND */}
         <div
-          className="flex items-center py-3 md:py-4 px-4 md:px-6 lg:px-10 transition-colors duration-300"
-          style={navStyle}
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0"
+          style={{ height: `calc(100% + ${BLUR_EXTEND}px)` }}
+        >
+          {BLUR_LAYERS.map((l) => (
+            <div
+              key={l.blur}
+              className="absolute inset-0"
+              style={{
+                backdropFilter: `blur(${l.blur}px) saturate(140%)`,
+                WebkitBackdropFilter: `blur(${l.blur}px) saturate(140%)`,
+                maskImage: l.mask,
+                WebkitMaskImage: l.mask,
+              }}
+            />
+          ))}
+          <div
+            className="absolute inset-0 transition-[background] duration-300"
+            style={{ background: tint }}
+          />
+        </div>
+
+        <div
+          className="relative flex items-center py-3 md:py-4 px-4 md:px-6 lg:px-10 transition-colors duration-300"
+          style={{ color: isDark ? "#ffffff" : "#0a0a0a" }}
         >
           {/* 좌 — Plane 로고 (Home 링크) */}
           <Link
