@@ -41,15 +41,19 @@ function PlaneHoverIcon({ theme }: { theme: "light" | "dark" }) {
 
 type NavTheme = "light" | "dark";
 
-/* Progressive blur — nav 바 안에서 위 → 아래로 약해지는 blur.
-   블러 강도가 다른 3개 레이어를 mask 띠로 겹쳐 계단 없이 잇는다.
-   겹치는 구간은 앞 레이어 결과가 다시 흐려져 누적되므로 값은 작게 유지.
-   바 아래로 BLUR_EXTEND 만큼 더 뻗어 꼬리를 길게 — 단, 강한 띠는 바 안에 두고 꼬리는 1px 수준. */
+/* Progressive blur — bridge.surf 의 "양파" 구조.
+   세 레이어 모두 위쪽은 100% 불투명, 약한 blur 일수록 아래로 길게 뻗음.
+   레이어는 약한 순서로 깔고 강한 것을 마지막(맨 위)에 — backdrop-filter 는 앞 레이어 결과를
+   다시 흐리므로 위에서부터 1+4+10 → 1+4 → 1 → 0 으로 단조 감소하는 램프가 된다.
+   박스 상단은 뷰포트 상단(0)과 일치시킨다. 위로 밀어 올리면(bridge.surf 의 -30px) Chrome 이 backdrop 을
+   요소 경계에서 미러링할 때 뷰포트 밖의 빈 영역(투명 + html 배경색)이 섞여 최상단에 밝은/어두운 띠가 생긴다.
+   nav 아래로는 BLUR_EXTEND 만큼 꼬리를 남긴다. */
+const BLUR_TOP_OFFSET = 0;
 const BLUR_EXTEND = 48;
 const BLUR_LAYERS = [
-  { blur: 5, mask: "linear-gradient(to bottom, #000 0%, #000 30%, transparent 55%)" },
-  { blur: 2.5, mask: "linear-gradient(to bottom, transparent 25%, #000 45%, #000 60%, transparent 80%)" },
-  { blur: 1, mask: "linear-gradient(to bottom, transparent 55%, #000 72%, transparent 100%)" },
+  { blur: 1, mask: "linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%)" },
+  { blur: 4, mask: "linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%)" },
+  { blur: 10, mask: "linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%)" },
 ];
 
 /* 글로벌 상단 minimal fixed nav — Midday 스타일 참조.
@@ -108,11 +112,6 @@ export default function Navbar(_props?: { scrollThreshold?: number }) {
   if (pathname.startsWith("/admin")) return null;
 
   const isDark = theme === "dark";
-  /* 틴트도 아래로 갈수록 투명 — blur 와 같은 방향으로 사라짐 */
-  const tint = isDark
-    ? "linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.3) 45%, rgba(10,10,10,0) 100%)"
-    : "linear-gradient(to bottom, rgba(250,250,248,0.75) 0%, rgba(250,250,248,0.4) 45%, rgba(250,250,248,0) 100%)";
-
   const linkClass = isDark
     ? "text-white hover:text-white"
     : "text-[#0a0a0a] hover:text-[#0a0a0a]";
@@ -137,32 +136,34 @@ export default function Navbar(_props?: { scrollThreshold?: number }) {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-[100]">
-        {/* Blur 스택 — 컨텐츠 뒤, 바 아래 BLUR_EXTEND 까지 꼬리, 클릭 통과 */}
+        {/* Blur 스택 — 배경 틴트 없이 blur 만 (bridge.surf 방식). 틴트가 있으면 섹션 경계에서
+            nav 절반만 다른 색으로 덮이는 띠가 생기고, gradient background 는 transition 이 안 돼 뚝 바뀐다.
+            컨텐츠 뒤(isolate + 컨텐츠 z-10), 뷰포트 위 BLUR_TOP_OFFSET 부터 nav 아래 BLUR_EXTEND 까지, 클릭 통과.
+            레이어는 DOM 순서(약 → 강)로 쌓이며 z-index 를 주지 않는다. saturate 는 3중 누적되면 과포화되므로 제외. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0"
-          style={{ height: `calc(100% + ${BLUR_EXTEND}px)` }}
+          className="pointer-events-none absolute inset-x-0 isolate"
+          style={{
+            top: -BLUR_TOP_OFFSET,
+            height: `calc(100% + ${BLUR_TOP_OFFSET + BLUR_EXTEND}px)`,
+          }}
         >
           {BLUR_LAYERS.map((l) => (
             <div
               key={l.blur}
               className="absolute inset-0"
               style={{
-                backdropFilter: `blur(${l.blur}px) saturate(140%)`,
-                WebkitBackdropFilter: `blur(${l.blur}px) saturate(140%)`,
+                backdropFilter: `blur(${l.blur}px)`,
+                WebkitBackdropFilter: `blur(${l.blur}px)`,
                 maskImage: l.mask,
                 WebkitMaskImage: l.mask,
               }}
             />
           ))}
-          <div
-            className="absolute inset-0 transition-[background] duration-300"
-            style={{ background: tint }}
-          />
         </div>
 
         <div
-          className="relative flex items-center py-3 md:py-4 px-4 md:px-6 lg:px-10 transition-colors duration-300"
+          className="relative z-10 flex items-center py-3 md:py-4 px-4 md:px-6 lg:px-10 transition-colors duration-300"
           style={{ color: isDark ? "#ffffff" : "#0a0a0a" }}
         >
           {/* 좌 — Plane 로고 (Home 링크) */}
