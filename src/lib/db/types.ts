@@ -52,3 +52,21 @@ export interface NoticeSummary
   > {
   attachment_count: number;
 }
+
+/* 과정 문의 (inquiries) — 사이트 폼 → /api/inquiry 저장분. Google Form 전달 상태 포함 */
+export interface InquiryRow {
+  id: string; // uuid
+  name: string;
+  phone: string;
+  email: string;
+  status: string;
+  plan: string;
+  schools: string[];
+  english: string | null;
+  experience: string | null;
+  inquiry: string | null;
+  forwarded: boolean;
+  forward_error: string | null;
+  ip: string | null;
+  created_at: string;
+}
