@@ -368,7 +368,7 @@ export const  AIRLINE_PREP = {
       ],
     },
   ],
-  cost: { value: "₩200,000", originalValue: "₩250,000", note: "4회 패키지" },
+  cost: { value: "₩250,000", originalValue: "₩300,000", note: "4회 패키지" },
   transitionNote:
     "패키지 도중 입사 확정 시 A320 · B737을 활용한 OE 대비교육으로 전환",
   benefit: {
