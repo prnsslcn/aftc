@@ -39,13 +39,13 @@ export default function FormSections({ v, set, errors }: Props) {
 
   return (
     <>
-      <Section label="01 — Contact" title="기본 정보">
+      <Section label="01" title="Contact">
         <FloatInput label="이름" required error={errors.name} type="text" value={v.name} onChange={(e) => set("name", e.target.value)} autoComplete="name" />
         <FloatInput label="연락처" required error={errors.phone} type="tel" value={v.phone} onChange={(e) => set("phone", e.target.value)} autoComplete="tel" />
         <FloatInput label="이메일" required error={errors.email} type="email" value={v.email} onChange={(e) => set("email", e.target.value)} autoComplete="email" className="md:col-span-2" />
       </Section>
 
-      <Section label="02 — Situation" title="현재 상황">
+      <Section label="02" title="Current Situation">
         <Field label="현재 상태" required error={errors.status} className="md:col-span-2">
           <div className="flex flex-wrap gap-x-7 gap-y-1">
             {INQUIRY_OPTIONS.status.map((opt) => (
@@ -77,7 +77,7 @@ export default function FormSections({ v, set, errors }: Props) {
         </Field>
       </Section>
 
-      <Section label="03 — Details" title="추가 정보">
+      <Section label="03" title="Additional Details">
         <Field label="영어 수준" className="md:col-span-2">
           <div className="flex flex-wrap gap-x-7 gap-y-1">
             {INQUIRY_OPTIONS.english.map((opt) => (

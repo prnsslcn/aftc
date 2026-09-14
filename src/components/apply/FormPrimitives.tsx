@@ -85,8 +85,8 @@ export function Field({
 export function Section({ label, title, children }: { label: string; title: string; children: ReactNode }) {
   return (
     <section className="pt-12 md:pt-14 first:pt-0">
-      <p className="font-mono text-[11px] tracking-[.22em] uppercase text-[#0a0a0a]/40">{label}</p>
-      <h3 className="mt-2 text-lg md:text-xl font-semibold tracking-[-0.02em]">{title}</h3>
+      <p className="font-mono text-[11px] tracking-[.22em] text-[#0a0a0a]/40 tabular-nums">{label}</p>
+      <h3 className="mt-2 font-display text-xl md:text-2xl font-semibold tracking-[-0.03em]">{title}</h3>
       <div className="mt-6 grid gap-x-8 gap-y-8 md:grid-cols-2">{children}</div>
     </section>
   );
