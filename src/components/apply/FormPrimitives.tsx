@@ -1,8 +1,8 @@
 "use client";
 
-import type { ChangeEvent, ReactNode } from "react";
+import type { ReactNode } from "react";
 
-/* 과정 문의 폼 프리미티브 — Home/pipeline 문법: mono 번호, 하단 보더 라인 인풋, 흑백 pill */
+/* 과정 문의 폼 프리미티브 — mono 번호, 하단 보더 라인 인풋, 흑백 pill (제어 컴포넌트) */
 
 export const lineInput =
   "w-full bg-transparent border-0 border-b border-black/[.15] rounded-none px-0 py-2.5 text-[15px] md:text-base text-[#0a0a0a] placeholder:text-[#0a0a0a]/25 outline-none focus:border-[#0a0a0a] transition-colors";
@@ -47,17 +47,26 @@ export function Pill({
   name,
   value,
   label,
+  checked,
   onChange,
 }: {
   type?: "radio" | "checkbox";
   name: string;
   value: string;
   label?: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
 }) {
   return (
     <label className="cursor-pointer">
-      <input type={type} name={name} value={value} className="peer sr-only" onChange={onChange} />
+      <input
+        type={type}
+        name={name}
+        value={value}
+        checked={checked}
+        onChange={(e) => onChange(e.currentTarget.checked)}
+        className="peer sr-only"
+      />
       <span className="inline-block rounded-full border border-black/[.12] px-4 py-2 text-sm text-[#0a0a0a]/60 transition-colors hover:border-black/30 peer-checked:bg-[#0a0a0a] peer-checked:border-[#0a0a0a] peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-black/20">
         {label ?? value}
       </span>

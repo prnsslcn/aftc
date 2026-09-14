@@ -1,54 +1,87 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { CONTACT, FORM_ENTRIES } from "@/lib/constants";
+import { CONTACT } from "@/lib/constants";
 import { BLOCK_EASE } from "@/lib/motion";
-import InquiryFields from "./InquiryFields";
+import { EMPTY_VALUES, StepBasic, StepExtra, StepSituation, type Errors, type InquiryValues } from "./StepFields";
+
+const STEPS = [
+  { key: "basic", title: "기본 정보", sub: "연락드릴 정보를 알려 주세요." },
+  { key: "situation", title: "현재 상황", sub: "지금 어디쯤 계신지, 어떤 과정에 관심이 있는지." },
+  { key: "extra", title: "추가 정보", sub: "선택 사항입니다. 비워 두셔도 됩니다." },
+] as const;
 
 type FormState = "idle" | "submitting" | "success" | "error";
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/* 제출: FormData → JSON → POST /api/inquiry (서버가 DB 저장 + Google Form 전달). */
+/* 스텝별 필수 검사 — 서버(Zod) 검증과 별개로 다음 단계 진입을 막는 용도 */
+function validateStep(step: number, v: InquiryValues): Errors {
+  const e: Errors = {};
+  if (step === 0) {
+    if (!v.name.trim()) e.name = "이름을 입력해 주세요.";
+    if (!v.phone.trim()) e.phone = "연락처를 입력해 주세요.";
+    if (!EMAIL_RE.test(v.email.trim())) e.email = "올바른 이메일을 입력해 주세요.";
+  }
+  if (step === 1) {
+    if (!v.status) e.status = "현재 상태를 선택해 주세요.";
+    if (!v.plan || (v.plan === "__other_option__" && !v.planOther.trim())) e.plan = "계획을 선택하거나 입력해 주세요.";
+    const n = v.schools.length + (v.schoolOtherOn && v.schoolOther.trim() ? 1 : 0);
+    if (n === 0) e.schools = "하나 이상 선택해 주세요.";
+  }
+  return e;
+}
+
 export default function InquiryForm() {
+  const [values, setValues] = useState<InquiryValues>(EMPTY_VALUES);
+  const [step, setStep] = useState(0);
+  const [dir, setDir] = useState(1);
+  const [errors, setErrors] = useState<Errors>({});
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [planOther, setPlanOther] = useState(false);
-  const [schoolOther, setSchoolOther] = useState(false);
-  const [schoolError, setSchoolError] = useState(false);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
+  const set = <K extends keyof InquiryValues>(key: K, value: InquiryValues[K]) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
+  };
 
-    const schools = data.getAll(FORM_ENTRIES.school).map(String).filter((v) => v !== "__other_option__");
-    const schoolOtherText = String(data.get(`${FORM_ENTRIES.school}.other`) ?? "").trim();
-    if (schoolOther && schoolOtherText) schools.push(schoolOtherText);
-    if (schools.length === 0) {
-      setSchoolError(true);
+  const go = (next: number) => {
+    if (next > step) {
+      const e = validateStep(step, values);
+      if (Object.values(e).some(Boolean)) {
+        setErrors(e);
+        return;
+      }
+    }
+    setDir(next > step ? 1 : -1);
+    setErrors({});
+    setStep(next);
+  };
+
+  async function submit() {
+    const e = validateStep(1, values);
+    if (Object.values(e).some(Boolean)) {
+      setErrors(e);
+      setStep(1);
       return;
     }
-    setSchoolError(false);
     setState("submitting");
     setErrorMessage(null);
-
-    const planValue = String(data.get(FORM_ENTRIES.plan) ?? "");
-    const plan = planValue === "__other_option__" ? String(data.get(`${FORM_ENTRIES.plan}.other`) ?? "").trim() : planValue;
-
+    const schools = [...values.schools];
+    if (values.schoolOtherOn && values.schoolOther.trim()) schools.push(values.schoolOther.trim());
     const payload = {
-      name: data.get(FORM_ENTRIES.name),
-      phone: data.get(FORM_ENTRIES.phone),
-      email: data.get(FORM_ENTRIES.email),
-      status: data.get(FORM_ENTRIES.status),
-      plan,
+      name: values.name,
+      phone: values.phone,
+      email: values.email,
+      status: values.status,
+      plan: values.plan === "__other_option__" ? values.planOther.trim() : values.plan,
       schools,
-      english: data.get(FORM_ENTRIES.english) ?? "",
-      experience: data.get(FORM_ENTRIES.experience) ?? "",
-      inquiry: data.get(FORM_ENTRIES.inquiry) ?? "",
-      website: data.get("website") ?? "",
+      english: values.english,
+      experience: values.experience,
+      inquiry: values.inquiry,
+      website: "",
     };
-
     try {
       const res = await fetch("/api/inquiry", {
         method: "POST",
@@ -62,83 +95,100 @@ export default function InquiryForm() {
         return;
       }
       setState("success");
-      setPlanOther(false);
-      setSchoolOther(false);
-      form.reset();
     } catch {
       setErrorMessage("네트워크 오류로 접수하지 못했습니다.");
       setState("error");
     }
   }
 
+  const reset = () => {
+    setValues(EMPTY_VALUES);
+    setStep(0);
+    setErrors({});
+    setState("idle");
+  };
+
+  if (state === "success") {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.7, ease: BLOCK_EASE }}
+        className="rounded-[24px] bg-[#0a0a0a] text-white p-8 md:p-12"
+      >
+        <p className="font-mono text-[11px] uppercase tracking-[.22em] text-white/40">Inquiry received</p>
+        <h3 className="mt-5 font-display tracking-[-0.04em]" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, lineHeight: 1 }}>
+          Received.
+        </h3>
+        <p className="mt-5 text-white/70 leading-relaxed break-keep-all">문의가 접수되었습니다. 빠른 시일 내에 안내 연락을 드리겠습니다.</p>
+        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+          <Link href="/" className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">홈으로</Link>
+          <Link href="/notices" className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">공지사항</Link>
+          <button type="button" onClick={reset} className="text-white/50 hover:text-white transition-colors">다시 작성하기</button>
+        </div>
+      </motion.div>
+    );
+  }
+
+  const last = step === STEPS.length - 1;
+  const stepProps = { v: values, set, errors };
+
   return (
-    <AnimatePresence mode="wait">
-      {state === "success" ? (
-        <motion.div
-          key="success"
-          initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.7, ease: BLOCK_EASE }}
-          className="rounded-[24px] bg-[#0a0a0a] text-white p-8 md:p-12"
-        >
-          <p className="font-mono text-[11px] uppercase tracking-[.22em] text-white/40">Inquiry received</p>
-          <h3 className="mt-5 font-display tracking-[-0.04em]" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, lineHeight: 1 }}>
-            Received.
-          </h3>
-          <p className="mt-5 text-white/70 leading-relaxed break-keep-all">
-            문의가 접수되었습니다. 빠른 시일 내에 안내 연락을 드리겠습니다.
+    <form onSubmit={(e) => { e.preventDefault(); if (last) submit(); else go(step + 1); }}>
+      {/* 스텝 헤더 — mono 진행 표시 + 얇은 프로그레스 바 */}
+      <div className="flex items-end justify-between gap-6">
+        <div>
+          <p className="font-mono text-[11px] tracking-[.22em] text-[#0a0a0a]/40 tabular-nums">
+            STEP {String(step + 1).padStart(2, "0")} <span className="text-[#0a0a0a]/20">/ {String(STEPS.length).padStart(2, "0")}</span>
           </p>
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-            <Link href="/" className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">
-              홈으로
-            </Link>
-            <Link href="/notices" className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">
-              공지사항
-            </Link>
-            <button type="button" onClick={() => setState("idle")} className="text-white/50 hover:text-white transition-colors">
-              다시 작성하기
-            </button>
-          </div>
-        </motion.div>
-      ) : (
-        <motion.form
-          key="form"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          onSubmit={handleSubmit}
-          className="border-b border-black/[.08]"
+          <h3 className="mt-3 text-xl md:text-2xl font-semibold tracking-[-0.02em]">{STEPS[step].title}</h3>
+          <p className="mt-1.5 text-sm text-[#0a0a0a]/55 break-keep-all">{STEPS[step].sub}</p>
+        </div>
+      </div>
+      <div className="mt-6 h-px w-full bg-black/[.08]">
+        <motion.div className="h-px bg-[#0a0a0a] origin-left" animate={{ scaleX: (step + 1) / STEPS.length }} transition={{ duration: 0.6, ease: BLOCK_EASE }} style={{ width: "100%" }} />
+      </div>
+
+      <div className="relative mt-4 overflow-hidden">
+        <AnimatePresence mode="wait" initial={false} custom={dir}>
+          <motion.div
+            key={STEPS[step].key}
+            custom={dir}
+            initial={{ opacity: 0, x: dir * 32, filter: "blur(6px)" }}
+            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, x: dir * -32, filter: "blur(6px)" }}
+            transition={{ duration: 0.45, ease: BLOCK_EASE }}
+          >
+            {step === 0 && <StepBasic {...stepProps} />}
+            {step === 1 && <StepSituation {...stepProps} />}
+            {step === 2 && <StepExtra {...stepProps} />}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* 네비게이션 */}
+      <div className="mt-2 border-t border-black/[.08] pt-8 flex items-center justify-between gap-6">
+        <button
+          type="button"
+          onClick={() => go(step - 1)}
+          disabled={step === 0 || state === "submitting"}
+          className="text-sm text-[#0a0a0a]/50 hover:text-[#0a0a0a] transition-colors disabled:opacity-0 disabled:pointer-events-none"
         >
-          {/* honeypot — 봇 차단용, 사람에게는 보이지 않음 */}
-          <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
-
-          <InquiryFields
-            planOther={planOther}
-            setPlanOther={setPlanOther}
-            schoolOther={schoolOther}
-            setSchoolOther={setSchoolOther}
-            schoolError={schoolError}
-            clearSchoolError={() => setSchoolError(false)}
-          />
-
-          <div className="py-8 md:py-10 md:pl-[72px]">
-            <button
-              type="submit"
-              disabled={state === "submitting"}
-              className="w-full rounded-full bg-[#0a0a0a] py-4 text-[15px] font-semibold text-white transition-[transform,opacity] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {state === "submitting" ? "접수 중…" : "문의 보내기"}
-            </button>
-            {state === "error" && (
-              <p className="mt-4 text-sm text-red-600 break-keep-all">
-                {errorMessage ?? "제출 중 오류가 발생했습니다."} 계속 실패하면 {CONTACT.phone} 으로 문의해 주세요.
-              </p>
-            )}
-            <p className="mt-4 font-mono text-[10px] tracking-[.14em] uppercase text-[#0a0a0a]/35">
-              * 표시는 필수 항목
-            </p>
-          </div>
-        </motion.form>
+          ← 이전
+        </button>
+        <button
+          type="submit"
+          disabled={state === "submitting"}
+          className="rounded-full bg-[#0a0a0a] px-8 py-3.5 text-[15px] font-semibold text-white transition-[transform,opacity] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {last ? (state === "submitting" ? "접수 중…" : "문의 보내기") : "다음 →"}
+        </button>
+      </div>
+      {state === "error" && (
+        <p className="mt-4 text-sm text-red-600 break-keep-all text-right">
+          {errorMessage ?? "제출 중 오류가 발생했습니다."} 계속 실패하면 {CONTACT.phone} 으로 문의해 주세요.
+        </p>
       )}
-    </AnimatePresence>
+    </form>
   );
 }
