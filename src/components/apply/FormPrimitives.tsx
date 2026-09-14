@@ -87,11 +87,14 @@ export function Section({ label, title, children }: { label: string; title: stri
     <section className="pt-12 md:pt-14 first:pt-0">
       <p className="font-mono text-[11px] tracking-[.22em] uppercase text-[#0a0a0a]/40">{label}</p>
       <h3 className="mt-2 text-lg md:text-xl font-semibold tracking-[-0.02em]">{title}</h3>
-      <div className="mt-6 grid gap-x-8 gap-y-7 md:grid-cols-2">{children}</div>
+      <div className="mt-6 grid gap-x-8 gap-y-8 md:grid-cols-2">{children}</div>
     </section>
   );
 }
 
+/* 선택 옵션 — nav 링크와 같은 문법의 텍스트 버튼.
+   hover: 아래 밑줄(after)이 좌→우로. 선택: 위 밑줄(before)이 우→좌로 그어져 위아래 두 줄 = 선택 상태.
+   (Tailwind 정적 스캔을 위해 클래스는 문자열 조립 없이 그대로 나열) */
 export function Pill({
   type = "radio",
   name,
@@ -108,7 +111,7 @@ export function Pill({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="cursor-pointer">
+    <label className="group cursor-pointer">
       <input
         type={type}
         name={name}
@@ -117,7 +120,11 @@ export function Pill({
         onChange={(e) => onChange(e.currentTarget.checked)}
         className="peer sr-only"
       />
-      <span className="inline-block rounded-full border border-black/[.12] px-4 py-2 text-sm text-[#0a0a0a]/65 transition-colors hover:border-black/30 peer-checked:bg-[#0a0a0a] peer-checked:border-[#0a0a0a] peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-black/20">
+      <span
+        className="relative inline-block py-1.5 text-[15px] text-[#0a0a0a]/55 transition-colors duration-300 group-hover:text-[#0a0a0a] peer-checked:text-[#0a0a0a] peer-focus-visible:text-[#0a0a0a]
+          after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-current after:transition-[width] after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:after:w-full peer-checked:after:w-full
+          before:absolute before:right-0 before:top-0 before:h-[1.5px] before:w-0 before:bg-current before:transition-[width] before:duration-500 before:ease-[cubic-bezier(0.16,1,0.3,1)] peer-checked:before:w-full"
+      >
         {label ?? value}
       </span>
     </label>

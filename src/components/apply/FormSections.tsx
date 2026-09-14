@@ -47,14 +47,14 @@ export default function FormSections({ v, set, errors }: Props) {
 
       <Section label="02 — Situation" title="현재 상황">
         <Field label="현재 상태" required error={errors.status} className="md:col-span-2">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-x-7 gap-y-1">
             {INQUIRY_OPTIONS.status.map((opt) => (
               <Pill key={opt} name="status" value={opt} checked={v.status === opt} onChange={() => set("status", opt)} />
             ))}
           </div>
         </Field>
         <Field label="해외 비행유학 계획" required error={errors.plan} className="md:col-span-2">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-x-7 gap-y-1">
             {INQUIRY_OPTIONS.plan.map((opt) => (
               <Pill key={opt} name="plan" value={opt} checked={v.plan === opt} onChange={() => set("plan", opt)} />
             ))}
@@ -65,7 +65,7 @@ export default function FormSections({ v, set, errors }: Props) {
           )}
         </Field>
         <Field label="희망 비행학교 및 희망 과정" required hint="복수 선택" error={errors.schools} className="md:col-span-2">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-x-7 gap-y-1">
             {INQUIRY_OPTIONS.school.map((opt) => (
               <Pill key={opt} type="checkbox" name="schools" value={opt} checked={v.schools.includes(opt)} onChange={(on) => toggleSchool(opt, on)} />
             ))}
@@ -79,7 +79,7 @@ export default function FormSections({ v, set, errors }: Props) {
 
       <Section label="03 — Details" title="추가 정보">
         <Field label="영어 수준" className="md:col-span-2">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-x-7 gap-y-1">
             {INQUIRY_OPTIONS.english.map((opt) => (
               <Pill key={opt} name="english" value={opt} checked={v.english === opt} onChange={() => set("english", v.english === opt ? "" : opt)} />
             ))}
