@@ -39,8 +39,7 @@ export default async function AdminDashboardPage() {
   return (
     <section>
       <div className="mb-8">
-        <p className="text-white/45 font-mono uppercase tracking-[.22em] text-xs mb-2">Dashboard</p>
-        <h1 className="font-display font-black text-3xl tracking-[-0.02em]">관리자</h1>
+        <h1 className="font-display font-black text-3xl tracking-[-0.02em]">Dashboard</h1>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
