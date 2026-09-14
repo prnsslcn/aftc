@@ -2,41 +2,30 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { CONTACT } from "@/lib/constants";
 import { BLOCK_EASE } from "@/lib/motion";
-import { EMPTY_VALUES, StepBasic, StepExtra, StepSituation, type Errors, type InquiryValues } from "./StepFields";
-
-const STEPS = [
-  { key: "basic", title: "기본 정보", sub: "연락드릴 정보를 알려 주세요." },
-  { key: "situation", title: "현재 상황", sub: "지금 어디쯤 계신지, 어떤 과정에 관심이 있는지." },
-  { key: "extra", title: "추가 정보", sub: "선택 사항입니다. 비워 두셔도 됩니다." },
-] as const;
+import FormSections, { EMPTY_VALUES, type Errors, type InquiryValues } from "./FormSections";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/* 스텝별 필수 검사 — 서버(Zod) 검증과 별개로 다음 단계 진입을 막는 용도 */
-function validateStep(step: number, v: InquiryValues): Errors {
+/* 클라이언트 필수 검사 — 서버(Zod) 검증과 별개로 제출 전 인라인 안내 */
+function validate(v: InquiryValues): Errors {
   const e: Errors = {};
-  if (step === 0) {
-    if (!v.name.trim()) e.name = "이름을 입력해 주세요.";
-    if (!v.phone.trim()) e.phone = "연락처를 입력해 주세요.";
-    if (!EMAIL_RE.test(v.email.trim())) e.email = "올바른 이메일을 입력해 주세요.";
-  }
-  if (step === 1) {
-    if (!v.status) e.status = "현재 상태를 선택해 주세요.";
-    if (!v.plan || (v.plan === "__other_option__" && !v.planOther.trim())) e.plan = "계획을 선택하거나 입력해 주세요.";
-    const n = v.schools.length + (v.schoolOtherOn && v.schoolOther.trim() ? 1 : 0);
-    if (n === 0) e.schools = "하나 이상 선택해 주세요.";
-  }
+  if (!v.name.trim()) e.name = "이름을 입력해 주세요.";
+  if (!v.phone.trim()) e.phone = "연락처를 입력해 주세요.";
+  if (!EMAIL_RE.test(v.email.trim())) e.email = "올바른 이메일을 입력해 주세요.";
+  if (!v.status) e.status = "현재 상태를 선택해 주세요.";
+  if (!v.plan || (v.plan === "__other_option__" && !v.planOther.trim())) e.plan = "계획을 선택하거나 입력해 주세요.";
+  const n = v.schools.length + (v.schoolOtherOn && v.schoolOther.trim() ? 1 : 0);
+  if (n === 0) e.schools = "하나 이상 선택해 주세요.";
   return e;
 }
 
+/* 단일 폼. 제출: JSON → POST /api/inquiry (서버가 DB 저장 + Google Form 전달). */
 export default function InquiryForm() {
   const [values, setValues] = useState<InquiryValues>(EMPTY_VALUES);
-  const [step, setStep] = useState(0);
-  const [dir, setDir] = useState(1);
   const [errors, setErrors] = useState<Errors>({});
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -46,24 +35,11 @@ export default function InquiryForm() {
     setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
   };
 
-  const go = (next: number) => {
-    if (next > step) {
-      const e = validateStep(step, values);
-      if (Object.values(e).some(Boolean)) {
-        setErrors(e);
-        return;
-      }
-    }
-    setDir(next > step ? 1 : -1);
-    setErrors({});
-    setStep(next);
-  };
-
   async function submit() {
-    const e = validateStep(1, values);
+    const e = validate(values);
     if (Object.values(e).some(Boolean)) {
       setErrors(e);
-      setStep(1);
+      document.querySelector<HTMLElement>("[data-field-error]")?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     setState("submitting");
@@ -101,13 +77,6 @@ export default function InquiryForm() {
     }
   }
 
-  const reset = () => {
-    setValues(EMPTY_VALUES);
-    setStep(0);
-    setErrors({});
-    setState("idle");
-  };
-
   if (state === "success") {
     return (
       <motion.div
@@ -124,68 +93,30 @@ export default function InquiryForm() {
         <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
           <Link href="/" className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">홈으로</Link>
           <Link href="/notices" className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">공지사항</Link>
-          <button type="button" onClick={reset} className="text-white/50 hover:text-white transition-colors">다시 작성하기</button>
+          <button type="button" onClick={() => { setValues(EMPTY_VALUES); setErrors({}); setState("idle"); }} className="text-white/50 hover:text-white transition-colors">
+            다시 작성하기
+          </button>
         </div>
       </motion.div>
     );
   }
 
-  const last = step === STEPS.length - 1;
-  const stepProps = { v: values, set, errors };
-
   return (
-    <form onSubmit={(e) => { e.preventDefault(); if (last) submit(); else go(step + 1); }}>
-      {/* 스텝 헤더 — mono 진행 표시 + 얇은 프로그레스 바 */}
-      <div className="flex items-end justify-between gap-6">
-        <div>
-          <p className="font-mono text-[11px] tracking-[.22em] text-[#0a0a0a]/40 tabular-nums">
-            STEP {String(step + 1).padStart(2, "0")} <span className="text-[#0a0a0a]/20">/ {String(STEPS.length).padStart(2, "0")}</span>
-          </p>
-          <h3 className="mt-3 text-xl md:text-2xl font-semibold tracking-[-0.02em]">{STEPS[step].title}</h3>
-          <p className="mt-1.5 text-sm text-[#0a0a0a]/55 break-keep-all">{STEPS[step].sub}</p>
-        </div>
-      </div>
-      <div className="mt-6 h-px w-full bg-black/[.08]">
-        <motion.div className="h-px bg-[#0a0a0a] origin-left" animate={{ scaleX: (step + 1) / STEPS.length }} transition={{ duration: 0.6, ease: BLOCK_EASE }} style={{ width: "100%" }} />
-      </div>
+    <form onSubmit={(e) => { e.preventDefault(); submit(); }} noValidate>
+      <FormSections v={values} set={set} errors={errors} />
 
-      <div className="relative mt-4 overflow-hidden">
-        <AnimatePresence mode="wait" initial={false} custom={dir}>
-          <motion.div
-            key={STEPS[step].key}
-            custom={dir}
-            initial={{ opacity: 0, x: dir * 32, filter: "blur(6px)" }}
-            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, x: dir * -32, filter: "blur(6px)" }}
-            transition={{ duration: 0.45, ease: BLOCK_EASE }}
-          >
-            {step === 0 && <StepBasic {...stepProps} />}
-            {step === 1 && <StepSituation {...stepProps} />}
-            {step === 2 && <StepExtra {...stepProps} />}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* 네비게이션 */}
-      <div className="mt-2 border-t border-black/[.08] pt-8 flex items-center justify-between gap-6">
-        <button
-          type="button"
-          onClick={() => go(step - 1)}
-          disabled={step === 0 || state === "submitting"}
-          className="text-sm text-[#0a0a0a]/50 hover:text-[#0a0a0a] transition-colors disabled:opacity-0 disabled:pointer-events-none"
-        >
-          ← 이전
-        </button>
+      <div className="mt-12 md:mt-14 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="font-mono text-[10px] tracking-[.14em] uppercase text-[#0a0a0a]/35">* 표시는 필수 항목</p>
         <button
           type="submit"
           disabled={state === "submitting"}
-          className="rounded-full bg-[#0a0a0a] px-8 py-3.5 text-[15px] font-semibold text-white transition-[transform,opacity] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-full bg-[#0a0a0a] px-9 py-4 text-[15px] font-semibold text-white transition-[transform,opacity] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {last ? (state === "submitting" ? "접수 중…" : "문의 보내기") : "다음 →"}
+          {state === "submitting" ? "접수 중…" : "문의 보내기 →"}
         </button>
       </div>
       {state === "error" && (
-        <p className="mt-4 text-sm text-red-600 break-keep-all text-right">
+        <p className="mt-4 text-sm text-red-600 break-keep-all sm:text-right">
           {errorMessage ?? "제출 중 오류가 발생했습니다."} 계속 실패하면 {CONTACT.phone} 으로 문의해 주세요.
         </p>
       )}
