@@ -86,7 +86,7 @@ export function Section({ label, title, children }: { label: string; title: stri
   return (
     <section className="pt-12 md:pt-14 first:pt-0">
       <p className="font-mono text-[11px] tracking-[.22em] text-[#0a0a0a]/40 tabular-nums">{label}</p>
-      <h3 className="mt-2 font-display text-xl md:text-2xl font-semibold tracking-[-0.03em]">{title}</h3>
+      <h3 className="mt-2 font-display text-[1.75rem] md:text-[2.1rem] leading-tight font-semibold tracking-[-0.03em]">{title}</h3>
       <div className="mt-6 grid gap-x-8 gap-y-8 md:grid-cols-2">{children}</div>
     </section>
   );
