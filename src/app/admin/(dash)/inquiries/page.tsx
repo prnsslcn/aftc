@@ -2,6 +2,7 @@ import Link from "next/link";
 import { sql } from "@/lib/db/client";
 import type { InquiryRow } from "@/lib/db/types";
 import { InquiryActions } from "@/components/admin/InquiryActions";
+import { ResendAllButton } from "@/components/admin/ResendAllButton";
 import { formatDateTime } from "@/lib/admin-format";
 
 /* 관리자 문의 목록 — 실운영 확인·검증용. 최신순, Google 전달 실패 건 강조. ?filter=failed 로 실패만 */
@@ -34,13 +35,16 @@ export default async function AdminInquiriesPage({
             총 {stat.total} 건 · Google Form 전달 실패 {stat.failed} 건
           </p>
         </div>
-        <div className="flex items-center gap-1 text-sm">
-          <FilterTab href="/admin/inquiries" active={!failedOnly}>
-            전체
-          </FilterTab>
-          <FilterTab href="/admin/inquiries?filter=failed" active={failedOnly}>
-            전달 실패
-          </FilterTab>
+        <div className="flex flex-col items-end gap-3">
+          <div className="flex items-center gap-1 text-sm">
+            <FilterTab href="/admin/inquiries" active={!failedOnly}>
+              전체
+            </FilterTab>
+            <FilterTab href="/admin/inquiries?filter=failed" active={failedOnly}>
+              전달 실패
+            </FilterTab>
+          </div>
+          <ResendAllButton failedCount={stat.failed} />
         </div>
       </div>
 

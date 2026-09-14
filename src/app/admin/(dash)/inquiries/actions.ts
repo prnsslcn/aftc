@@ -55,3 +55,38 @@ export async function deleteInquiry(id: string): Promise<ActionResult> {
   revalidateAll();
   return { ok: true };
 }
+
+/* 전달 실패 건 일괄 재전달 — 폼 설정을 고친 뒤 한 번에. 오래된 순으로 순차 전송(Google 부하·순서 보존) */
+export async function resendAllFailed(): Promise<ActionResult<{ sent: number; failed: number }>> {
+  const g = await guard();
+  if (!g.ok) return g;
+
+  const { rows } = await sql<InquiryRow>`
+    SELECT * FROM inquiries WHERE forwarded = FALSE ORDER BY created_at ASC LIMIT 100
+  `;
+  let sent = 0;
+  let failed = 0;
+  for (const row of rows) {
+    const input: InquiryInput = {
+      name: row.name,
+      phone: row.phone,
+      email: row.email,
+      status: row.status as InquiryInput["status"],
+      plan: row.plan,
+      schools: row.schools,
+      english: (row.english ?? undefined) as InquiryInput["english"],
+      experience: row.experience ?? undefined,
+      inquiry: row.inquiry ?? undefined,
+    };
+    const result = await forwardToGoogleForm(input);
+    await sql`
+      UPDATE inquiries
+      SET forwarded = ${result.ok}, forward_error = ${result.ok ? null : result.error}
+      WHERE id = ${row.id}
+    `;
+    if (result.ok) sent += 1;
+    else failed += 1;
+  }
+  revalidateAll();
+  return { ok: true, data: { sent, failed } };
+}
