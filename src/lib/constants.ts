@@ -18,6 +18,19 @@ export const FORM_ENTRIES = {
   inquiry: "entry.2084604228",
 } as const;
 
+/* 과정 문의 폼 선택지 — Google Form 옵션과 동일하게 유지 (클라이언트 렌더 + 서버 검증 공용) */
+export const INQUIRY_OPTIONS = {
+  status: ["고등학생", "대학생", "대학 졸업생", "직장인", "기타"],
+  plan: ["이미 결정됨", "고민중", "정보 탐색 단계"], // + 기타(자유 입력)
+  school: [
+    "Hillsboro Aero Academy",
+    "Aeroguard Flight Training Center",
+    "Phoenix East Aviation",
+    "입사준비반",
+  ], // 복수 선택 + 기타(자유 입력)
+  english: ["초급", "중급", "중상급", "상급"],
+} as const;
+
 export const CONTACT = {
   phone: "02-715-5398",
   location: "아세아항공직업전문학교",

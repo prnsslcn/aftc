@@ -4,23 +4,20 @@ import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import FadeIn from "@/components/ui/FadeIn";
-import { GOOGLE_FORM_ACTION, FORM_ENTRIES } from "@/lib/constants";
+import { CONTACT, FORM_ENTRIES, INQUIRY_OPTIONS } from "@/lib/constants";
 
-const STATUS_OPTIONS = ["고등학생", "대학생", "대학 졸업생", "직장인", "기타"];
-const PLAN_OPTIONS = ["이미 결정됨", "고민중", "정보 탐색 단계"];
-/* 폼 질문 '희망 비행학교 및 희망 과정' — 체크박스(복수 선택). 폼 옵션 순서와 동일하게 유지 */
-const SCHOOL_OPTIONS = [
-  "Hillsboro Aero Academy",
-  "Aeroguard Flight Training Center",
-  "Phoenix East Aviation",
-  "입사준비반",
-];
-const ENGLISH_OPTIONS = ["초급", "중급", "중상급", "상급"];
+/* 선택지는 Google Form 과 동일 (lib/constants INQUIRY_OPTIONS). 폼 필드 name 은 FORM_ENTRIES 키를 그대로 써서
+   FormData → JSON 변환 시 서버 스키마 키와 맞춘다 (실제 Google entry ID 매핑은 서버가 담당). */
+const STATUS_OPTIONS = INQUIRY_OPTIONS.status;
+const PLAN_OPTIONS = INQUIRY_OPTIONS.plan;
+const SCHOOL_OPTIONS = INQUIRY_OPTIONS.school;
+const ENGLISH_OPTIONS = INQUIRY_OPTIONS.english;
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
 export default function ApplyForm() {
   const [state, setState] = useState<FormState>("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [planOther, setPlanOther] = useState(false);
   const [schoolOther, setSchoolOther] = useState(false);
   const [schoolError, setSchoolError] = useState(false);
@@ -30,39 +27,55 @@ export default function ApplyForm() {
     const data = new FormData(form);
 
     /* 체크박스 그룹은 HTML required 로 강제되지 않으므로 직접 검사 */
-    if (data.getAll(FORM_ENTRIES.school).length === 0) {
+    const schools = data.getAll(FORM_ENTRIES.school).map(String).filter((v) => v !== "__other_option__");
+    const schoolOtherText = String(data.get(`${FORM_ENTRIES.school}.other`) ?? "").trim();
+    if (schoolOther && schoolOtherText) schools.push(schoolOtherText);
+    if (schools.length === 0) {
       setSchoolError(true);
       return;
     }
     setSchoolError(false);
     setState("submitting");
+    setErrorMessage(null);
 
-    // Google Forms "기타" handling
-    if (planOther) {
-      const otherText = data.get(`${FORM_ENTRIES.plan}.other`) || "";
-      data.set(FORM_ENTRIES.plan, "__other_option__");
-      data.set(`${FORM_ENTRIES.plan}.other_option_response`, otherText as string);
-      data.delete(`${FORM_ENTRIES.plan}.other`);
-    }
-    /* 체크박스 '기타' — 선택 값 __other_option__ 은 그대로 두고 자유 입력을 other_option_response 로 */
-    if (schoolOther) {
-      const otherText = data.get(`${FORM_ENTRIES.school}.other`) || "";
-      data.set(`${FORM_ENTRIES.school}.other_option_response`, otherText as string);
-      data.delete(`${FORM_ENTRIES.school}.other`);
-    }
+    const planValue = String(data.get(FORM_ENTRIES.plan) ?? "");
+    const plan =
+      planValue === "__other_option__"
+        ? String(data.get(`${FORM_ENTRIES.plan}.other`) ?? "").trim()
+        : planValue;
+
+    const payload = {
+      name: data.get(FORM_ENTRIES.name),
+      phone: data.get(FORM_ENTRIES.phone),
+      email: data.get(FORM_ENTRIES.email),
+      status: data.get(FORM_ENTRIES.status),
+      plan,
+      schools,
+      english: data.get(FORM_ENTRIES.english) ?? "",
+      experience: data.get(FORM_ENTRIES.experience) ?? "",
+      inquiry: data.get(FORM_ENTRIES.inquiry) ?? "",
+      website: data.get("website") ?? "",
+    };
 
     try {
-      await fetch(GOOGLE_FORM_ACTION, {
+      const res = await fetch("/api/inquiry", {
         method: "POST",
-        body: data,
-        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
+      const json = (await res.json()) as { ok: boolean; error?: string };
+      if (!res.ok || !json.ok) {
+        setErrorMessage(json.error ?? "접수에 실패했습니다.");
+        setState("error");
+        return;
+      }
       setState("success");
       setPlanOther(false);
       setSchoolOther(false);
       setSchoolError(false);
       form.reset();
     } catch {
+      setErrorMessage("네트워크 오류로 접수하지 못했습니다.");
       setState("error");
     }
   }
@@ -117,6 +130,16 @@ export default function ApplyForm() {
                 onSubmit={handleSubmit}
                 className="mt-12 space-y-6"
               >
+                {/* honeypot — 봇 차단용, 사람에게는 보이지 않음 */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                />
+
                 {/* 이름 */}
                 <Field label="이름" required>
                   <input
@@ -273,8 +296,8 @@ export default function ApplyForm() {
                 </button>
 
                 {state === "error" && (
-                  <p className="text-sm text-red-400 text-center">
-                    제출 중 오류가 발생했습니다. 다시 시도해주세요.
+                  <p className="text-sm text-red-500 text-center">
+                    {errorMessage ?? "제출 중 오류가 발생했습니다."} 계속 실패하면 {CONTACT.phone} 으로 문의해 주세요.
                   </p>
                 )}
               </motion.form>
