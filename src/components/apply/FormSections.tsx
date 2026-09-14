@@ -1,7 +1,7 @@
 "use client";
 
 import { INQUIRY_OPTIONS } from "@/lib/constants";
-import { Field, Pill, Section, boxInput } from "./FormPrimitives";
+import { Field, FloatInput, Pill, Section } from "./FormPrimitives";
 
 /* 질문 9개를 세 묶음으로. 값은 InquiryForm 이 보관(제어 컴포넌트). */
 
@@ -40,15 +40,9 @@ export default function FormSections({ v, set, errors }: Props) {
   return (
     <>
       <Section label="01 — Contact" title="기본 정보">
-        <Field label="이름" required error={errors.name}>
-          <input type="text" value={v.name} onChange={(e) => set("name", e.target.value)} placeholder="홍길동" className={boxInput} autoComplete="name" />
-        </Field>
-        <Field label="연락처" required error={errors.phone}>
-          <input type="tel" value={v.phone} onChange={(e) => set("phone", e.target.value)} placeholder="010-0000-0000" className={boxInput} autoComplete="tel" />
-        </Field>
-        <Field label="이메일" required error={errors.email} className="md:col-span-2">
-          <input type="email" value={v.email} onChange={(e) => set("email", e.target.value)} placeholder="example@email.com" className={boxInput} autoComplete="email" />
-        </Field>
+        <FloatInput label="이름" required error={errors.name} type="text" value={v.name} onChange={(e) => set("name", e.target.value)} autoComplete="name" />
+        <FloatInput label="연락처" required error={errors.phone} type="tel" value={v.phone} onChange={(e) => set("phone", e.target.value)} autoComplete="tel" />
+        <FloatInput label="이메일" required error={errors.email} type="email" value={v.email} onChange={(e) => set("email", e.target.value)} autoComplete="email" className="md:col-span-2" />
       </Section>
 
       <Section label="02 — Situation" title="현재 상황">
@@ -67,7 +61,7 @@ export default function FormSections({ v, set, errors }: Props) {
             <Pill name="plan" value="__other_option__" label="기타" checked={v.plan === "__other_option__"} onChange={() => set("plan", "__other_option__")} />
           </div>
           {v.plan === "__other_option__" && (
-            <input type="text" value={v.planOther} onChange={(e) => set("planOther", e.target.value)} placeholder="직접 입력해 주세요" className={`${boxInput} mt-3`} />
+            <FloatInput label="직접 입력" type="text" value={v.planOther} onChange={(e) => set("planOther", e.target.value)} className="mt-2" />
           )}
         </Field>
         <Field label="희망 비행학교 및 희망 과정" required hint="복수 선택" error={errors.schools} className="md:col-span-2">
@@ -78,7 +72,7 @@ export default function FormSections({ v, set, errors }: Props) {
             <Pill type="checkbox" name="schools" value="__other_option__" label="기타" checked={v.schoolOtherOn} onChange={(on) => set("schoolOtherOn", on)} />
           </div>
           {v.schoolOtherOn && (
-            <input type="text" value={v.schoolOther} onChange={(e) => set("schoolOther", e.target.value)} placeholder="비행학교 또는 과정 이름을 입력해 주세요" className={`${boxInput} mt-3`} />
+            <FloatInput label="비행학교 또는 과정 이름" type="text" value={v.schoolOther} onChange={(e) => set("schoolOther", e.target.value)} className="mt-2" />
           )}
         </Field>
       </Section>
@@ -91,12 +85,8 @@ export default function FormSections({ v, set, errors }: Props) {
             ))}
           </div>
         </Field>
-        <Field label="조종 관련 경험" className="md:col-span-2">
-          <input type="text" value={v.experience} onChange={(e) => set("experience", e.target.value)} placeholder="관련 경험이 있다면 적어 주세요" className={boxInput} />
-        </Field>
-        <Field label="문의사항" className="md:col-span-2">
-          <textarea rows={4} value={v.inquiry} onChange={(e) => set("inquiry", e.target.value)} placeholder="궁금한 점을 자유롭게 적어 주세요" className={`${boxInput} resize-none`} />
-        </Field>
+        <FloatInput label="조종 관련 경험" type="text" value={v.experience} onChange={(e) => set("experience", e.target.value)} className="md:col-span-2" />
+        <FloatInput label="문의사항" multiline rows={3} value={v.inquiry} onChange={(e) => set("inquiry", e.target.value)} className="md:col-span-2" />
       </Section>
     </>
   );
