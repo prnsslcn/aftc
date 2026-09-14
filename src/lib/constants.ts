@@ -31,11 +31,11 @@ export const INQUIRY_OPTIONS = {
   english: ["초급", "중급", "중상급", "상급"],
 } as const;
 
-/* 비행학교 브랜드 색 — 지도 SVG(public/images/*.svg) 의 주(州) 색과 동일. 문의 폼 선택 강조 등에 사용 */
+/* 비행학교 브랜드 색 (사용자 지정). 문의 폼 선택 강조 등에 사용. 지도 SVG 의 주(州) 색과는 별개 */
 export const SCHOOL_COLORS: Record<string, string> = {
-  "Hillsboro Aero Academy": "#142649",
-  "Aeroguard Flight Training Center": "#ff9902",
-  "Phoenix East Aviation": "#951c1b",
+  "Hillsboro Aero Academy": "#1b3668",
+  "Aeroguard Flight Training Center": "#ff9900",
+  "Phoenix East Aviation": "#be1723",
 };
 
 export const CONTACT = {
