@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ADMIN_HOME, ADMIN_SECTIONS } from "@/lib/admin-sections";
+import { ADMIN_SECTIONS } from "@/lib/admin-sections";
 
-const TABS = [{ href: ADMIN_HOME, label: "대시보드" }, ...ADMIN_SECTIONS.map((s) => ({ href: s.href, label: s.label }))];
+const TABS = ADMIN_SECTIONS.map((s) => ({ href: s.href, label: s.label }));
 
-/* 관리자 헤더 탭 — 현재 경로에 흰 밑줄. 항목은 lib/admin-sections 에서 관리 */
+/* 관리자 헤더 탭 — 현재 경로에 흰 밑줄. 항목은 lib/admin-sections 에서 관리. 대시보드는 탭 없이 브랜드 링크 */
 export function AdminNav() {
   const pathname = usePathname();
   return (

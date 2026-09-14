@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import { sql } from "@/lib/db/client";
 import { ADMIN_SECTIONS } from "@/lib/admin-sections";
 
-/* 관리자 대시보드 — 로그인 랜딩. 섹션별 카드 그리드 + 핵심 수치.
+/* 관리자 대시보드 (/admin) — 로그인 랜딩. 섹션별 카드 그리드 + 핵심 수치.
    카드 목록은 lib/admin-sections, 수치는 섹션 key 별로 여기서 조회. */
 export default async function AdminDashboardPage() {
   const [noticeRes, inquiryRes] = await Promise.all([

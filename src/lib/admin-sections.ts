@@ -9,7 +9,8 @@ export type AdminSection = {
   icon: string; // Iconify Solar
 };
 
-export const ADMIN_HOME = "/admin/dashboard";
+/* 관리자 홈(대시보드) — /admin 자체. 탭 없이 브랜드 링크로만 진입 */
+export const ADMIN_HOME = "/admin";
 
 export const ADMIN_SECTIONS: AdminSection[] = [
   {
