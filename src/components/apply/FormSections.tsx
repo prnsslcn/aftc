@@ -1,6 +1,6 @@
 "use client";
 
-import { INQUIRY_OPTIONS } from "@/lib/constants";
+import { INQUIRY_OPTIONS, SCHOOL_COLORS } from "@/lib/constants";
 import { Field, FloatInput, Pill, Section } from "./FormPrimitives";
 
 /* 질문 9개를 세 묶음으로. 값은 InquiryForm 이 보관(제어 컴포넌트). */
@@ -67,7 +67,7 @@ export default function FormSections({ v, set, errors }: Props) {
         <Field label="희망 비행학교 및 희망 과정" required hint="복수 선택" error={errors.schools} className="md:col-span-2 mt-4 md:mt-6">
           <div className="flex flex-wrap gap-x-7 gap-y-1">
             {INQUIRY_OPTIONS.school.map((opt) => (
-              <Pill key={opt} type="checkbox" name="schools" value={opt} checked={v.schools.includes(opt)} onChange={(on) => toggleSchool(opt, on)} />
+              <Pill key={opt} type="checkbox" name="schools" value={opt} checked={v.schools.includes(opt)} onChange={(on) => toggleSchool(opt, on)} accent={SCHOOL_COLORS[opt]} />
             ))}
             <Pill type="checkbox" name="schools" value="__other_option__" label="기타" checked={v.schoolOtherOn} onChange={(on) => set("schoolOtherOn", on)} />
           </div>

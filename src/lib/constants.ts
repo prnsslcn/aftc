@@ -31,6 +31,13 @@ export const INQUIRY_OPTIONS = {
   english: ["초급", "중급", "중상급", "상급"],
 } as const;
 
+/* 비행학교 브랜드 색 — 지도 SVG(public/images/*.svg) 의 주(州) 색과 동일. 문의 폼 선택 강조 등에 사용 */
+export const SCHOOL_COLORS: Record<string, string> = {
+  "Hillsboro Aero Academy": "#142649",
+  "Aeroguard Flight Training Center": "#ff9902",
+  "Phoenix East Aviation": "#951c1b",
+};
+
 export const CONTACT = {
   phone: "02-715-5398",
   location: "아세아항공직업전문학교",

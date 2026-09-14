@@ -102,6 +102,7 @@ export function Pill({
   label,
   checked,
   onChange,
+  accent,
 }: {
   type?: "radio" | "checkbox";
   name: string;
@@ -109,6 +110,8 @@ export function Pill({
   label?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  /* 선택 시 텍스트·상하 라인 색 (예: 비행학교 브랜드 색). 없으면 검정 */
+  accent?: string;
 }) {
   return (
     <label className="group cursor-pointer">
@@ -124,6 +127,7 @@ export function Pill({
         className="relative inline-block py-1.5 text-[15px] text-[#0a0a0a]/55 transition-colors duration-300 group-hover:text-[#0a0a0a] peer-checked:text-[#0a0a0a] peer-focus-visible:text-[#0a0a0a]
           after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-current after:transition-[width] after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:after:w-full peer-checked:after:w-full
           before:absolute before:right-0 before:top-0 before:h-[1.5px] before:w-0 before:bg-current before:transition-[width] before:duration-500 before:ease-[cubic-bezier(0.16,1,0.3,1)] peer-checked:before:w-full"
+        style={checked && accent ? { color: accent } : undefined}
       >
         {label ?? value}
       </span>
