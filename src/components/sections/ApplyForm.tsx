@@ -8,10 +8,12 @@ import { GOOGLE_FORM_ACTION, FORM_ENTRIES } from "@/lib/constants";
 
 const STATUS_OPTIONS = ["고등학생", "대학생", "대학 졸업생", "직장인", "기타"];
 const PLAN_OPTIONS = ["이미 결정됨", "고민중", "정보 탐색 단계"];
+/* 폼 질문 '희망 비행학교 및 희망 과정' — 체크박스(복수 선택). 폼 옵션 순서와 동일하게 유지 */
 const SCHOOL_OPTIONS = [
   "Hillsboro Aero Academy",
   "Aeroguard Flight Training Center",
   "Phoenix East Aviation",
+  "입사준비반",
 ];
 const ENGLISH_OPTIONS = ["초급", "중급", "중상급", "상급"];
 
@@ -21,12 +23,19 @@ export default function ApplyForm() {
   const [state, setState] = useState<FormState>("idle");
   const [planOther, setPlanOther] = useState(false);
   const [schoolOther, setSchoolOther] = useState(false);
+  const [schoolError, setSchoolError] = useState(false);
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setState("submitting");
-
     const form = e.currentTarget;
     const data = new FormData(form);
+
+    /* 체크박스 그룹은 HTML required 로 강제되지 않으므로 직접 검사 */
+    if (data.getAll(FORM_ENTRIES.school).length === 0) {
+      setSchoolError(true);
+      return;
+    }
+    setSchoolError(false);
+    setState("submitting");
 
     // Google Forms "기타" handling
     if (planOther) {
@@ -35,9 +44,10 @@ export default function ApplyForm() {
       data.set(`${FORM_ENTRIES.plan}.other_option_response`, otherText as string);
       data.delete(`${FORM_ENTRIES.plan}.other`);
     }
+    /* 체크박스 '기타' — 선택 값 __other_option__ 은 그대로 두고 자유 입력을 other_option_response 로 */
     if (schoolOther) {
       const otherText = data.get(`${FORM_ENTRIES.school}.other`) || "";
-      data.set(FORM_ENTRIES.school, otherText as string);
+      data.set(`${FORM_ENTRIES.school}.other_option_response`, otherText as string);
       data.delete(`${FORM_ENTRIES.school}.other`);
     }
 
@@ -50,6 +60,7 @@ export default function ApplyForm() {
       setState("success");
       setPlanOther(false);
       setSchoolOther(false);
+      setSchoolError(false);
       form.reset();
     } catch {
       setState("error");
@@ -182,24 +193,28 @@ export default function ApplyForm() {
                   )}
                 </Field>
 
-                {/* 희망 비행학교 */}
-                <Field label="희망 비행학교" required>
+                {/* 희망 비행학교 및 희망 과정 — 복수 선택 */}
+                <Field label="희망 비행학교 및 희망 과정" required hint="복수 선택 가능">
                   <div className="flex flex-wrap gap-2">
                     {SCHOOL_OPTIONS.map((opt) => (
                       <RadioPill
                         key={opt}
+                        type="checkbox"
                         name={FORM_ENTRIES.school}
                         value={opt}
-                        onChange={() => setSchoolOther(false)}
+                        onChange={() => setSchoolError(false)}
                       />
                     ))}
                     <label className="cursor-pointer">
                       <input
-                        type="radio"
+                        type="checkbox"
                         name={FORM_ENTRIES.school}
-                        value="__other__"
+                        value="__other_option__"
                         className="peer sr-only"
-                        onChange={() => setSchoolOther(true)}
+                        onChange={(e) => {
+                          setSchoolOther(e.currentTarget.checked);
+                          setSchoolError(false);
+                        }}
                       />
                       <span className="inline-block rounded-full px-4 py-2 text-sm text-black/50 bg-black/[.04] peer-checked:bg-[#1a1a1a] peer-checked:text-white peer-checked:opacity-100 transition-all">
                         기타
@@ -210,9 +225,12 @@ export default function ApplyForm() {
                     <input
                       name={`${FORM_ENTRIES.school}.other`}
                       type="text"
-                      placeholder="비행학교 이름을 입력해주세요"
+                      placeholder="비행학교 또는 과정 이름을 입력해주세요"
                       className="form-input mt-3"
                     />
+                  )}
+                  {schoolError && (
+                    <p className="mt-2 text-sm text-red-600">하나 이상 선택해주세요.</p>
                   )}
                 </Field>
 
@@ -271,10 +289,12 @@ export default function ApplyForm() {
 function Field({
   label,
   required,
+  hint,
   children,
 }: {
   label: string;
   required?: boolean;
+  hint?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -282,16 +302,27 @@ function Field({
       <label className="block text-sm font-medium text-black/60 mb-2">
         {label}
         {required && <span className="text-emerald-600 ml-1">*</span>}
+        {hint && <span className="ml-2 text-xs font-normal text-black/40">{hint}</span>}
       </label>
       {children}
     </div>
   );
 }
 
-function RadioPill({ name, value, onChange }: { name: string; value: string; onChange?: () => void }) {
+function RadioPill({
+  name,
+  value,
+  onChange,
+  type = "radio",
+}: {
+  name: string;
+  value: string;
+  onChange?: () => void;
+  type?: "radio" | "checkbox";
+}) {
   return (
     <label className="cursor-pointer">
-      <input type="radio" name={name} value={value} className="peer sr-only" onChange={onChange} />
+      <input type={type} name={name} value={value} className="peer sr-only" onChange={onChange} />
       <span className="inline-block rounded-full px-4 py-2 text-sm text-black/50 bg-black/[.04] peer-checked:bg-[#1a1a1a] peer-checked:text-white peer-checked:opacity-100 transition-all">
         {value}
       </span>

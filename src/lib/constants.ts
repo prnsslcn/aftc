@@ -4,16 +4,18 @@ export const GOOGLE_FORM_URL =
 export const GOOGLE_FORM_ACTION =
   "https://docs.google.com/forms/d/e/1FAIpQLSeMWuAgbIi8-xprEo0Sv8G3M-xTmGLZXwNMyYq3KDeMJooAiQ/formResponse";
 
+/* Google Form 필드 ID — 폼의 FB_PUBLIC_LOAD_DATA 기준 (2026-09-14 재확인).
+   폼을 다시 만들거나 질문을 바꾸면 ID 가 달라지므로 그때마다 갱신할 것. */
 export const FORM_ENTRIES = {
-  name: "entry.826355120",
-  phone: "entry.1149713456",
-  email: "entry.245385898",
-  status: "entry.1212825914",
-  plan: "entry.1290620365",
-  school: "entry.476526749",
-  english: "entry.886453069",
-  experience: "entry.843615978",
-  inquiry: "entry.1138392509",
+  name: "entry.2092238618",
+  phone: "entry.1556369182",
+  email: "entry.479301265",
+  status: "entry.1753222212",
+  plan: "entry.588393791",
+  school: "entry.2109138769", // 체크박스(복수 선택) — '희망 비행학교 및 희망 과정'
+  english: "entry.523284882",
+  experience: "entry.1463374978",
+  inquiry: "entry.2084604228",
 } as const;
 
 export const CONTACT = {
