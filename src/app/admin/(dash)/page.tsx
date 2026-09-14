@@ -39,7 +39,7 @@ export default async function AdminDashboardPage() {
   return (
     <section>
       <div className="mb-8">
-        <h1 className="font-display font-black text-3xl tracking-[-0.02em]">Dashboard</h1>
+        <h1 className="font-display font-black text-5xl md:text-6xl tracking-[-0.03em]">Dashboard</h1>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
