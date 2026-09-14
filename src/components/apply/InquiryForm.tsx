@@ -102,7 +102,14 @@ export default function InquiryForm() {
   }
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); submit(); }} noValidate>
+    <form
+      onSubmit={(e) => { e.preventDefault(); submit(); }}
+      /* Enter 제출 방지 — 한 줄 입력란(input)에서만 막는다. textarea 줄바꿈, 버튼에 포커스 후 Enter 는 그대로 */
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && (e.target as HTMLElement).tagName === "INPUT") e.preventDefault();
+      }}
+      noValidate
+    >
       <FormSections v={values} set={set} errors={errors} />
 
       <div className="mt-12 md:mt-14 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
