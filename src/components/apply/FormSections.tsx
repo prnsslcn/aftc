@@ -1,6 +1,7 @@
 "use client";
 
 import { INQUIRY_OPTIONS, SCHOOL_COLORS } from "@/lib/constants";
+import { formatPhone } from "@/lib/format";
 import { Field, FloatInput, Pill, Section } from "./FormPrimitives";
 
 /* 질문 9개를 세 묶음으로. 값은 InquiryForm 이 보관(제어 컴포넌트). */
@@ -41,7 +42,7 @@ export default function FormSections({ v, set, errors }: Props) {
     <>
       <Section label="01" title="Contact">
         <FloatInput label="이름" required error={errors.name} type="text" value={v.name} onChange={(e) => set("name", e.target.value)} autoComplete="name" />
-        <FloatInput label="연락처" required error={errors.phone} type="tel" value={v.phone} onChange={(e) => set("phone", e.target.value)} autoComplete="tel" />
+        <FloatInput label="연락처" required error={errors.phone} type="tel" inputMode="numeric" maxLength={13} value={v.phone} onChange={(e) => set("phone", formatPhone(e.target.value))} autoComplete="tel" />
         <FloatInput label="이메일" required error={errors.email} type="email" value={v.email} onChange={(e) => set("email", e.target.value)} autoComplete="email" className="md:col-span-2" />
       </Section>
 
