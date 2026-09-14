@@ -53,7 +53,7 @@ export default function FormSections({ v, set, errors }: Props) {
             ))}
           </div>
         </Field>
-        <Field label="해외 비행유학 계획" required error={errors.plan} className="md:col-span-2">
+        <Field label="해외 비행유학 계획" required error={errors.plan} className="md:col-span-2 mt-4 md:mt-6">
           <div className="flex flex-wrap gap-x-7 gap-y-1">
             {INQUIRY_OPTIONS.plan.map((opt) => (
               <Pill key={opt} name="plan" value={opt} checked={v.plan === opt} onChange={() => set("plan", opt)} />
@@ -64,7 +64,7 @@ export default function FormSections({ v, set, errors }: Props) {
             <FloatInput label="직접 입력" type="text" value={v.planOther} onChange={(e) => set("planOther", e.target.value)} className="mt-2" />
           )}
         </Field>
-        <Field label="희망 비행학교 및 희망 과정" required hint="복수 선택" error={errors.schools} className="md:col-span-2">
+        <Field label="희망 비행학교 및 희망 과정" required hint="복수 선택" error={errors.schools} className="md:col-span-2 mt-4 md:mt-6">
           <div className="flex flex-wrap gap-x-7 gap-y-1">
             {INQUIRY_OPTIONS.school.map((opt) => (
               <Pill key={opt} type="checkbox" name="schools" value={opt} checked={v.schools.includes(opt)} onChange={(on) => toggleSchool(opt, on)} />
