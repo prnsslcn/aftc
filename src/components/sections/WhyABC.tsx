@@ -100,16 +100,16 @@ export default function WhyABC() {
         {/* 좌: sticky 헤딩 */}
         <div className="lg:sticky lg:top-28 lg:self-start">
           <DropletReveal>
-            <p className="text-[#0a0a0a]/55 font-mono uppercase tracking-[.22em] text-xs mb-5">
+            {/* <p className="text-[#0a0a0a]/55 font-mono uppercase tracking-[.22em] text-xs mb-5">
               Why ABC
-            </p>
+            </p> */}
             <h2
               className="font-display tracking-[-0.03em] leading-[0.95] break-keep-all"
               style={{ fontSize: "clamp(2.5rem, 5.5vw, 5rem)" }}
             >
               <span className="font-light">Why </span>
-              <span className="font-black text-[#467ee9]">ABC</span>
-              <span className="font-light">?</span>
+              <span className="font-extrabold text-[#467ee9]">ABC</span>
+              {/* <span className="font-light">?</span> */}
             </h2>
             <p className="mt-6 text-[#0a0a0a]/55 max-w-sm text-sm md:text-[15px] leading-relaxed break-keep-all">
               예비 조종사 양성부터 항공사 입사까지 이어지는 통합 교육 시스템,
