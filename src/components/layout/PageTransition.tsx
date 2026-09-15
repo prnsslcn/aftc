@@ -20,6 +20,9 @@ type Ctx = {
   runEnter: (isHome: boolean) => Promise<void>;
   inTransition: () => boolean;
   awaitNextChildrenChange: () => Promise<void>;
+  /* 블라인드(enter)가 완전히 걷힌 상태. 첫 화면 안에 있는 요소의 등장 애니메이션은 이 값으로 게이트해서
+     오버레이 뒤에서 미리 끝나 버리지 않게 한다. */
+  ready: boolean;
 };
 
 const TransitionContext = createContext<Ctx>({
@@ -27,6 +30,7 @@ const TransitionContext = createContext<Ctx>({
   runEnter: async () => {},
   inTransition: () => false,
   awaitNextChildrenChange: async () => {},
+  ready: true,
 });
 
 export function usePageTransition() {
@@ -183,6 +187,7 @@ export function PageTransition({
         runEnter,
         inTransition: () => inTransitionRef.current,
         awaitNextChildrenChange,
+        ready: !active,
       }}
     >
       {/* navbar 는 Provider 안에 있지만 motion.div 밖에 배치 — context 사용 가능 + transform 영향 없음 */}

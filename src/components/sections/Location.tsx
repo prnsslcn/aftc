@@ -1,9 +1,18 @@
+"use client";
+
+import { useRef } from "react";
 import Link from "next/link";
+import { motion, useInView } from "framer-motion";
+import { blockIn } from "@/lib/motion";
+import { usePageTransition } from "@/components/layout/PageTransition";
 
 /* Location — 찾아오시는 길.
    한 화면(100dvh)에 담기게 컴팩트 레이아웃.
    Naver 는 iframe embed 를 차단하므로 지도는 Google Maps embed 로 렌더,
-   '지도 열기' 링크만 네이버로 연결. 다크 톤을 위해 invert + hue-rotate 필터. */
+   '지도 열기' 링크만 네이버로 연결. 다크 톤을 위해 invert + hue-rotate 필터.
+   등장: Intro·pipeline 과 같은 blockIn (헤드라인 → 주소 → 지도), 뷰포트 하단 20% 진입 + PageTransition ready 게이트. */
+
+const BLOCK_STYLE = { willChange: "opacity, filter, transform" } as const;
 
 const MAP_ADDRESS = "서울특별시 영등포구 당산로32길 16";
 const GOOGLE_MAP_EMBED_URL = `https://maps.google.com/maps?q=${encodeURIComponent(
@@ -14,19 +23,25 @@ const NAVER_MAP_LINK = `https://map.naver.com/p/search/${encodeURIComponent(
 )}`;
 
 export default function Location() {
+  const ref = useRef<HTMLDivElement>(null);
+  const seen = useInView(ref, { once: true, margin: "0px 0px -20% 0px" });
+  const { ready } = usePageTransition();
+  const inView = seen && ready;
+
   return (
     <section data-nav-theme="dark" className="relative min-h-[100dvh] flex flex-col bg-[#0a0a0a] text-[#fafaf8] px-6 md:px-10 lg:px-16 pt-24 pb-10 md:pt-28 md:pb-14">
-      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col">
+      <div ref={ref} className="mx-auto flex w-full max-w-6xl flex-1 flex-col">
         {/* Header + Address — 인라인 컴팩트 */}
         <div className="mb-8 md:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-          <h2
+          <motion.h2
             className="font-display font-light tracking-[-0.03em] leading-[0.95] break-keep-all"
-            style={{ fontSize: "clamp(2rem, 4vw, 4rem)" }}
+            style={{ fontSize: "clamp(2rem, 4vw, 4rem)", ...BLOCK_STYLE }}
+            {...blockIn(11, "18%", 0.82, 0.08, inView)}
           >
             Location
-          </h2>
+          </motion.h2>
 
-          <div className="md:text-right">
+          <motion.div className="md:text-right" style={BLOCK_STYLE} {...blockIn(8, "14%", 0.78, 0.28, inView)}>
             <p className="text-white/45 font-mono uppercase tracking-[.22em] text-xs mb-2">
               Address
             </p>
@@ -36,11 +51,15 @@ export default function Location() {
             <p className="text-white/70 mt-1 leading-relaxed break-keep-all">
               {MAP_ADDRESS}
             </p>
-          </div>
+          </motion.div>
         </div>
 
         {/* Map — flex-1 로 남은 공간 채움, 다크 필터 적용 */}
-        <div className="relative flex-1 min-h-[280px] rounded-2xl overflow-hidden border border-white/10">
+        <motion.div
+          className="relative flex-1 min-h-[280px] rounded-2xl overflow-hidden border border-white/10"
+          style={BLOCK_STYLE}
+          {...blockIn(8, "6%", 0.9, 0.48, inView)}
+        >
           <iframe
             src={GOOGLE_MAP_EMBED_URL}
             title="아세아항공직업전문학교 위치"
@@ -68,7 +87,7 @@ export default function Location() {
           >
             네이버 지도에서 열기 →
           </a>
-        </div>
+        </motion.div>
       </div>
 
       {/* 관리자 로그인 진입점 — 우측 하단 조용히 */}
