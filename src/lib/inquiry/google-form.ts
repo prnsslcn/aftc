@@ -13,7 +13,9 @@ const SCHOOL_SET = new Set<string>(INQUIRY_OPTIONS.school);
 export function buildGoogleFormBody(input: InquiryInput): URLSearchParams {
   const body = new URLSearchParams();
   body.append(FORM_ENTRIES.name, input.name);
-  body.append(FORM_ENTRIES.phone, input.phone);
+  /* 연락처는 숫자만 전달 — Google 폼의 '연락처' 질문에 "정수" 응답 확인이 걸려 있어 하이픈이 있으면 거절된다
+     (2026-09-15 실측). DB 에는 하이픈 포함 원본을 보관하고, Google 로 보낼 때만 정리 */
+  body.append(FORM_ENTRIES.phone, input.phone.replace(/\D/g, "") || input.phone);
   body.append(FORM_ENTRIES.email, input.email);
   body.append(FORM_ENTRIES.status, input.status);
 
