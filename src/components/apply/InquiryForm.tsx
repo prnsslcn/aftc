@@ -85,17 +85,18 @@ export default function InquiryForm() {
         transition={{ duration: 0.7, ease: BLOCK_EASE }}
         className="rounded-[24px] bg-[#0a0a0a] text-white p-8 md:p-12"
       >
-        <p className="font-mono text-[11px] uppercase tracking-[.22em] text-white/40">Inquiry received</p>
-        <h3 className="mt-5 font-display tracking-[-0.04em]" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, lineHeight: 1 }}>
+        <h3 className="font-display tracking-[-0.04em]" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, lineHeight: 1 }}>
           Received.
         </h3>
         <p className="mt-5 text-white/70 leading-relaxed break-keep-all">문의가 접수되었습니다. 빠른 시일 내에 안내 연락을 드리겠습니다.</p>
-        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-          <Link href="/" className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">홈으로</Link>
-          <Link href="/notices" className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">공지사항</Link>
-          <button type="button" onClick={() => { setValues(EMPTY_VALUES); setErrors({}); setState("idle"); }} className="text-white/50 hover:text-white transition-colors">
-            다시 작성하기
-          </button>
+        <div className="mt-10 text-sm">
+          {/* nav 링크와 같은 hover 밑줄 (좌→우) */}
+          <Link
+            href="/"
+            className="relative inline-block py-1 after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-current after:transition-[width] after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] hover:after:w-full"
+          >
+            홈으로
+          </Link>
         </div>
       </motion.div>
     );
