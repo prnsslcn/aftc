@@ -32,16 +32,17 @@ export default async function NoticesPage() {
   return (
     <main data-nav-theme="dark" className="min-h-[100dvh] bg-[#0a0a0a] text-white px-6 md:px-10 lg:px-16 pt-32 pb-24">
       <div className="mx-auto max-w-4xl">
+        {/* 헤드라인 — pipeline "Integrated Pilot Program" 과 동일 타이포 (Outfit 800) + 한글 서브 */}
         <div className="mb-14">
-          <p className="text-white/45 font-mono uppercase tracking-[.22em] text-xs mb-4">
-            Notices
-          </p>
           <h1
-            className="font-display font-light tracking-[-0.03em] leading-[0.95] break-keep-all"
-            style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}
+            className="font-display tracking-[-0.045em]"
+            style={{ fontSize: "clamp(2.25rem, 5.5vw, 5rem)", fontWeight: 800, lineHeight: 0.95 }}
           >
-            공지사항
+            Notices
           </h1>
+          <p className="mt-4 font-medium text-white/60" style={{ fontSize: "clamp(1rem, 1.3vw, 1.25rem)" }}>
+            공지사항
+          </p>
         </div>
 
         {rows.length === 0 ? (
