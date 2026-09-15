@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CONTACT } from "@/lib/constants";
@@ -29,6 +29,15 @@ export default function InquiryForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  /* 개발 환경 전용 — /apply?preview=success 로 성공 카드를 제출 없이 확인. 프로덕션에서는 무시.
+     useSyncExternalStore: 서버 스냅샷은 "" 이라 SSR 은 폼을 그리고, 클라이언트에서 쿼리를 읽어 전환 (hydration 안전) */
+  const search = useSyncExternalStore(
+    () => () => {},
+    () => window.location.search,
+    () => "",
+  );
+  const previewSuccess = process.env.NODE_ENV !== "production" && new URLSearchParams(search).get("preview") === "success";
 
   const set = <K extends keyof InquiryValues>(key: K, value: InquiryValues[K]) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -77,7 +86,7 @@ export default function InquiryForm() {
     }
   }
 
-  if (state === "success") {
+  if (state === "success" || previewSuccess) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
